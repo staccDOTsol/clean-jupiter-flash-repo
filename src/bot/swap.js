@@ -3,11 +3,21 @@ const cache = require("./cache");
 const fs = require('fs')
 const JSBI = require('jsbi')
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
-const { SolendMarket, flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruction,SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
+let { flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruction,SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
 const { Token, createTransferInstruction } = require('@solana/spl-token');
 const { ASSOCIATED_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@project-serum/anchor/dist/cjs/utils/token");
 const axios = require('axios')
+if (cache.strategy == "arbitrage"){
+	
 
+	
+	flashBorrowReserveLiquidityInstruction = require( "./solend-sdk/dist/instructions/flashBorrowReserveLiquidity" );
+
+	
+	flashRepayReserveLiquidityInstruction = require( "./solend-sdk/dist/instructions/flashRepayReserveLiquidity" );
+
+ SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey("E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa")
+}
 
 
 const { Keypair, Connection, PublicKey, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } = require("@solana/web3.js");

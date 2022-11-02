@@ -37,10 +37,10 @@ function Tokens() {
 		};
 
 		if (strategy === "arbitrage") {
-			tokensIsSet.tokenB = true;
+		//	tokensIsSet.tokenB = true;
 		}
 
-		if (strategy === "pingpong" && tokenId === "tokenA") {
+		if (tokenId === "tokenA") {
 			goToNextStep = false;
 		}
 
@@ -104,23 +104,28 @@ function Tokens() {
 
 			
 			isMountedRef.current && setTokenBs(res.data);
+			configs = JSON.parse(fs.readFileSync(strategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
+
+			
 				let temp = [] 
 				for (var config of configs){
 					for (var reserve in config.reserves){
 						if (parseInt(reserve) < config.reserves.length / 2 * 3){
+
+	
 							temp.push(config.reserves[reserve].liquidityToken.mint)
 						}
 					}
 				}
 				isMountedRef.current && setTokenBs(res.data);
-
-				res.data = res.data.filter((token) => temp.includes(token.address))
-				isMountedRef.current && setTokens(res.data);
-				// save tokens to tokens.json file
 				fs.writeFileSync(
 					"./temp/tokens.json",
 					JSON.stringify(res.data, null, 2)
 				);
+				res.data = res.data.filter((token) => temp.includes(token.address))
+				isMountedRef.current && setTokens(res.data);
+				// save tokens to tokens.json file
+				
 			});
 		}
 	}, []);
@@ -175,7 +180,7 @@ function Tokens() {
 						)}
 				</Box>
 
-				{strategy === "pingpong" && (
+				{true && (
 					<>
 						<Text>
 							Token B:{" "}

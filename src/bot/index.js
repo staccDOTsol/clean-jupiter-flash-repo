@@ -404,7 +404,8 @@ const watcher = async (jupiter, tokenA, tokenB) => {
 			await pingpongStrategy(jupiter, tokenA, tokenB);
 		}
 		if (cache.config.tradingStrategy === "arbitrage") {
-			await arbitrageStrategy(jupiter, tokenA, tokenB);
+			await pingpongStrategy(jupiter, tokenA, tokenB);
+			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
 	}
 };
@@ -414,7 +415,7 @@ const run = async () => {
 		// set everything up
 		const { jupiter, tokenA, tokenB } = await setup();
 
-		if (cache.config.tradingStrategy === "pingpong") {
+		if (true){//cache.config.tradingStrategy === "pingpong") {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
@@ -431,7 +432,7 @@ const run = async () => {
 				cache.initialBalance.tokenA
 			);
 			cache.lastBalance.tokenB = cache.initialBalance.tokenB;
-		} else if (cache.config.tradingStrategy === "arbitrage") {
+		} else if (false){//cache.config.tradingStrategy === "arbitrage") {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
