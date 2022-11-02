@@ -1,26 +1,154 @@
 const { calculateProfit, toDecimal, storeItInTempAsJSON } = require("../utils");
 const cache = require("./cache");
+const fs = require('fs')
+const JSBI = require('jsbi')
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
+const { SolendMarket, flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruction,SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
+const { Token, createTransferInstruction } = require('@solana/spl-token');
+const { ASSOCIATED_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@project-serum/anchor/dist/cjs/utils/token");
+const axios = require('axios')
 
-const swap = async (jupiter, route) => {
+
+
+const { Keypair, Connection, PublicKey, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } = require("@solana/web3.js");
+const bs58 = require('bs58');
+const { AnchorProvider } = require("@project-serum/anchor");
+const { default: NodeWallet } = require("@project-serum/anchor/dist/cjs/nodewallet");
+const payer = Keypair.fromSecretKey(
+	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
+);
+
+const swap = async (jupiter, route, route2, tokenA) => {
 	try {
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 
 		if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
-		const { execute } = await jupiter.exchange({
+		const execute1 = await jupiter.exchange({
 			routeInfo: route,
 		});
-		const result = await execute();
 
+		const execute2 = await jupiter.exchange({
+			routeInfo: route2,
+		});
+	
+		const connection = new Connection(cache.config.rpc[Math.floor(Math.random()*cache.config.rpc.length)]);
+		let goaccs= []
+		const luts = JSON.parse(fs.readFileSync('./luts.json').toString())
+		for (var mi of [...route.marketInfos,...route2.marketInfos]){
+			try {
+			for (var lut of luts[mi.amm.id].split(',')){
+				try {
+			let test = (await connection.getAddressLookupTable(new PublicKey(lut))).value
+			goaccs.push(test)
+				}catch (err){
+
+				}
+			}
+		}
+		catch (err){
+
+		}
+		}
+		let mint = (route.marketInfos[0].inputMint.toBase58())
+		let configs = JSON.parse(fs.readFileSync('./configs.json').toString())
+		let reserve, market 
+		for (var m of configs.reverse()){
+			try {
+			for(var r of m.reserves.reverse()){
+				if (r.liquidityToken.mint == mint){
+					market = m 
+					reserve = r 
+				}
+			}
+		} catch (err){
+			console.log(err)
+		}
+		}
+		let jaregm = (
+			await connection.getTokenAccountsByOwner(
+			  new PublicKey(
+				"JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"
+			  ),
+			  { mint: new PublicKey(reserve.liquidityToken.mint) }
+			)
+		  ).value[0].pubkey
+		let tokenAccount = (
+			await connection.getTokenAccountsByOwner(
+			  payer.publicKey,
+			  { mint: new PublicKey(reserve.liquidityToken.mint) }
+			)
+		  ).value[0].pubkey
+	
+		let instructions =  [
+			flashBorrowReserveLiquidityInstruction(
+			  Math.ceil(JSBI.toNumber(route.inAmount) *  10 ** tokenA.decimals),
+			  new PublicKey(reserve.liquidityAddress),
+			  tokenAccount,
+			  new PublicKey(reserve.address),
+			  new PublicKey(market.address),
+			  SOLEND_PRODUCTION_PROGRAM_ID,
+			  payer.publicKey
+			),
+		  ];	
+
+		await Promise.all(
+			[execute1.transactions, execute2.transactions].map(async (txs) => {
+			  const { setupTransaction, swapTransaction, cleanupTransaction } =
+txs
+			  await Promise.all(
+          [setupTransaction, swapTransaction, cleanupTransaction]
+            .filter(Boolean)
+            .map(async (transaction) => {
+			instructions.push(...transaction.instructions)
+		
+			})
+			  )
+		})
+		)
+		instructions.push(
+			flashRepayReserveLiquidityInstruction(
+			  
+				Math.ceil(JSBI.toNumber(route.inAmount) * 10 ** tokenA.decimals),
+				0,
+			  tokenAccount,
+			  new PublicKey(
+				reserve.liquidityAddress
+			  ),
+			  new PublicKey(
+				reserve.liquidityFeeReceiverAddress
+			  ),
+			  jaregm,
+			  new PublicKey(reserve.address),
+			  new PublicKey(market.address),
+			  payer.publicKey,
+			  SOLEND_PRODUCTION_PROGRAM_ID
+			)
+		  );
+		  const  messageV00 = new TransactionMessage({
+			payerKey: payer.publicKey,
+			recentBlockhash: (await (
+				await connection.getLatestBlockhash()
+			  ).blockhash),
+			instructions,
+		}).compileToV0Message(goaccs);
+		const transaction = new VersionedTransaction(
+					messageV00
+				  );
+				  transaction.sign([payer])
+				const result = await sendAndConfirmTransaction(connection,transaction)
+			
 		if (process.env.DEBUG) storeItInTempAsJSON("result", result);
 
 		const performanceOfTx = performance.now() - performanceOfTxStart;
 
 		return [result, performanceOfTx];
 	} catch (error) {
+		cache.swappingRightNow = false;
+
 		console.log("Swap error: ", error);
+		return [false, false]
 	}
 };
 exports.swap = swap;

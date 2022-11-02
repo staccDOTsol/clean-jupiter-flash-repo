@@ -79,7 +79,7 @@ const loadConfigFile = ({ showSpinner = false }) => {
 	throw new Error("\nNo config.json file found!\n");
 };
 
-const calculateProfit = (oldVal, newVal) => ((newVal - oldVal) / oldVal) * 100;
+const calculateProfit = (oldVal, newVal) =>  	((newVal - oldVal) / oldVal) * 100;
 
 const toDecimal = (number, decimals) =>
 	parseFloat(number / 10 ** decimals).toFixed(decimals);

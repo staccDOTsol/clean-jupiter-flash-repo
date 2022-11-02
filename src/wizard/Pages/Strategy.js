@@ -6,8 +6,8 @@ const { default: SelectInput } = require("ink-select-input");
 const chalk = require("chalk");
 
 const TRADING_STRATEGIES = [
-	{ label: "Ping Pong", value: "pingpong" },
-	{ label: "Arbitrage", value: "arbitrage" },
+	{ label: "risk.lol", value: "pingpong" },
+//	{ label: "Arbitrage", value: "arbitrage" },
 	{ label: chalk.gray("coming soon..."), value: "null" },
 ];
 

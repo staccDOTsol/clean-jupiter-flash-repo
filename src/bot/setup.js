@@ -9,6 +9,7 @@ const { logExit } = require("./exit");
 const { loadConfigFile } = require("../utils");
 const { intro, listenHotkeys } = require("./ui");
 const cache = require("./cache");
+const JSBI  = require("jsbi");
 
 const setup = async () => {
 	let spinner, tokens, tokenA, tokenB, wallet;
@@ -68,7 +69,7 @@ const setup = async () => {
 
 		spinner.text = "Setting up connection ...";
 		// connect to RPC
-		const connection = new Connection(cache.config.rpc[0]);
+		const connection = new Connection(cache.config.rpc[Math.floor(Math.random()*cache.config.rpc.length)]);
 
 		spinner.text = "Loading Jupiter SDK...";
 
@@ -112,14 +113,14 @@ const getInitialOutAmountWithSlippage = async (
 		const routes = await jupiter.computeRoutes({
 			inputMint: new PublicKey(inputToken.address),
 			outputMint: new PublicKey(outputToken.address),
-			inputAmount: amountToTrade,
-			slippage: 0,
-			forceFeech: true,
+			            amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
+            slippageBps: 0,
+
+			forceFetch: true,
 		});
 
 		if (routes?.routesInfos?.length > 0) spinner.succeed("Routes computed!");
 		else spinner.fail("No routes found. Something is wrong!");
-
 		return routes.routesInfos[0].outAmountWithSlippage;
 	} catch (error) {
 		if (spinner)

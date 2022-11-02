@@ -3,6 +3,7 @@ console.clear();
 require("dotenv").config();
 const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
+const JSBI  = require("jsbi");
 
 const {
 	calculateProfit,
@@ -41,32 +42,42 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 
 		// set input / output token
 		const inputToken = cache.sideBuy ? tokenA : tokenB;
-		const outputToken = cache.sideBuy ? tokenB : tokenA;
+		const outputToken = cache.sideSell ? tokenB : tokenA;
 
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
 		const routes = await jupiter.computeRoutes({
 			inputMint: new PublicKey(inputToken.address),
 			outputMint: new PublicKey(outputToken.address),
-			inputAmount: amountToTrade,
-			slippage,
-			forceFetch: true,
+			            amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
+            slippageBps: slippage,
+
+		});
+		// choose first route
+		const route = await routes.routesInfos[0];
+		const routes2 = await jupiter.computeRoutes({
+			inputMint: new PublicKey(outputToken.address),
+			outputMint: new PublicKey(inputToken.address),
+			            amount: JSBI.BigInt(route.outAmount), // raw input amount of tokens
+            slippageBps: slippage,
+			forceFetch: true
 		});
 
-		checkRoutesResponse(routes);
+
+		checkRoutesResponse(routes2);
 
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
-			routes.routesInfos.length;
+			routes.routesInfos.length + routes2.routesInfos.length;
+
+		// choose another route
+		const route2 = await routes2.routesInfos[0];
 
 		// update status as OK
 		cache.queue[i] = 0;
 
 		const performanceOfRouteComp =
 			performance.now() - performanceOfRouteCompStart;
-
-		// choose first route
-		const route = await routes.routesInfos[0];
 
 		// update slippage with "profit or kill" slippage
 		if (cache.config.slippage === "profitOrKill") {
@@ -76,8 +87,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 
 		// calculate profitability
 
-		let simulatedProfit = calculateProfit(baseAmount, await route.outAmount);
-
+		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
+		console.log(simulatedProfit)
 		// store max profit spotted
 		if (
 			simulatedProfit > cache.maxProfitSpotted[cache.sideBuy ? "buy" : "sell"]
@@ -94,6 +105,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			tokenA,
 			tokenB,
 			route,
+			route2,
 			simulatedProfit,
 		});
 
@@ -123,8 +135,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					inAmount: toDecimal(route.inAmount, inputToken.decimals),
-					expectedOutAmount: toDecimal(route.outAmount, outputToken.decimals),
+					inAmount: toDecimal(JSBI.toNumber(route.inAmount), inputToken.decimals),
+					expectedOutAmount: toDecimal(JSBI.toNumber(route2.outAmount), outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -140,16 +152,17 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 							tokenA,
 							tokenB,
 							route,
+							route2,
 							simulatedProfit,
 						});
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(jupiter, route);
+				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
-
+				if (tx){
 				const profit = calculateProfit(
 					cache.currentBalance[cache.sideBuy ? "tokenB" : "tokenA"],
 					tx.outputAmount
@@ -176,7 +189,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				}
 			}
 		}
-
+	}
 		if (tx) {
 			if (!tx.error) {
 				// change side
@@ -194,6 +207,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			tokenA,
 			tokenB,
 			route,
+			route2,
 			simulatedProfit,
 		});
 	} catch (error) {
@@ -304,7 +318,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					inAmount: toDecimal(route.inAmount, inputToken.decimals),
+					inAmount: toDecimal(JSBI.toNumber(route.inAmount), inputToken.decimals),
 					expectedOutAmount: toDecimal(route.outAmount, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};

@@ -22,6 +22,7 @@ function Tokens() {
 		configSetValue,
 	} = useContext(WizardContext);
 	const [tokens, setTokens] = useState([]);
+	const [tokenBs, setTokenBs] = useState([]);
 	const [autocompleteTokens, setAutocompleteTokens] = useState([]);
 	const [tempTokensValue, setTempTokensValue] = useState(tokensValue);
 
@@ -56,14 +57,21 @@ function Tokens() {
 	const handleTokenChange = (tokenId, value) => {
 		if (!isMountedRef.current) return;
 		const sanitizedValue = value.replace(/[^a-zA-Z0-9]/g, "");
-		const filteredTokens = tokens
+		const filteredTokens = !tokensIsSet.tokenA ? tokens
 			.map((t) => ({
 				label: t.symbol,
 				value: t.address,
 			}))
 			.filter((t) =>
 				t.label.toLowerCase().includes(sanitizedValue.toLowerCase())
-			);
+			) : tokenBs
+			.map((t) => ({
+				label: t.symbol,
+				value: t.address,
+			}))
+			.filter((t) =>
+				t.label.toLowerCase().includes(sanitizedValue.toLowerCase())
+			); 
 		if (isMountedRef.current) {
 			setAutocompleteTokens(filteredTokens);
 			setTempTokensValue({
@@ -92,6 +100,21 @@ function Tokens() {
 			tokens.tokensFromFile?.length > 0 && setTokens(tokensFromFile);
 		} else {
 			axios.get(TOKEN_LIST_URL[network]).then((res) => {
+				let configs = JSON.parse(fs.readFileSync("./configs.json").toString())
+
+			
+			isMountedRef.current && setTokenBs(res.data);
+				let temp = [] 
+				for (var config of configs){
+					for (var reserve in config.reserves){
+						if (parseInt(reserve) < config.reserves.length / 2 * 3){
+							temp.push(config.reserves[reserve].liquidityToken.mint)
+						}
+					}
+				}
+				isMountedRef.current && setTokenBs(res.data);
+
+				res.data = res.data.filter((token) => temp.includes(token.address))
 				isMountedRef.current && setTokens(res.data);
 				// save tokens to tokens.json file
 				fs.writeFileSync(
@@ -114,7 +137,11 @@ function Tokens() {
 				{tokens
 					? chalk.magenta(tokens.length)
 					: chalk.yellowBright("loading...")}{" "}
-				tokens available.
+				tokens available for tokenA and{" "}
+				{tokenBs
+					? chalk.magenta(tokenBs.length)
+					: chalk.yellowBright("loading...")}{" "}
+				tokens available for tokenB.
 			</Text>
 			<Text color="gray">Type token symbol and use arrows to select</Text>
 			<Box margin={1} flexDirection="column">
