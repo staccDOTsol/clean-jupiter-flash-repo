@@ -221,6 +221,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			}
 			cache.swappingRightNow = false;
 		}
+		if (mod > 0.1){
 		if (simulatedProfit > 0){
 		mod = mod / 1.01
 		}
@@ -228,6 +229,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			mod = mod / 1.2
 		
 		}
+	}
 		printToConsole({
 			date,
 			i,

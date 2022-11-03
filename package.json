@@ -11,10 +11,10 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"build": "cp -r buffer-layout/* node_modules/@solana/buffer-layout/ && yarn getluts",
-		"getluts": "nohup yarn ts-node getluts.ts &",
+		"build": "cp -r buffer-layout/* node_modules/@solana/buffer-layout/",
+		"getluts": "yarn ts-node getluts.ts &",
 		"wizard": "node ./src/index.js",
-		"start": "node ./src/index.js && node ./src/bot/index.js",
+		"start": "yarn build ; yarn getluts; node ./src/bot/index.js",
 		"background": "nohup yarn ts-node getluts.ts & ",
 		"trade": "node ./src/bot/index.js",
 		"test": "xo && ava"
@@ -25,9 +25,8 @@
 	],
 	"dependencies": {
 		"@jup-ag/core": "^3.0.0-beta.2",
-		"@project-serum/anchor": "^0.25.0",
-		"@project-serum/common": "^0.0.1-beta.3",
 		"@solana/buffer-layout": "^4.0.0",
+		"@solana/spl-token": "0.2.0",
 		"@solana/web3.js": "^1.66.2",
 		"@solendprotocol/solend-sdk": "^0.7.0",
 		"@supercharge/promise-pool": "^2.3.2",

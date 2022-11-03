@@ -4,15 +4,12 @@ const fs = require('fs')
 const JSBI = require('jsbi')
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 let { flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruction,SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
-const { Token, createTransferInstruction } = require('@solana/spl-token');
-const { ASSOCIATED_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@project-serum/anchor/dist/cjs/utils/token");
-const axios = require('axios')
+const {  createTransferCheckedInstruction } = require('@solana/spl-token');
 
 
 const { Keypair, Connection, PublicKey, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } = require("@solana/web3.js");
 const bs58 = require('bs58');
-const { AnchorProvider } = require("@project-serum/anchor");
-const { default: NodeWallet } = require("@project-serum/anchor/dist/cjs/nodewallet");
+
 const payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
@@ -103,13 +100,14 @@ console.log(err)
 			  { mint: new PublicKey(reserve.liquidityToken.mint) }
 			)
 		  ).value[0].pubkey
-		let tokenAccount = (
-			await connection.getTokenAccountsByOwner(
+		let ata = (
+			await connection.getParsedTokenAccountsByOwner(
 			  payer.publicKey,
 			  { mint: new PublicKey(reserve.liquidityToken.mint) }
 			)
-		  ).value[0].pubkey
-	
+		  ).value[0]
+	let tokenAccount = ata.pubkey 
+	let balance = ata.account.data.parsed.info.tokenAmount.amount
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
 			  Math.ceil(JSBI.toNumber(route.inAmount) *  1),
@@ -182,29 +180,17 @@ txs
 				
 			  )
 			);
-			console.log((
-				
-				Math.ceil(JSBI.toNumber(route.inAmount) * 1),
-				0,
-			  tokenAccount,
-			  new PublicKey(
-				reserve.liquidityAddress
-			  ),
-			  new PublicKey(
-				reserve.liquidityAddress
-			  ),
-			  payer.publicKey,
-			  new PublicKey(reserve.address),
-			  new PublicKey(market.address),
-			  payer.publicKey,
-			  SOLEND_PRODUCTION_PROGRAM_ID,
-			  jaregm,
-			  new PublicKey(
-				  "5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
-				)
-			  
-			)	)
 				}
+instructions.push(
+				createTransferCheckedInstruction(
+					tokenAccount, // from (should be a token account)
+					new PublicKey(tokenA.address), // mint
+					tokenAccount, // to (should be a token account)
+					payer.publicKey, // from's owner
+					balance, // amount, if your deciamls is 8, send 10^8 for 1 token
+					tokenA.decimals // decimals
+				  )
+)
 let tinstructions = [] 
 for (var ix of instructions){
 	if (!tinstructions.includes(ix)){

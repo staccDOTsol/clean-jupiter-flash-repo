@@ -19,7 +19,7 @@
     "address": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
   },
   "slippage":40.5,
-  "minPercProfit": "0",
+  "minPercProfit": "0.12",
   "minInterval": 30,
   "tradeSize": {
     "value": 0.1,
