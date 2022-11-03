@@ -1,7 +1,6 @@
 const { default: axios } = require("axios");
 const promiseRetry = require("promise-retry");
 
-const { logExit, handleExit } = require("../bot/exit");
 const { storeItInTempAsJSON } = require("../utils");
 const cache = require("../bot/cache");
 
@@ -70,8 +69,8 @@ const getSwapResultFromSolscanParser = async (txid) => {
 
 		return [inputAmount, outputAmount];
 	} catch (error) {
-		logExit(1, error);
-		handleExit();
+		console.log(error)
+		
 	} finally {
 		cache.fetchingResultsFromSolscan = false;
 		cache.tradingEnabled = true;

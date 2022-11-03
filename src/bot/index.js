@@ -1,4 +1,3 @@
-console.clear();
 
 require("dotenv").config()
 const fs = require('fs')
@@ -13,10 +12,8 @@ const {
 	updateIterationsPerMin,
 	checkRoutesResponse,
 } = require("../utils");
-const { handleExit, logExit } = require("./exit");
 const cache = require("./cache");
 const { setup, getInitialOutAmountWithSlippage } = require("./setup");
-const { printToConsole } = require("./ui/");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 let mod = 10
 const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
@@ -115,18 +112,6 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			cache.maxProfitSpotted[cache.sideBuy ? "buy" : "sell"] = simulatedProfit;
 		}
 
-		printToConsole({
-			date,
-			i,
-			performanceOfRouteComp,
-			inputToken,
-			outputToken,
-			tokenA,
-			tokenB,
-			route,
-			route2,
-			simulatedProfit,
-		});
 
 		// check profitability and execute tx
 		let tx, performanceOfTx;
@@ -162,18 +147,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				// start refreshing status
 				const printTxStatus = setInterval(() => {
 					if (cache.swappingRightNow) {
-						printToConsole({
-							date,
-							i,
-							performanceOfRouteComp,
-							inputToken,
-							outputToken,
-							tokenA,
-							tokenB,
-							route,
-							route2,
-							simulatedProfit,
-						});
+					
 					}
 				}, 500);
 
@@ -230,18 +204,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		
 		}
 	}
-		printToConsole({
-			date,
-			i,
-			performanceOfRouteComp,
-			inputToken,
-			outputToken,
-			tokenA,
-			tokenB,
-			route,
-			route2,
-			simulatedProfit,
-		});
+	
 	} catch (error) {
 		cache.queue[i] = 1;
 		console.log(error);
@@ -312,17 +275,6 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 			cache.maxProfitSpotted["buy"] = simulatedProfit;
 		}
 
-		printToConsole({
-			date,
-			i,
-			performanceOfRouteComp,
-			inputToken,
-			outputToken,
-			tokenA,
-			tokenB: tokenA,
-			route,
-			simulatedProfit,
-		});
 
 		// check profitability and execute tx
 		let tx, performanceOfTx;
@@ -358,17 +310,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 				// start refreshing status
 				const printTxStatus = setInterval(() => {
 					if (cache.swappingRightNow) {
-						printToConsole({
-							date,
-							i,
-							performanceOfRouteComp,
-							inputToken,
-							outputToken,
-							tokenA,
-							tokenB: tokenA,
-							route,
-							simulatedProfit,
-						});
+					
 					}
 				}, 500);
 
@@ -408,17 +350,6 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 			cache.swappingRightNow = false;
 		}
 
-		printToConsole({
-			date,
-			i,
-			performanceOfRouteComp,
-			inputToken,
-			outputToken,
-			tokenA,
-			tokenB: tokenA,
-			route,
-			simulatedProfit,
-		});
 	} catch (error) {
 		cache.queue[i] = 1;
 		throw error;
@@ -479,12 +410,10 @@ const run = async () => {
 			cache.config.minInterval
 		);
 	} catch (error) {
-		logExit(error);
+		console.log(error)
 		process.exitCode = 1;
 	}
 };
 
 run();
 
-// handle exit
-process.on("exit", handleExit);

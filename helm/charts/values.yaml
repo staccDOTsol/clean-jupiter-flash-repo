@@ -53,6 +53,9 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+spec:
+  nodeSelector:
+    kubernetes.io/os: linux
 containers:
   - env:
     - name: DEBUG

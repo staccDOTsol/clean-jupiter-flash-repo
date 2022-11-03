@@ -1,7 +1,4 @@
-const chalk = require("chalk");
 const fs = require("fs");
-const ora = require("ora-classic");
-const { logExit } = require("../bot/exit");
 
 const createTempDir = () => !fs.existsSync("./temp") && fs.mkdirSync("./temp");
 
@@ -9,10 +6,7 @@ const storeItInTempAsJSON = (filename, data) =>
 	fs.writeFileSync(`./temp/${filename}.json`, JSON.stringify(data, null, 2));
 
 const createConfigFile = (config) => {
-	const configSpinner = ora({
-		text: "Creating config...",
-		discardStdin: false,
-	}).start();
+
 
 	const configValues = {
 		network: config.network.value,
@@ -34,7 +28,6 @@ const createConfigFile = (config) => {
 	};
 
 	fs.writeFileSync("./config.json", JSON.stringify(configValues, null, 2), {});
-	configSpinner.succeed("Config created!");
 };
 
 const verifyConfig = (config) => {
