@@ -9,7 +9,7 @@
 # To configure this workflow:
 #
 # 1. Set the following secrets in your repository (instructions for getting these 
-#    https://docs.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux):
+#    https://docs.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux)):
 #    - AZURE_CLIENT_ID
 #    - AZURE_TENANT_ID
 #    - AZURE_SUBSCRIPTION_ID
@@ -21,15 +21,16 @@
 #    - CLUSTER_NAME (name of your AKS cluster)
 #    - IMAGE_PULL_SECRET_NAME (name of the ImagePullSecret that will be created to pull your ACR image)
 #
-# 3. Choose the appropriate render engine for the bake step https://github.com/Azure/k8s-bake. The config below assumes Kustomize.
-#    Set your kustomizationPath and kubectl-version to suit your configuration.
-#    - KUSTOMIZE_PATH (the path where your Kustomize manifests are located)
+# 3. Choose the appropriate render engine for the bake step https://github.com/Azure/k8s-bake. The config below assumes Helm.
+#    Set your helmChart, overrideFiles, overrides, and helm-version to suit your configuration.
+#    - CHART_PATH (path to your helm chart)
+#    - CHART_OVERRIDE_PATH (path to your helm chart with override values)
 #
 # For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
 # For more options with the actions used below please refer to https://github.com/Azure/login
 
-name: Build and deploy an app to AKS with Kustomize
+name: Build and deploy an app to AKS with Helm
 
 on:
   push:
@@ -40,10 +41,11 @@ on:
 env:
   AZURE_CONTAINER_REGISTRY: "your-azure-container-registry"
   CONTAINER_NAME: "your-container-name"
-  RESOURCE_GROUP: "staccoverflow"
-  CLUSTER_NAME: "stacc"
+  RESOURCE_GROUP: "stacceas_group"
+  CLUSTER_NAME: "stacceast"
   IMAGE_PULL_SECRET_NAME: "your-image-pull-secret-name"
-  KUSTOMIZE_PATH: "your-kustomize-path"
+  CHART_PATH: "your-chart-path"
+  CHART_OVERRIDE_PATH: "your-chart-override-path"
 
 jobs:
   buildImage:
@@ -54,7 +56,7 @@ jobs:
     steps:
     # Checks out the repository this file is in
     - uses: actions/checkout@v3
-
+    
     # Logs in with your Azure credentials
     - name: Azure login
       uses: azure/login@v1.4.3
@@ -62,12 +64,12 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      
+    
     # Builds and pushes an image up to your Azure Container Registry
     - name: Build and push image to ACR
       run: |
         az acr build --image ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }} --registry ${{ env.AZURE_CONTAINER_REGISTRY }} -g ${{ env.RESOURCE_GROUP }} .
-  
+
   createSecret:
     permissions:
       contents: read
@@ -108,8 +110,8 @@ jobs:
         container-registry-url: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io
         container-registry-username: ${{ steps.get-acr-creds.outputs.username }}
         container-registry-password: ${{ steps.get-acr-creds.outputs.password }}
-        secret-name: ${{ env.IMAGE_PULL_SECRET_NAME }}  
-  
+        secret-name: ${{ env.IMAGE_PULL_SECRET_NAME }} 
+
   deploy:
     permissions:
       actions: read
@@ -120,7 +122,7 @@ jobs:
     steps:
     # Checks out the repository this file is in
     - uses: actions/checkout@v3
-
+    
     # Logs in with your Azure credentials
     - name: Azure login
       uses: azure/login@v1.4.3
@@ -128,7 +130,7 @@ jobs:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
+        
     # Retrieves your Azure Kubernetes Service cluster's kubeconfig file
     - name: Get K8s context
       uses: azure/aks-set-context@v2.0
@@ -136,13 +138,16 @@ jobs:
         resource-group: ${{ env.RESOURCE_GROUP }}
         cluster-name: ${{ env.CLUSTER_NAME }}
 
-    # Runs Kustomize to create manifest files
+    # Runs Helm to create manifest files
     - name: Bake deployment
       uses: azure/k8s-bake@v2.1
       with:
-        renderEngine: 'kustomize'
-        kustomizationPath: ${{ env.KUSTOMIZE_PATH }}
-        kubectl-version: latest
+        renderEngine: 'helm'
+        helmChart: ${{ env.CHART_PATH }}
+        overrideFiles: ${{ env.CHART_OVERRIDE_PATH }}
+        overrides: |     
+          replicas:2
+        helm-version: 'latest' 
       id: bake
 
     # Deploys application based on manifest files from previous step
