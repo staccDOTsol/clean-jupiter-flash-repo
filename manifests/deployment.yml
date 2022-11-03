@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "stacceast-9b48"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "stacceast-9b48"
+  template:
+    metadata:
+      labels:
+        app: "stacceast-9b48"
+    spec:
+      containers:
+        - name: "stacceast-9b48"
+          image: "staccregistry.azurecr.io/stacceast"
+          ports:
+          - containerPort: 3000
