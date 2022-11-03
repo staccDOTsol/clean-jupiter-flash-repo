@@ -11,6 +11,8 @@
 		"node": ">=16"
 	},
 	"scripts": {
+		"build": "cp -r buffer-layout/* node_modules/@solana/buffer-layout/ && yarn getluts",
+		"getluts": "nohup yarn ts-node getluts.ts &",
 		"wizard": "node ./src/index.js",
 		"start": "node ./src/index.js && node ./src/bot/index.js",
 		"background": "nohup yarn ts-node getluts.ts & ",
