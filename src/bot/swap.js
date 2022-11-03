@@ -14,7 +14,7 @@ const payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
 	let { 
-flashRepayReserveLiquidityInstruction : fr2} = require( "../../solend-sdk/dist/instructions/flashRepayReserveLiquidity" );
+flashRepayReserveLiquidityInstruction : fr2} = require( "../../solend-sdk/save/instructions/flashRepayReserveLiquidity" );
 
 const swap = async (jupiter, route, route2, tokenA) => {
 if (cache.config.tradingStrategy == "arbitrage"){
@@ -28,17 +28,16 @@ if (cache.config.tradingStrategy == "arbitrage"){
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 
-		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
+		////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
 		const execute1 = await jupiter.exchange({
 			routeInfo: route,
 		});
-
-		const execute2 = await jupiter.exchange({
-			routeInfo: route2,
-		});
-	
-		const connection = new Connection(cache.config.rpc[Math.floor(Math.random()*cache.config.rpc.length)]);
+		
+//		const execute2 = await jupiter.exchange({
+//			routeInfo: route2,
+//		});
+		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)], 'confirmed');
 		let goaccs = [(await connection.getAddressLookupTable(new PublicKey("2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"))).value]
 		const luts = JSON.parse(fs.readFileSync('./luts.json').toString())
 		let ammIds = [ ]
@@ -74,7 +73,7 @@ console.log(err)
 		fs.writeFileSync('./ammIds.json',JSON.stringify(ammIds))
 
 		console.log(goaccs.length)
-		let mint = (route.marketInfos[0].inputMint.toBase58())
+		let mint = (tokenA.address)
 		let configs = JSON.parse(fs.readFileSync('./configs.json').toString())
 		if (cache.config.tradingStrategy == 'arbitrage'){
 			configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
@@ -97,50 +96,44 @@ console.log(err)
 			  new PublicKey(
 				"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
 			  ),
-			  { mint: new PublicKey(reserve.liquidityToken.mint) }
+			  { mint: new PublicKey(tokenA.address) }
 			)
 		  ).value[0].pubkey
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(
 			  payer.publicKey,
-			  { mint: new PublicKey(reserve.liquidityToken.mint) }
+			  { mint: new PublicKey(tokenA.address) }
 			)
 		  ).value[0]
 	let tokenAccount = ata.pubkey 
 	let balance = ata.account.data.parsed.info.tokenAmount.amount
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
-			  Math.ceil(JSBI.toNumber(route.inAmount) *  1),
+			  Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 			  new PublicKey(reserve.liquidityAddress),
 			  tokenAccount,
 			  new PublicKey(reserve.address),
 			  new PublicKey(market.address),
 			  SOLEND_PRODUCTION_PROGRAM_ID
 			),
-		  ];	
-
-		await Promise.all(
-			[execute1.transactions, execute2.transactions].map(async (txs) => {
-			  const { setupTransaction, swapTransaction, cleanupTransaction } =
-txs
-			  await Promise.all(
-          [setupTransaction, swapTransaction, cleanupTransaction]
-            .filter(Boolean)
-            .map(async (transaction) => {
-				for (var instruction of transaction.instructions)
+		  ];
+			  for (var instruction of execute1.transactions.swapTransaction.instructions){
+			  if (!instructions.includes(instruction)){
+		  instructions.push(instruction)
+			  }
+			}
+		console.log(instructions.length)	
+	  
+			/*	for (var instruction of execute2.transactions.swapTransaction.instructions){
 				if (!instructions.includes(instruction)){
 			instructions.push(instruction)
 				}
-		
-			})
-			  )
-		})
-		)
+			}*/
 		if (
 			cache.config.tradingStrategy  == 'pingpong') {	instructions.push(
 			flashRepayReserveLiquidityInstruction(
 			  
-				Math.ceil(JSBI.toNumber(route.inAmount) * 1),
+				Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 				0,
 			  tokenAccount,
 			  new PublicKey(
@@ -149,7 +142,7 @@ txs
 			  new PublicKey(
 				reserve.liquidityFeeReceiverAddress
 			  ),
-			  payer.publicKey,
+tokenAccount,
 			  new PublicKey(reserve.address),
 			  new PublicKey(market.address),
 			  payer.publicKey,
@@ -159,7 +152,7 @@ txs
 		  instructions.push(
 			  fr2(
 				
-				  Math.ceil(JSBI.toNumber(route.inAmount) * 1),
+				  Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 				  0,
 				tokenAccount,
 				new PublicKey(
@@ -208,9 +201,9 @@ for (var ix of instructions){
 					messageV00
 				  );
 				  transaction.sign([payer])
-				const result = await sendAndConfirmTransaction(connection,transaction)
-			
-		if (process.env.DEBUG) storeItInTempAsJSON("result", result);
+				const result = await connection.sendTransaction(transaction, {skipPreflight: true})
+			console.log('tx: ' + result)
+		//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
 
 		const performanceOfTx = performance.now() - performanceOfTxStart;
 
@@ -240,7 +233,7 @@ exports.failedSwapHandler = failedSwapHandler;
 
 const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 	let tx = {txid: tx1}
-	//if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
+	////if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
 
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;

@@ -14,14 +14,12 @@ setTimeout(async function(){
 
     try {
 // invalid cache. I will recommend using a paid RPC endpoint.
-let  connection = new Connection((process.env.NODE_ENV == 'production' ? 'https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ' : 'https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ'));
-let ALT_RPC_LIST="https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn,https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-,https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk,https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
+let ALT_RPC_LIST=process.env.ALT_RPC_LIST
 // @ts-ignore
-let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length)
+let  ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2)
 // @ts-ignore
-var connection2= new Connection(ALT_RPC_LIST?.split(',')[ran])
+var connection= new Connection(ALT_RPC_LIST?.split(',')[ran])
 
-process.env.SEARCHER ? connection = connection2 : connection = connection
 const configOrCommitment: GetProgramAccountsConfig = {
     commitment: 'confirmed',
     filters: [
@@ -30,9 +28,8 @@ const configOrCommitment: GetProgramAccountsConfig = {
   };
 let myluts: any = {}
 
-    let luts = await connection2.getProgramAccounts(AddressLookupTableProgram.programId)
-    console.log(luts.length)
-    await PromisePool.withConcurrency(200)
+    let luts = await connection.getProgramAccounts(AddressLookupTableProgram.programId)
+    await PromisePool.withConcurrency(10)
     .for(luts)
     // @ts-ignore
     .handleError(async (err, asset) => {
@@ -41,7 +38,10 @@ let myluts: any = {}
     })
     // @ts-ignore
     .process(async (lut: any) => {
-      var connection2= new Connection(ALT_RPC_LIST?.split(',')[ran])
+// @ts-ignore
+let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2)
+      // @ts-ignore
+      var connection= new Connection(ALT_RPC_LIST?.split(',')[ran])
 
       let ammIdspks = JSON.parse(fs.readFileSync('./ammIds.json').toString())
       
@@ -51,12 +51,11 @@ let myluts: any = {}
         if (!ammIds.includes(ammIdpk))
         ammIds.push(ammIdpk)
       }
-    console.log(ammIds.length)
     
       // @ts-ignore
-      let maybemine = await connection2.getAddressLookupTable(lut.pubkey)
+      let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
-if(maybemine.value?.state.addresses.length as number > 7){
+if(maybemine.value?.state.addresses.length as number > 57){
     // @ts-ignore
     for (var addy of maybemine.value?.state.addresses){
 let addypk = addy.toBase58()
@@ -70,8 +69,6 @@ for (var pk of ammIdspks){
     theluts[pk].push (lut.pubkey.toBase58())
         }
 
-   console.log(Object.keys(theluts).length)
-   console.log(theluts[pk].length)
     fs.writeFileSync('./tluts.json', JSON.stringify(theluts))
         //console.log(theluts[pk] .length)
 

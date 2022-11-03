@@ -1,5 +1,4 @@
 const fs = require("fs");
-const chalk = require("chalk");
 const bs58 = require("bs58");
 const { Jupiter } = require("@jup-ag/core");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
@@ -49,14 +48,14 @@ const setup = async () => {
 		}
 
 		// connect to RPC
-		const connection = new Connection(cache.config.rpc[Math.floor(Math.random()*cache.config.rpc.length)]);
+		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)]);
 
 
 		const jupiter = await Jupiter.load({
 			connection,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: true,
+			restrictIntermediateTokens: false,
 			wrapUnwrapSOL: cache.wrapUnwrapSOL,
 		});
 
@@ -95,8 +94,7 @@ const getInitialOutAmountWithSlippage = async (
 
 		return routes.routesInfos[0].outAmountWithSlippage;
 	} catch (error) {
-		if (spinner)
-			spinner.fail(chalk.bold.redBright("Computing routes failed!\n"));
+
 		console.log(error)
 		process.exitCode = 1;
 	}

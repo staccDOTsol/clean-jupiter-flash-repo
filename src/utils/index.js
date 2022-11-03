@@ -68,7 +68,6 @@ const loadConfigFile = ({ showSpinner = false }) => {
 		return config;
 	}
 
-	spinner?.fail(chalk.redBright("Loading config failed!\n"));
 	throw new Error("\nNo config.json file found!\n");
 };
 

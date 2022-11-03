@@ -1,13 +1,11 @@
 {
   "network": "mainnet-beta",
   "rpc": [
-    "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn",
-    "https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-",
-    "https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ",
-    "https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc",
-    "https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc",
-    "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk",
-    "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
+"https://081a1p3RYEV2dhxfLkcYt9RTgGO8ghtP6qFO5GcmGzVDmkZxJLpJ01MGTHYUq.xyz2.hyperplane.dev",  
+"https://081a1dU41NiElTXZW0TdlKmrU0L1x35fV0qdVinIxcoetvZWqs3U6qn3FgRCb.xyz2.hyperplane.dev",
+"https://081a1esJWk47yr3Qcy0sgrJPub2LzAxhOL3YLL8YpDfaMuCBZlfBdtBA83PUm.xyz2.hyperplane.dev",
+    "https://quaint-old-hill.solana-mainnet.discover.quiknode.pro/1d68cf9ff37548ce6956cf9493ab7e39fd73a352/",
+    "https://081a1L0DMpSYHxsTUP5b2Q080cTITpsLP3ydK1QxBJsSXMK2tPKdtX0iFS7Ti.xyz2.hyperplane.dev"
   ],
   "tradingStrategy": "arbitrage",
   "tokenA": {
@@ -19,7 +17,7 @@
     "address": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
   },
   "slippage":40.5,
-  "minPercProfit": "0.15",
+  "minPercProfit": "0.25",
   "minInterval": 30,
   "tradeSize": {
     "value": 0.1,
