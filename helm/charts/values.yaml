@@ -2,13 +2,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
+replicaCount: 40
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+image: staccregistry.azurecr.io/clean-jupiter-flash-repo:latest
+imagePullPolicy: IfNotPresent
+
 
 imagePullSecrets: []
 nameOverride: ""
@@ -55,8 +53,60 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
-
-resources: {}
+containers:
+  - env:
+    - name: DEBUG
+      valueFrom:
+        configMapKeyRef:
+          key: DEBUG
+          name: nginx-latest-config-k8vn
+    - name: SKIP_INTRO
+      valueFrom:
+        configMapKeyRef:
+          key: SKIP_INTRO
+          name: nginx-latest-config-k8vn
+    - name: UI_COLOR
+      valueFrom:
+        configMapKeyRef:
+          key: UI_COLOR
+          name: nginx-latest-config-k8vn
+    - name: TRADING_ENABLED
+      valueFrom:
+        configMapKeyRef:
+          key: TRADING_ENABLED
+          name: nginx-latest-config-k8vn
+    - name: WRAP_UNWRAP_SOL
+      valueFrom:
+        configMapKeyRef:
+          key: WRAP_UNWRAP_SOL
+          name: nginx-latest-config-k8vn
+    - name: SOLANA_WALLET_PRIVATE_KEY
+      valueFrom:
+        configMapKeyRef:
+          key: SOLANA_WALLET_PRIVATE_KEY
+          name: nginx-latest-config-k8vn
+    - name: DEFAULT_RPC
+      valueFrom:
+        configMapKeyRef:
+          key: DEFAULT_RPC
+          name: nginx-latest-config-k8vn
+    - name: ALT_RPC_LIST
+      valueFrom:
+        configMapKeyRef:
+          key: ALT_RPC_LIST
+          name: nginx-latest-config-k8vn
+    - name: minPercProfit
+      valueFrom:
+        configMapKeyRef:
+          key: minPercProfit
+          name: nginx-latest-config-k8vn
+resources:
+      requests:
+        cpu: '0.25'
+        memory: 4G
+      limits:
+        cpu: '8'
+        memory: 12G
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -70,7 +120,7 @@ resources: {}
 
 autoscaling:
   enabled: false
-  minReplicas: 1
+  minReplicas: 40
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
