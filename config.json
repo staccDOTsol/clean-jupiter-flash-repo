@@ -1,0 +1,32 @@
+{
+  "network": "mainnet-beta",
+  "rpc": [
+    "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn",
+    "https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-",
+    "https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ",
+    "https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc",
+    "https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc",
+    "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk",
+    "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
+  ],
+  "tradingStrategy": "arbitrage",
+  "tokenA": {
+    "symbol": "USDC",
+    "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+  },
+  "tokenB": {
+    "symbol": "mSOL",
+    "address": "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"
+  },
+  "slippage":40.5,
+  "minPercProfit": "0",
+  "minInterval": 30,
+  "tradeSize": {
+    "value": 0.1,
+    "strategy": "cumulative"
+  },
+  "ui": {
+    "defaultColor": "cyan"
+  },
+  "storeFailedTxInHistory": true
+}

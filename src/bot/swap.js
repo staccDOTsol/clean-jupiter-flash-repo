@@ -7,17 +7,6 @@ let { flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruct
 const { Token, createTransferInstruction } = require('@solana/spl-token');
 const { ASSOCIATED_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@project-serum/anchor/dist/cjs/utils/token");
 const axios = require('axios')
-if (cache.strategy == "arbitrage"){
-	
-
-	
-	flashBorrowReserveLiquidityInstruction = require( "./solend-sdk/dist/instructions/flashBorrowReserveLiquidity" );
-
-	
-	flashRepayReserveLiquidityInstruction = require( "./solend-sdk/dist/instructions/flashRepayReserveLiquidity" );
-
- SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey("E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa")
-}
 
 
 const { Keypair, Connection, PublicKey, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } = require("@solana/web3.js");
@@ -27,13 +16,22 @@ const { default: NodeWallet } = require("@project-serum/anchor/dist/cjs/nodewall
 const payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
+	let { 
+flashRepayReserveLiquidityInstruction : fr2} = require( "../../solend-sdk/dist/instructions/flashRepayReserveLiquidity" );
 
 const swap = async (jupiter, route, route2, tokenA) => {
+if (cache.config.tradingStrategy == "arbitrage"){
+
+ SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey("E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa")
+
+	
+}
+
 	try {
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 
-		if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
+		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
 		const execute1 = await jupiter.exchange({
 			routeInfo: route,
@@ -44,25 +42,46 @@ const swap = async (jupiter, route, route2, tokenA) => {
 		});
 	
 		const connection = new Connection(cache.config.rpc[Math.floor(Math.random()*cache.config.rpc.length)]);
-		let goaccs= []
+		let goaccs = [(await connection.getAddressLookupTable(new PublicKey("2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"))).value]
 		const luts = JSON.parse(fs.readFileSync('./luts.json').toString())
+		let ammIds = [ ]
+try {
+			ammIds =  JSON.parse(fs.readFileSync('./ammIds.json').toString())
+			
+} catch (err){
+}
+let goodluts = []
 		for (var mi of [...route.marketInfos,...route2.marketInfos]){
+
 			try {
-			for (var lut of luts[mi.amm.id].split(',')){
+				ammIds.push(mi.amm.id)
+				console.log(mi.amm.id)
+			for (var lut of luts[mi.amm.id]){
 				try {
+					if (!goodluts.includes(mi.amm.id)){
+						goodluts.push(mi.amm.id)
 			let test = (await connection.getAddressLookupTable(new PublicKey(lut))).value
+			if (!goaccs.includes(test)){
 			goaccs.push(test)
+			}
+		}
 				}catch (err){
 
 				}
 			}
 		}
 		catch (err){
+console.log(err)
+		}
+		}
+		fs.writeFileSync('./ammIds.json',JSON.stringify(ammIds))
 
-		}
-		}
+		console.log(goaccs.length)
 		let mint = (route.marketInfos[0].inputMint.toBase58())
 		let configs = JSON.parse(fs.readFileSync('./configs.json').toString())
+		if (cache.config.tradingStrategy == 'arbitrage'){
+			configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
+		}
 		let reserve, market 
 		for (var m of configs.reverse()){
 			try {
@@ -79,7 +98,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 		let jaregm = (
 			await connection.getTokenAccountsByOwner(
 			  new PublicKey(
-				"JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"
+				"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
 			  ),
 			  { mint: new PublicKey(reserve.liquidityToken.mint) }
 			)
@@ -93,13 +112,12 @@ const swap = async (jupiter, route, route2, tokenA) => {
 	
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
-			  Math.ceil(JSBI.toNumber(route.inAmount) *  10 ** tokenA.decimals),
+			  Math.ceil(JSBI.toNumber(route.inAmount) *  1),
 			  new PublicKey(reserve.liquidityAddress),
 			  tokenAccount,
 			  new PublicKey(reserve.address),
 			  new PublicKey(market.address),
-			  SOLEND_PRODUCTION_PROGRAM_ID,
-			  payer.publicKey
+			  SOLEND_PRODUCTION_PROGRAM_ID
 			),
 		  ];	
 
@@ -111,16 +129,20 @@ txs
           [setupTransaction, swapTransaction, cleanupTransaction]
             .filter(Boolean)
             .map(async (transaction) => {
-			instructions.push(...transaction.instructions)
+				for (var instruction of transaction.instructions)
+				if (!instructions.includes(instruction)){
+			instructions.push(instruction)
+				}
 		
 			})
 			  )
 		})
 		)
-		instructions.push(
+		if (
+			cache.config.tradingStrategy  == 'pingpong') {	instructions.push(
 			flashRepayReserveLiquidityInstruction(
 			  
-				Math.ceil(JSBI.toNumber(route.inAmount) * 10 ** tokenA.decimals),
+				Math.ceil(JSBI.toNumber(route.inAmount) * 1),
 				0,
 			  tokenAccount,
 			  new PublicKey(
@@ -129,19 +151,72 @@ txs
 			  new PublicKey(
 				reserve.liquidityFeeReceiverAddress
 			  ),
-			  jaregm,
+			  payer.publicKey,
 			  new PublicKey(reserve.address),
 			  new PublicKey(market.address),
 			  payer.publicKey,
 			  SOLEND_PRODUCTION_PROGRAM_ID
-			)
-		  );
-		  const  messageV00 = new TransactionMessage({
+			) )
+			  } else { 
+		  instructions.push(
+			  fr2(
+				
+				  Math.ceil(JSBI.toNumber(route.inAmount) * 1),
+				  0,
+				tokenAccount,
+				new PublicKey(
+				  reserve.liquidityAddress
+				),
+				new PublicKey(
+				  reserve.liquidityAddress
+				),
+				tokenAccount,
+				new PublicKey(reserve.address),
+				new PublicKey(market.address),
+				payer.publicKey,
+				SOLEND_PRODUCTION_PROGRAM_ID,
+				jaregm,
+				new PublicKey(
+					"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
+				  )
+				
+			  )
+			);
+			console.log((
+				
+				Math.ceil(JSBI.toNumber(route.inAmount) * 1),
+				0,
+			  tokenAccount,
+			  new PublicKey(
+				reserve.liquidityAddress
+			  ),
+			  new PublicKey(
+				reserve.liquidityAddress
+			  ),
+			  payer.publicKey,
+			  new PublicKey(reserve.address),
+			  new PublicKey(market.address),
+			  payer.publicKey,
+			  SOLEND_PRODUCTION_PROGRAM_ID,
+			  jaregm,
+			  new PublicKey(
+				  "5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
+				)
+			  
+			)	)
+				}
+let tinstructions = [] 
+for (var ix of instructions){
+	if (!tinstructions.includes(ix)){
+		tinstructions.push(ix)
+	}
+}
+				const  messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
 			recentBlockhash: (await (
 				await connection.getLatestBlockhash()
 			  ).blockhash),
-			instructions,
+			instructions:tinstructions,
 		}).compileToV0Message(goaccs);
 		const transaction = new VersionedTransaction(
 					messageV00
@@ -177,13 +252,14 @@ const failedSwapHandler = (tradeEntry) => {
 };
 exports.failedSwapHandler = failedSwapHandler;
 
-const successSwapHandler = async (tx, tradeEntry, tokenA, tokenB) => {
-	if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
+const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
+	let tx = {txid: tx1}
+	//if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
 
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
 
-	if (cache.config.tradingStrategy === "pingpong") {
+	if (false) {
 		// update balance
 		if (cache.sideBuy) {
 			cache.lastBalance.tokenA = cache.currentBalance.tokenA;
@@ -229,7 +305,7 @@ const successSwapHandler = async (tx, tradeEntry, tokenA, tokenB) => {
 		tempHistory.push(tradeEntry);
 		cache.tradeHistory = tempHistory;
 	}
-	if (cache.config.tradingStrategy === "arbitrage") {
+	if (true) {
 		/** check real amounts on solscan because Jupiter SDK returns wrong amounts
 		 *  when we trading TokenA <> TokenA (arbitrage)
 		 */

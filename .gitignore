@@ -104,8 +104,8 @@ dist
 .tern-port
 
 # temp files
-temp/*
-/config.json
+#temp/*
+#/config.json
 
 # useless stuff
 .DS_Store

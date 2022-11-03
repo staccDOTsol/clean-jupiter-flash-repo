@@ -31,6 +31,7 @@ const setup = async () => {
 		try {
 			tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 			// find tokens full Object
+			
 			tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
 	tokenB = tokens.find((t) => t.address === cache.config.tokenB.address);
 		} catch (error) {

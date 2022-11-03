@@ -13,6 +13,7 @@
 	"scripts": {
 		"wizard": "node ./src/index.js",
 		"start": "node ./src/index.js && node ./src/bot/index.js",
+		"background": "nohup yarn ts-node getluts.ts & ",
 		"trade": "node ./src/bot/index.js",
 		"test": "xo && ava"
 	},
@@ -24,8 +25,10 @@
 		"@jup-ag/core": "^3.0.0-beta.2",
 		"@project-serum/anchor": "^0.25.0",
 		"@project-serum/common": "^0.0.1-beta.3",
+		"@solana/buffer-layout": "^4.0.0",
 		"@solana/web3.js": "^1.66.2",
 		"@solendprotocol/solend-sdk": "^0.7.0",
+		"@supercharge/promise-pool": "^2.3.2",
 		"asciichart": "^1.5.25",
 		"axios": "^0.27.2",
 		"bs58": "^5.0.0",
@@ -47,7 +50,8 @@
 		"ora-classic": "^5.4.2",
 		"promise-retry": "^2.0.1",
 		"react": "^17.0.2",
-		"strip-ansi": "^7.0.1"
+		"strip-ansi": "^7.0.1",
+		"ts-node": "^10.9.1"
 	},
 	"ava": {
 		"require": [

@@ -18,7 +18,6 @@ function printToConsole({
 	route2,
 	simulatedProfit,
 }) {
-
 	try {
 		if (cache.ui.allowClear) {
 			// update max profitability spotted chart

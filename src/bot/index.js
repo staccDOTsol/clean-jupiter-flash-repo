@@ -1,6 +1,7 @@
 console.clear();
 
-require("dotenv").config();
+require("dotenv").config()
+const fs = require('fs')
 const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
 const JSBI  = require("jsbi");
@@ -17,7 +18,7 @@ const cache = require("./cache");
 const { setup, getInitialOutAmountWithSlippage } = require("./setup");
 const { printToConsole } = require("./ui/");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
-
+let mod = 10
 const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	cache.iteration++;
 	const date = new Date();
@@ -28,12 +29,29 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
 
+		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+		tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]//.find((t) => t.address === cache.config.tokenB.address);
+		configs = JSON.parse(fs.readFileSync(cache.config.strategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
+
+			
+				let temp = [] 
+				for (var config of configs){
+					for (var reserve in config.reserves){
+						if (parseInt(reserve) < cache.config.strategy === 'pingpong' ? config.reserves.length / 2 * 3 : config.reserves.length ){
+
+	
+							temp.push(config.reserves[reserve].liquidityToken.mint)
+						}
+					}
+				}
+		tokens = tokens.filter((token) => temp.includes(token.address))
+		tokenA = tokens[Math.floor(Math.random() * tokens.length)]//.find((t) => t.address === cache.config.tokenB.address);
 		// Calculate amount that will be used for trade
-		const amountToTrade =
+		const amountToTrade = Math.floor(mod * 10 ** tokenA.decimals) /*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
 				: cache.initialBalance[cache.sideBuy ? "tokenA" : "tokenB"];
-
+		*/
 		const baseAmount = cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 
 		// default slippage
@@ -54,7 +72,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 
 		});
 		// choose first route
-		const route = await routes.routesInfos[0];
+		const route = await routes.routesInfos[Math.floor(Math.random() * 2)];
+		
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(outputToken.address),
 			outputMint: new PublicKey(inputToken.address),
@@ -71,7 +90,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			routes.routesInfos.length + routes2.routesInfos.length;
 
 		// choose another route
-		const route2 = await routes2.routesInfos[0];
+		const route2 = await routes2.routesInfos[Math.floor(Math.random() * 2)];
 
 		// update status as OK
 		cache.queue[i] = 0;
@@ -81,7 +100,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 
 		// update slippage with "profit or kill" slippage
 		if (cache.config.slippage === "profitOrKill") {
-			route.outAmountWithSlippage =
+			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
 
@@ -124,7 +143,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			}
 			if (cache.hotkeys.r) {
 				console.log("[R] PRESSED - REVERT BACK SWAP!");
-				route.outAmountWithSlippage = 0;
+				route.otherAmountThresholdWithSlippage = 0;
 			}
 
 			if (cache.tradingEnabled || cache.hotkeys.r) {
@@ -163,6 +182,11 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				// stop refreshing status
 				clearInterval(printTxStatus);
 				if (tx){
+					mod = mod * 100
+					successSwapHandler(tx, tradeEntry, tokenA, tokenB);
+
+				}
+				if (false){
 				const profit = calculateProfit(
 					cache.currentBalance[cache.sideBuy ? "tokenB" : "tokenA"],
 					tx.outputAmount
@@ -197,7 +221,13 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			}
 			cache.swappingRightNow = false;
 		}
-
+		if (simulatedProfit > 0){
+		mod = mod / 1.01
+		}
+		else {
+			mod = mod / 1.2
+		
+		}
 		printToConsole({
 			date,
 			i,
@@ -268,7 +298,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 		// update slippage with "profit or kill" slippage
 		if (cache.config.slippage === "profitOrKill") {
-			route.outAmountWithSlippage = cache.lastBalance["tokenA"];
+			route.otherAmountThresholdWithSlippage = cache.lastBalance["tokenA"];
 		}
 
 		// calculate profitability
@@ -307,7 +337,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 			}
 			if (cache.hotkeys.r) {
 				console.log("[R] PRESSED - REVERT BACK SWAP!");
-				route.outAmountWithSlippage = 0;
+				route.otherAmountThresholdWithSlippage = 0;
 			}
 
 			if (cache.tradingEnabled || cache.hotkeys.r) {
