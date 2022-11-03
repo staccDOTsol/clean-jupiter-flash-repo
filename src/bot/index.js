@@ -134,7 +134,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			!cache.swappingRightNow &&
 			(cache.hotkeys.e ||
 				cache.hotkeys.r ||
-				simulatedProfit >= cache.config.minPercProfit)
+				simulatedProfit >= parseFloat(process.env.minPercProfit))
 		) {
 			// hotkeys
 			if (cache.hotkeys.e) {
@@ -330,7 +330,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 			!cache.swappingRightNow &&
 			(cache.hotkeys.e ||
 				cache.hotkeys.r ||
-				simulatedProfit >= cache.config.minPercProfit)
+				simulatedProfit >= parseFloat(process.env.minPercProfit))
 		) {
 			// hotkeys
 			if (cache.hotkeys.e) {
