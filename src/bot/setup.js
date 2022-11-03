@@ -7,7 +7,7 @@ const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 
 const { logExit } = require("./exit");
 const { loadConfigFile } = require("../utils");
-const { intro, listenHotkeys } = require("./ui");
+const { intro } = require("./ui");
 const cache = require("./cache");
 const JSBI  = require("jsbi");
 
@@ -15,7 +15,7 @@ const setup = async () => {
 	let spinner, tokens, tokenA, tokenB, wallet;
 	try {
 		// listen for hotkeys
-		listenHotkeys();
+		//listenHotkeys();
 		await intro();
 
 		// load config file and store it in cache

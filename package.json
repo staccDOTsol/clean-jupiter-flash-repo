@@ -11,10 +11,9 @@
 		"node": ">=16"
 	},
 	"scripts": {
-		"build": "cp -r buffer-layout/* node_modules/@solana/buffer-layout/",
 		"getluts": "yarn ts-node getluts.ts &",
 		"wizard": "node ./src/index.js",
-		"start": "yarn build ; yarn getluts; node ./src/bot/index.js",
+		"start": "yarn getluts; node ./src/bot/index.js",
 		"background": "nohup yarn ts-node getluts.ts & ",
 		"trade": "node ./src/bot/index.js",
 		"test": "xo && ava"
