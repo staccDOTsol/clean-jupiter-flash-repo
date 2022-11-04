@@ -132,19 +132,19 @@ console.log(err)
 		
 		let reserve, market 
 		for (var m of configs.reverse()){
-			 market = await SolendMarket.initialize(
+			 aaa = await SolendMarket.initialize(
 				connection,
 				"production", // optional environment argument
 				new PublicKey(m.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 			  );
 			  // 2. Read on-chain accounts for reserve data and cache
-			  await market.loadReserves();
-			  config.reserves = (market.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
-			 m = market
+			  await aaa.loadReserves();
+			  config.reserves = (aaa.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
 			try {
-			for(var r of m.reserves.reverse()){
+			for(var r of aaa.reserves.reverse()){
 				if (r.config.liquidityToken.mint == mint){
 					reserve = r.config
+					market = aaa
 				}
 			}
 		} catch (err){
