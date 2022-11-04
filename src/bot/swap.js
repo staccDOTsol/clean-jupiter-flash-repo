@@ -139,9 +139,9 @@ console.log(err)
 			  // 2. Read on-chain accounts for reserve data and cache
 			  await market.loadReserves();
 			  config.reserves = (market.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
-			 
+			 m = market
 			try {
-			for(var r of market.reserves.reverse()){
+			for(var r of m.reserves.reverse()){
 				if (r.config.liquidityToken.mint == mint){
 					reserve = r 
 				}
