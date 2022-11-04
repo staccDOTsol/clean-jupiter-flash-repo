@@ -92,7 +92,7 @@ if (process.env.tradingStrategy == 'pingpong' || temp3.length > 0){
 		const execute2 = await jupiter.exchange({
 			routeInfo: route2,
 		}); */
-		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)], {skipPreflight: false, commitment: 'singleGossip'});
+		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)]);
 	let goluts = ["BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
 	"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
 	"2V7kVs1TsZv7j38UTv4Dgbc6h258KS8eo5GZL9yhxCjv",
