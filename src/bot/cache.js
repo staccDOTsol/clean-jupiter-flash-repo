@@ -5,7 +5,7 @@ const cache = {
 	queueThrottle: 1,
 	sideBuy: true,
 	iteration: 0,
-	config: {strategy: 'pingpong'},
+	config: { strategy: "pingpong" },
 	iterationPerMinute: {
 		start: performance.now(),
 		value: 0,
