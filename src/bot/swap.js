@@ -5,7 +5,7 @@ const JSBI = require('jsbi')
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 let { flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruction,SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
 const {  createTransferCheckedInstruction } = require('@solana/spl-token');
-
+const BN = require('bn.js')
 
 var  { SolendMarket } = require("@solendprotocol/solend-sdk");
 if (process.env.tradingStrategy == 'arbitrage'){
