@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "test-d214"
+    labels:
+        app: "test-d214"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: default-test-d214.0283a19bb7304cad8dbc.eastus.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "test-d214"
+                servicePort: 3000
