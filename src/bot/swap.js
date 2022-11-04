@@ -30,6 +30,7 @@ Keypair.fromSecretKey(
 );
 	let { 
 flashRepayReserveLiquidityInstruction : fr2} = require( "../../solend-sdk/save/instructions/flashRepayReserveLiquidity" );
+const { createAssociatedTokenAccount } = require("@solana/spl-token");
 
 const swap = async (jupiter, route, route2, tokenA) => {
 if (process.env.tradingStrategy == "arbitrage"){
@@ -150,28 +151,55 @@ console.log(err)
 			console.log(err)
 		}
 		}
-		let jaregm = (
-			await connection.getTokenAccountsByOwner(
-			  new PublicKey(
-				"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
-			  ),
+		let jaregm 
+		try {
+		(
+			jaregm = await connection.getTokenAccountsByOwner(
+				new PublicKey(
+					"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
+				  ),
 			  { mint: new PublicKey(tokenA.address) }
 			)
 		  ).value[0].pubkey
+			  } catch (err){
+				let [address] = (await createAssociatedTokenAccount(
+					connection, // connection
+					payer, // fee payer
+					new PublicKey(tokenA.address), // mint
+					new PublicKey(
+						"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
+					  ), // owner,
+				  ))
+
+				  jaregm= address
+			  }
 		  let ata = (
 			await connection.getParsedTokenAccountsByOwner(
 			  payer.publicKey,
 			  { mint: new PublicKey(tokenA.address) }
 			)
-		  ).value[0]
-	let tokenAccount = ata.pubkey 
+	
+			).value[0]
+	let tokenAccount
+			try {
+	 tokenAccount = ata.pubkey 
+		  } catch (err){
+			let [address] = (await createAssociatedTokenAccount(
+				connection, // connection
+				payer, // fee payer
+				new PublicKey(tokenA.address), // mint
+				payer.publicKey, // owner,
+			  ))
+
+			  jaregm= address
+		  }
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
 			  Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 			  new PublicKey(reserve.liquidityAddress),
 			  tokenAccount,
 			  new PublicKey(reserve.address),
-			  new PublicKey(market.address),
+			  new PublicKey(market.config.address),
 			  SOLEND_PRODUCTION_PROGRAM_ID
 			),
 		  ];
@@ -202,7 +230,7 @@ console.log(err)
 			  ),
 tokenAccount,
 			  new PublicKey(reserve.address),
-			  new PublicKey(market.address),
+			  new PublicKey(market.config.address),
 			  payer.publicKey,
 			  SOLEND_PRODUCTION_PROGRAM_ID
 			) )
@@ -221,7 +249,7 @@ tokenAccount,
 				),
 				tokenAccount,
 				new PublicKey(reserve.address),
-				new PublicKey(market.address),
+				new PublicKey(market.config.address),
 				payer.publicKey,
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,

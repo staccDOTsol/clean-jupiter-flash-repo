@@ -70,7 +70,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 						}
 					}
 
-		tokens = tokens.filter((token) => temp.includes(token.address) && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+		tokens = tokens.filter((token) => temp.includes(token.address))// && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
 		tokenA = tokens[Math.floor(Math.random() * tokens.length)]//.find((t) => t.address === cache.config.tokenB.address);
 		tokenB = tokenA
 		//tokenB = tokenA
