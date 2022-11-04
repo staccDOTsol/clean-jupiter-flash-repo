@@ -141,7 +141,7 @@ console.log(err)
 			  config.reserves = (market.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
 			 
 			try {
-			for(var r of m.reserves.reverse()){
+			for(var r of market.reserves.reverse()){
 				if (r.config.liquidityToken.mint == mint){
 					reserve = r 
 				}
