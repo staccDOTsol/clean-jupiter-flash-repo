@@ -132,7 +132,7 @@ console.log(err)
 		
 		let reserve, market 
 		for (var m of configs.reverse()){
-			 aaa = await SolendMarket.initialize(
+			let aaa = await SolendMarket.initialize(
 				connection,
 				"production", // optional environment argument
 				new PublicKey(m.address) // optional m address (TURBO SOL). Defaults to 'Main' market
