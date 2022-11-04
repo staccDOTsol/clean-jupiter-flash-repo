@@ -15,7 +15,7 @@ const createConfigFile = (config) => {
 		tokenA: config.tokens.value.tokenA,
 		tokenB: config.tokens.value.tokenB,
 		slippage: config.slippage.value,
-		minPercProfit: config.profit.value,
+		minPercProfit: parseFloat(process.env.minPercProfit),
 		minInterval: parseInt(config.advanced.value.minInterval),
 		tradeSize: {
 			value: parseFloat(config["trading size"].value.value),
@@ -97,25 +97,16 @@ const updateIterationsPerMin = (cache) => {
 const checkRoutesResponse = (routes) => {
 	if (Object.hasOwn(routes, "routesInfos")) {
 		if (routes.routesInfos.length === 0) {
-			logExit(1, {
-				message: "No routes found or something is wrong with RPC / Jupiter! ",
-			});
-			process.exit(1);
+			
 		}
 	} else {
-		logExit(1, {
-			message: "Something is wrong with RPC / Jupiter! ",
-		});
-		process.exit(1);
+		
 	}
 };
 
 const checkForEnvFile = () => {
 	if (!fs.existsSync("./.env")) {
-		logExit(1, {
-			message: "No .env file found! ",
-		});
-		process.exit(1);
+		
 	}
 };
 

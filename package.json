@@ -23,13 +23,14 @@
 		"./src/generator.js"
 	],
 	"dependencies": {
-		"@jup-ag/core": "^3.0.0-beta.2",
+		"@jup-ag/core": "^3.0.0-beta.4",
 		"@solana/buffer-layout": "^4.0.0",
-		"@solana/spl-token": "0.2.0",
+		"@solana/spl-token": "^0.3.6",
 		"@solana/web3.js": "^1.66.2",
 		"@solendprotocol/solend-sdk": "^0.7.0",
 		"@supercharge/promise-pool": "^2.3.2",
 		"axios": "^0.27.2",
+		"bn.js": "^5.2.1",
 		"bs58": "^5.0.0",
 		"import-jsx": "^4.0.1",
 		"jsbi": "^4.3.0",

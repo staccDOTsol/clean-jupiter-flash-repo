@@ -449,7 +449,7 @@
       "https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk",
       "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
     ],
-    "tradingStrategy": "arbitrage",
+    "tradingStrategy": "pingpong",
     "tokenA": {
       "symbol": "USDC",
       "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"

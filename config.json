@@ -4,10 +4,10 @@
 "https://081a1p3RYEV2dhxfLkcYt9RTgGO8ghtP6qFO5GcmGzVDmkZxJLpJ01MGTHYUq.xyz2.hyperplane.dev",  
 "https://081a1dU41NiElTXZW0TdlKmrU0L1x35fV0qdVinIxcoetvZWqs3U6qn3FgRCb.xyz2.hyperplane.dev",
 "https://081a1esJWk47yr3Qcy0sgrJPub2LzAxhOL3YLL8YpDfaMuCBZlfBdtBA83PUm.xyz2.hyperplane.dev",
-    "https://quaint-old-hill.solana-mainnet.discover.quiknode.pro/1d68cf9ff37548ce6956cf9493ab7e39fd73a352/",
-    "https://081a1L0DMpSYHxsTUP5b2Q080cTITpsLP3ydK1QxBJsSXMK2tPKdtX0iFS7Ti.xyz2.hyperplane.dev"
+"https://081a1L0DMpSYHxsTUP5b2Q080cTITpsLP3ydK1QxBJsSXMK2tPKdtX0iFS7Ti.xyz2.hyperplane.dev",
+    "https://quaint-old-hill.solana-mainnet.discover.quiknode.pro/1d68cf9ff37548ce6956cf9493ab7e39fd73a352/"
   ],
-  "tradingStrategy": "arbitrage",
+  "tradingStrategy": "pingpong",
   "tokenA": {
     "symbol": "USDC",
     "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"

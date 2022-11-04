@@ -7,17 +7,32 @@ let { flashRepayReserveLiquidityInstruction, flashBorrowReserveLiquidityInstruct
 const {  createTransferCheckedInstruction } = require('@solana/spl-token');
 
 
+var  { SolendMarket } = require("@solendprotocol/solend-sdk");
+if (process.env.tradingStrategy == 'arbitrage'){
+	var  { SolendMarket } = require("../../solend-sdk/save/classes/market");
+
+}
+
 const { Keypair, Connection, PublicKey, TransactionMessage, VersionedTransaction, sendAndConfirmTransaction } = require("@solana/web3.js");
 const bs58 = require('bs58');
 
-const payer = Keypair.fromSecretKey(
+let  payer 
+try {
+	payer = Keypair.fromSecretKey(new Uint8Array(JSON.parse((fs.readFileSync('./int.json').toString()))))
+}
+catch {
+	payer = Keypair.fromSecretKey(
+	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
+);
+}
+Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
 	let { 
 flashRepayReserveLiquidityInstruction : fr2} = require( "../../solend-sdk/save/instructions/flashRepayReserveLiquidity" );
 
 const swap = async (jupiter, route, route2, tokenA) => {
-if (cache.config.tradingStrategy == "arbitrage"){
+if (process.env.tradingStrategy == "arbitrage"){
 
  SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey("E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa")
 
@@ -25,19 +40,58 @@ if (cache.config.tradingStrategy == "arbitrage"){
 }
 
 	try {
+		
+		
 		const performanceOfTxStart = performance.now();
+		
 		cache.performanceOfTxStart = performanceOfTxStart;
+		let configs = JSON.parse(fs.readFileSync('./configs.json').toString())
+		if (process.env.tradingStrategy == 'arbitrage'){
+			configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
+		}
+		let temp = [] 
+		let temp2 = []
+		let temp3 = []
+		for (var mi of route.marketInfos){
+			temp2.push(mi.inputMint.toBase58())
 
+			temp2.push(mi.outputMint.toBase58())
+		} /*
+		for (var mi of route2.marketInfos){
+			temp2.push(mi.inputMint.toBase58())
+
+			temp2.push(mi.outputMint.toBase58())
+		} */
+		for (var config of configs){
+			for (var reserve2 in config.reserves){
+				if (parseInt(reserve2) < process.env.tradingStrategy === 'pingpong' ? config.reserves.length / 2 * 3 : config.reserves.length ){
+				
+					if (process.env.tradingStrategy != 'pingpong'  && parseInt(reserve2) > 1 ){	
+						let welike = config.reserves[reserve2].liquidityToken.mint
+						if (temp2.includes(welike) && welike != tokenA.address){
+							if (!temp3.includes(welike)){
+						temp3.push(welike)
+							}
+							}
+				}
+				else if (process.env.tradingStrategy != 'arbitrage' ){
+					
+
+				}
+				}
+			}
+		}
+if (process.env.tradingStrategy == 'pingpong' || temp3.length > 0){
 		////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
 		const execute1 = await jupiter.exchange({
 			routeInfo: route,
 		});
-		
-//		const execute2 = await jupiter.exchange({
-//			routeInfo: route2,
-//		});
-		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)], 'confirmed');
+		/*
+		const execute2 = await jupiter.exchange({
+			routeInfo: route2,
+		}); */
+		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)], {skipPreflight: false, commitment: 'singleGossip'});
 		let goaccs = [(await connection.getAddressLookupTable(new PublicKey("2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"))).value]
 		const luts = JSON.parse(fs.readFileSync('./luts.json').toString())
 		let ammIds = [ ]
@@ -74,16 +128,21 @@ console.log(err)
 
 		console.log(goaccs.length)
 		let mint = (tokenA.address)
-		let configs = JSON.parse(fs.readFileSync('./configs.json').toString())
-		if (cache.config.tradingStrategy == 'arbitrage'){
-			configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
-		}
+		
 		let reserve, market 
 		for (var m of configs.reverse()){
+			 market = await SolendMarket.initialize(
+				connection,
+				"production", // optional environment argument
+				new PublicKey(m.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			  );
+			  // 2. Read on-chain accounts for reserve data and cache
+			  await market.loadReserves();
+			  config.reserves = (market.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
+			 
 			try {
 			for(var r of m.reserves.reverse()){
-				if (r.liquidityToken.mint == mint){
-					market = m 
+				if (r.config.liquidityToken.mint == mint){
 					reserve = r 
 				}
 			}
@@ -99,14 +158,13 @@ console.log(err)
 			  { mint: new PublicKey(tokenA.address) }
 			)
 		  ).value[0].pubkey
-		let ata = (
+		  let ata = (
 			await connection.getParsedTokenAccountsByOwner(
 			  payer.publicKey,
 			  { mint: new PublicKey(tokenA.address) }
 			)
 		  ).value[0]
 	let tokenAccount = ata.pubkey 
-	let balance = ata.account.data.parsed.info.tokenAmount.amount
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
 			  Math.ceil(JSBI.toNumber(route.inAmount) * 2),
@@ -123,14 +181,14 @@ console.log(err)
 			  }
 			}
 		console.log(instructions.length)	
-	  
-			/*	for (var instruction of execute2.transactions.swapTransaction.instructions){
+	  /*
+			for (var instruction of execute2.transactions.swapTransaction.instructions){
 				if (!instructions.includes(instruction)){
 			instructions.push(instruction)
 				}
-			}*/
+			} */
 		if (
-			cache.config.tradingStrategy  == 'pingpong') {	instructions.push(
+			process.env.tradingStrategy  == 'pingpong') {	instructions.push(
 			flashRepayReserveLiquidityInstruction(
 			  
 				Math.ceil(JSBI.toNumber(route.inAmount) * 2),
@@ -174,26 +232,82 @@ tokenAccount,
 			  )
 			);
 				}
+				
+
+
+		console.log(temp3.length)
+
+		console.log(temp3.length)
+		console.log(temp3.length)
+		console.log(temp3.length)
+		console.log(temp3.length)
+		
+	let balance = ata.account.data.parsed.info.tokenAmount.amount
+	console.log(ata.account.data.parsed.info)
+	if (process.env.tradingStrategy == 'arbitrage'){
 instructions.push(
-				createTransferCheckedInstruction(
-					tokenAccount, // from (should be a token account)
-					new PublicKey(tokenA.address), // mint
-					tokenAccount, // to (should be a token account)
-					payer.publicKey, // from's owner
-					balance, // amount, if your deciamls is 8, send 10^8 for 1 token
-					tokenA.decimals // decimals
-				  )
+	createTransferCheckedInstruction(
+		tokenAccount, // from (should be a token account)
+		new PublicKey(tokenA.address), // mint
+		tokenAccount, // to (should be a token account)
+		payer.publicKey, // from's owner
+		balance == '0' ? 0 : Math.floor(balance / (temp3.length + 1)), // amount, if your deciamls is 8, send 10^8 for 1 token
+		tokenA.decimals // decimals
+	  )
+	  
 )
+		for (var t of temp3){
+
+			let atat = (
+				await connection.getParsedTokenAccountsByOwner(
+				  payer.publicKey,
+				  { mint: new PublicKey(t) }
+				)
+			  ).value[0]
+		let tokenAccountt = atat.pubkey 
+		let balancet = atat.account.data.parsed.info.tokenAmount.amount
+
+		instructions.push(
+			createTransferCheckedInstruction(
+				tokenAccountt, // from (should be a token account)
+				new PublicKey(tokenA.address), // mint
+				tokenAccountt, // to (should be a token account)
+				payer.publicKey, // from's owner
+				balancet == '0' ? 0 : Math.floor(balancet / (temp3.length + 1)), // amount, if your deciamls is 8, send 10^8 for 1 token
+				tokenA.decimals // decimals
+			  )
+			  
+		)
+		}
+	} else {
+		instructions.push(
+			createTransferCheckedInstruction(
+				tokenAccount, // from (should be a token account)
+				new PublicKey(tokenA.address), // mint
+				tokenAccount, // to (should be a token account)
+				payer.publicKey, // from's owner
+				balance, // amount, if your deciamls is 8, send 10^8 for 1 token
+				tokenA.decimals // decimals
+			  )
+			  
+		)
+	}
 let tinstructions = [] 
 for (var ix of instructions){
 	if (!tinstructions.includes(ix)){
 		tinstructions.push(ix)
 	}
 }
+
+tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+//tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]//.find((t) => t.address === cache.config.tokenB.address);
+configs = JSON.parse(fs.readFileSync(process.env.tradingStrategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
+
+	const conn = (new Connection("https://quaint-old-hill.solana-mainnet.discover.quiknode.pro/1d68cf9ff37548ce6956cf9493ab7e39fd73a352/", {skipPreflight: false,preflightCommitment:'singleGossip', commitment: 'singleGossip'}))
 				const  messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
 			recentBlockhash: (await (
-				await connection.getLatestBlockhash()
+				await conn.getLatestBlockhash()
 			  ).blockhash),
 			instructions:tinstructions,
 		}).compileToV0Message(goaccs);
@@ -201,13 +315,19 @@ for (var ix of instructions){
 					messageV00
 				  );
 				  transaction.sign([payer])
-				const result = await connection.sendTransaction(transaction, {skipPreflight: true})
+				const result = await conn.sendTransaction(transaction, {maxRetries: 5})
 			console.log('tx: ' + result)
 		//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
 
 		const performanceOfTx = performance.now() - performanceOfTxStart;
 
 		return [result, performanceOfTx];
+}
+else {
+	cache.swappingRightNow = false;
+
+	return [false, false]
+}
 	} catch (error) {
 		cache.swappingRightNow = false;
 

@@ -1,10 +1,17 @@
 
 require("dotenv").config()
+const { loadConfigFile } = require('../utils')
 const fs = require('fs')
+const BN = require('bn.js')
 const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
 const JSBI  = require("jsbi");
 
+var  { SolendMarket } = require("@solendprotocol/solend-sdk");
+if (process.env.tradingStrategy == 'arbitrage'){
+	var  { SolendMarket } = require("../../solend-sdk/save/classes/market");
+
+}
 const {
 	calculateProfit,
 	toDecimal,
@@ -15,6 +22,8 @@ const {
 const cache = require("./cache");
 const { setup, getInitialOutAmountWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
+const { Connection } = require("@solana/web3.js");
+const { config } = require("process");
 let mod = 10
 const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	cache.iteration++;
@@ -23,29 +32,52 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	cache.queue[i] = -1;
 
 	try {
+		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
-
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-		//tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]//.find((t) => t.address === cache.config.tokenB.address);
-		configs = JSON.parse(fs.readFileSync(cache.config.strategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
+		tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]//.find((t) => t.address === cache.config.tokenB.address);
+		configs = JSON.parse(fs.readFileSync(process.env.tradingStrategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
+		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)]);
 
 			
 				let temp = [] 
-				for (var config of configs){
-					for (var reserve in config.reserves){
-						if (parseInt(reserve) < cache.config.strategy === 'pingpong' ? config.reserves.length / 2 * 3 : config.reserves.length ){
+				let prices = {}
+				let config = configs[Math.floor(Math.random()*configs.length)]
+				let market = await SolendMarket.initialize(
+						connection,
+						"production", // optional environment argument
+						new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+					  );
+					  // 2. Read on-chain accounts for reserve data and cache
+					  await market.loadReserves();
+					  config.reserves = (market.reserves.filter((reserve) => reserve.stats.reserveBorrowLimit > new BN(0)));
+					 
+					for (var reserve in market.reserves){
+						if (true ){
+							if (process.env.tradingStrategy === 'arbitrage'){
 
 	
-							temp.push(config.reserves[reserve].liquidityToken.mint)
+							temp.push(market.reserves[reserve].config.liquidityToken.mint)
+
+						}
+						else if (process.env.tradingStrategy != 'arbitrage' ){
+							temp.push(market.reserves[reserve].config.liquidityToken.mint)
+
+						}
+						
+						prices[market.reserves[reserve].config.liquidityToken.mint]= (market.reserves[reserve].stats.assetPriceUSD);
 						}
 					}
-				}
-		tokens = tokens.filter((token) => temp.includes(token.address))
+				
+				console.log(prices)
+		tokens = tokens.filter((token) => temp.includes(token.address) && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
 		tokenA = tokens[Math.floor(Math.random() * tokens.length)]//.find((t) => t.address === cache.config.tokenB.address);
+		console.log(tokenA)
 		tokenB = tokenA
+		//tokenB = tokenA
 		// Calculate amount that will be used for trade
-		const amountToTrade = Math.floor(mod * 10 ** tokenA.decimals) /*
+		const amountToTrade = Math.floor((mod / prices[tokenA.address]) * 10 ** tokenA.decimals) /*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
 				: cache.initialBalance[cache.sideBuy ? "tokenA" : "tokenB"];
@@ -57,32 +89,35 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
 
 		// set input / output token
-		const inputToken = cache.sideBuy ? tokenA : tokenB;
-		const outputToken = cache.sideSell ? tokenB : tokenA;
-
+		const inputToken = tokenA//cache.sideBuy ? tokenA : tokenB;
+		const outputToken = tokenA//cache.sideSell ? tokenB : tokenA;
+		console.log(inputToken.symbol)
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
+
 		const routes = await jupiter.computeRoutes({
 			inputMint: new PublicKey(inputToken.address),
 			outputMint: new PublicKey(outputToken.address),
 			            amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
-            slippageBps: slippage,
+            slippageBps: 20,
 
+            forceFetch: true,
 		});
+
 		// choose first route
-		const route = await routes.routesInfos[Math.floor(Math.random() * 1)];
-/*		
+		const route = await routes.routesInfos[Math.floor(Math.random() * 2)];
+		/*
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(outputToken.address),
 			outputMint: new PublicKey(inputToken.address),
 			            amount: (JSBI.BigInt(parseInt(((JSBI.toNumber(route.outAmount) * 1.002))))), // raw input amount of tokens
-            slippageBps: slippage,
+            slippageBps: 99,
 			forceFetch: true
 		});
 
-*/
-//		checkRoutesResponse(routes2);
-
+		const route2 = await routes2.routesInfos[Math.floor(Math.random() * 1)];
+		*/
+		const route2= route
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
 			routes.routesInfos.length //+ routes2.routesInfos.length;
@@ -102,9 +137,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
 
-		// calculate profitability
-
-		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route.outAmount));
+	
+		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
 		console.log(simulatedProfit)
 		// store max profit spotted
 		if (
@@ -141,7 +175,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
 					inAmount: toDecimal(JSBI.toNumber(route.inAmount), inputToken.decimals),
-					expectedOutAmount: toDecimal(JSBI.toNumber(route.outAmount), outputToken.decimals),
+					expectedOutAmount: toDecimal(JSBI.toNumber(route2.outAmount), outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -152,7 +186,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(jupiter, route, route, tokenA);
+				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
@@ -364,10 +398,10 @@ const watcher = async (jupiter, tokenA, tokenB) => {
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
 	) {
-		if (cache.config.tradingStrategy === "pingpong") {
+		if (process.env.tradingStrategy === "pingpong") {
 			await pingpongStrategy(jupiter, tokenA, tokenB);
 		}
-		if (cache.config.tradingStrategy === "arbitrage") {
+		if (process.env.tradingStrategy === "arbitrage") {
 			await pingpongStrategy(jupiter, tokenA, tokenB);
 			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
@@ -379,7 +413,7 @@ const run = async () => {
 		// set everything up
 		const { jupiter, tokenA, tokenB } = await setup();
 
-		if (true){//cache.config.tradingStrategy === "pingpong") {
+		if (true){//process.env.tradingStrategy === "pingpong") {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
@@ -387,16 +421,11 @@ const run = async () => {
 			);
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
-
+			console.log(tokenA)
 			// set initial & last balance for tokenB
-			cache.initialBalance.tokenB = await getInitialOutAmountWithSlippage(
-				jupiter,
-				tokenA,
-				tokenB,
-				cache.initialBalance.tokenA
-			);
+			cache.initialBalance.tokenB = 0
 			cache.lastBalance.tokenB = cache.initialBalance.tokenB;
-		} else if (false){//cache.config.tradingStrategy === "arbitrage") {
+		} else if (false){//process.env.tradingStrategy === "arbitrage") {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
@@ -407,7 +436,7 @@ const run = async () => {
 		}
 
 		global.botInterval = setInterval(
-			() => watcher(jupiter, tokenA, tokenB),
+			() => watcher(jupiter, tokenA, tokenA),
 			cache.config.minInterval
 		);
 	} catch (error) {
@@ -415,6 +444,5 @@ const run = async () => {
 		process.exitCode = 1;
 	}
 };
-
 run();
 
