@@ -97,7 +97,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			inputMint: new PublicKey(inputToken.address),
 			outputMint: new PublicKey(outputToken.address),
 			            amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
-            slippageBps: 20,
+            slippageBps: 1380,
 
             forceFetch: true,
 		});
