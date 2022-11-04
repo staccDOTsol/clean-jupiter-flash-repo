@@ -342,20 +342,23 @@ for (var ix of instructions){
 tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 //tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]//.find((t) => t.address === cache.config.tokenB.address);
 configs = JSON.parse(fs.readFileSync(process.env.tradingStrategy === 'pingpong' ? "./configs.json" : "./configs2.json").toString())
-
-	const conn = (new Connection("https://quaint-old-hill.solana-mainnet.discover.quiknode.pro/1d68cf9ff37548ce6956cf9493ab7e39fd73a352/", {skipPreflight: false,preflightCommitment:'singleGossip', commitment: 'singleGossip'}))
-				const  messageV00 = new TransactionMessage({
+let goaccst = []
+for (var value of goaccs){
+	if (value.addresses.length>0){
+		goaccst.push(value)
+	}
+}			const  messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
 			recentBlockhash: (await (
-				await conn.getLatestBlockhash()
+				await connection.getLatestBlockhash()
 			  ).blockhash),
 			instructions:tinstructions,
-		}).compileToV0Message(goaccs);
+		}).compileToV0Message(goaccst);
 		const transaction = new VersionedTransaction(
 					messageV00
 				  );
 				  transaction.sign([payer])
-				const result = await conn.sendTransaction(transaction, {maxRetries: 5})
+				const result = await connection.sendTransaction(transaction, {maxRetries: 5})
 			console.log('tx: ' + result)
 		//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
 
