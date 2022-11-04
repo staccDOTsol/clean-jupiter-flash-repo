@@ -93,7 +93,19 @@ if (process.env.tradingStrategy == 'pingpong' || temp3.length > 0){
 			routeInfo: route2,
 		}); */
 		const connection = new Connection(process.env.ALT_RPC_LIST.split(',')[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)], {skipPreflight: false, commitment: 'singleGossip'});
-		let goaccs = [(await connection.getAddressLookupTable(new PublicKey("2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"))).value]
+	let goluts = ["BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
+	"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
+	"2V7kVs1TsZv7j38UTv4Dgbc6h258KS8eo5GZL9yhxCjv",
+	"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
+	"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"]
+		let goaccs = []
+		for (var golut of goluts){
+		
+			
+			
+			
+		goaccs.push(	(await connection.getAddressLookupTable(new PublicKey(golut))).value)
+		}
 		const luts = JSON.parse(fs.readFileSync('./luts.json').toString())
 		let ammIds = [ ]
 try {
