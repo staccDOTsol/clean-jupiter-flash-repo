@@ -175,7 +175,6 @@
       time: "2022-11-03T12:28:18Z"
     name: nginx-latest-2
     namespace: default
-    uid: 969df958-0243-4e91-b46c-d8d982e1f2b8
   spec:
     progressDeadlineSeconds: 1600
     replicas: 25
