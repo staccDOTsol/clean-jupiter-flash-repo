@@ -162,7 +162,7 @@ console.log(err)
 			)
 		  ).value[0].pubkey
 			  } catch (err){
-				let [address] = (await createAssociatedTokenAccount(
+				let hmmm = (await createAssociatedTokenAccount(
 					connection, // connection
 					payer, // fee payer
 					new PublicKey(tokenA.address), // mint
@@ -171,7 +171,7 @@ console.log(err)
 					  ), // owner,
 				  ))
 
-				  jaregm= address
+				  jaregm= hmmm.address
 			  }
 		  let ata = (
 			await connection.getParsedTokenAccountsByOwner(
@@ -184,14 +184,14 @@ console.log(err)
 			try {
 	 tokenAccount = ata.pubkey 
 		  } catch (err){
-			let [address] = (await createAssociatedTokenAccount(
+			let hmm = (await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
 				new PublicKey(tokenA.address), // mint
 				payer.publicKey, // owner,
 			  ))
 
-			  jaregm= address
+			  jaregm= hmm.address
 		  }
 		let instructions =  [
 			flashBorrowReserveLiquidityInstruction(
