@@ -41,6 +41,7 @@ let {
 	flashRepayReserveLiquidityInstruction: fr2,
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { createAssociatedTokenAccount } = require("@solana/spl-token");
+const { Token, createTransferInstruction } = require('@solana/spl-token');
 
 const swap = async (jupiter, route, route2, tokenA) => {
 	if (process.env.tradingStrategy == "arbitrage") {
@@ -245,17 +246,28 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			}
 
 			let balance = ata.account.data.parsed.info.tokenAmount.amount;
-			
+			try {
 				instructions.push(
-					createTransferCheckedInstruction(
-						tokenAccount, // from (should be a token account)
-						new PublicKey(tokenA.address), // mint
-						tokenAccount, // to (should be a token account)
-						payer.publicKey, // from's owner
-						balance, // amount, if your deciamls is 8, send 10^8 for 1 token
-						tokenA.decimals // decimals
-					)
-				);
+				  Token.createTransferInstruction(new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
+					tokenAccount,
+					tokenAccount,
+					payer.publicKey,[],
+					Math.floor(balance)
+				  )
+				); 
+				
+  } catch (err){
+	  instructions.push(
+		  createTransferInstruction(
+			tokenAccount,
+			tokenAccount,
+			payer.publicKey,
+			Math.floor(balance),[]
+		  )
+		); 
+  } 
+	  
+
 			let tinstructions = [];
 			for (var ix of instructions) {
 				if (!tinstructions.includes(ix)) {
