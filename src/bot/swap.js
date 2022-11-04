@@ -143,7 +143,7 @@ console.log(err)
 			try {
 			for(var r of m.reserves.reverse()){
 				if (r.config.liquidityToken.mint == mint){
-					reserve = r 
+					reserve = r.config
 				}
 			}
 		} catch (err){

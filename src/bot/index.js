@@ -69,11 +69,9 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 						prices[market.reserves[reserve].config.liquidityToken.mint]= (market.reserves[reserve].stats.assetPriceUSD);
 						}
 					}
-				
-				console.log(prices)
+
 		tokens = tokens.filter((token) => temp.includes(token.address) && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
 		tokenA = tokens[Math.floor(Math.random() * tokens.length)]//.find((t) => t.address === cache.config.tokenB.address);
-		console.log(tokenA)
 		tokenB = tokenA
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
@@ -421,7 +419,6 @@ const run = async () => {
 			);
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
-			console.log(tokenA)
 			// set initial & last balance for tokenB
 			cache.initialBalance.tokenB = 0
 			cache.lastBalance.tokenB = cache.initialBalance.tokenB;
