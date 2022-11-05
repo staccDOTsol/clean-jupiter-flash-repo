@@ -22,8 +22,6 @@
       
         labels:
           app: risk-lol
-      name: staked
-      namespace: production
       spec:
         nodeSelector:
           kubernetes.io/os: linux

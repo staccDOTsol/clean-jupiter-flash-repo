@@ -22,8 +22,6 @@
       
         labels:
           app: risk-lol
-      name: primary
-      namespace: production
       spec:
         nodeSelector:
           kubernetes.io/os: linux
