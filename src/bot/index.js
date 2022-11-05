@@ -77,6 +77,18 @@ const pingpongStrategy = async (
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
 		} catch (err) {}
 		let goodluts = [];
+	
+			
+		try {
+			if (!goodies.includes(reserve.config.liquidityToken.mint)) {
+				goodies.push(reserve.config.liquidityToken.mint);
+				console.log(
+					"g: " +
+						goodies.length.toString() +
+						" & res length: " +
+						market.reserves.length.toString()
+				);
+			}
 		for (var mi of [...route.marketInfos]) {
 			for (var abc of Object.values(mi.amm)) {
 				try {
@@ -107,6 +119,18 @@ const pingpongStrategy = async (
 			}
 		}
 		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+	} catch (err) {
+		if (!baddies.includes(reserve.config.liquidityToken.mint)) {
+			baddies.push(reserve.config.liquidityToken.mint);
+			console.log(
+				"b: " +
+					baddies.length.toString() +
+					" & res length: " +
+					market.reserves.length.toString()
+			);
+		}
+	}
+
 		/*
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -429,6 +453,7 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 
 			tokenB = tokenA;
 		}
+		done = false 
 		for (var res of market.reserves) {
 			if (!done) {
 				res =
@@ -450,7 +475,7 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 				);
 
 				if (test * 2 < reserve.stats.totalLiquidityWads / WAD) {
-					if (!goodies.includes(reserve.config.liquidityToken.mint)) {
+					if (true) {
 						const routes = await jupiter.computeRoutes({
 							inputMint: new PublicKey(reserve.config.liquidityToken.mint),
 							outputMint: new PublicKey(reserve.config.liquidityToken.mint),
