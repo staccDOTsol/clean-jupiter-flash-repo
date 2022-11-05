@@ -44,6 +44,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				)
 				.toString()
 		);
+//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 		const connection = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
@@ -67,19 +68,54 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		for (var reserve in market.reserves) {
 			if (true) {
 				if (process.env.tradingStrategy === "arbitrage") {
-					temp.push(market.reserves[reserve].config.liquidityToken.mint);
+					temp.push(reserve.config.liquidityToken.mint);
 				} else if (process.env.tradingStrategy != "arbitrage") {
-					temp.push(market.reserves[reserve].config.liquidityToken.mint);
+					temp.push(reserve.config.liquidityToken.mint);
 				}
-
-				prices[market.reserves[reserve].config.liquidityToken.mint] =
-					market.reserves[reserve].stats.assetPriceUSD;
 			}
 		}
+		let done = false 
+		while (done == false){
+			tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));//okens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+		
+			config = configs[Math.floor(Math.random() * configs.length)];
+			 market = await SolendMarket.initialize(
+				connection,
+				"production", // optional environment argument
+				new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			);
+			// 2. Read on-chain accounts for reserve data and cache
+			await market.loadReserves();
+			config.reserves = market.reserves.filter(
+				(reserve) => reserve.stats.reserveBorrowLimit > new BN(0)
+			);
+			market.reserves = config.reserves 
 
-		tokens = tokens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
-		tokenA = tokens[Math.floor(Math.random() * tokens.length)]; //.find((t) => t.address === cache.config.tokenB.address);
-		tokenB = tokenA;
+			let reserve = market.reserves[ (Math.floor(Math.random() *config.reserves.length))]
+					if (process.env.tradingStrategy === "arbitrage") {
+						temp.push(reserve.config.liquidityToken.mint);
+					} else if (process.env.tradingStrategy != "arbitrage") {
+						temp.push(reserve.config.liquidityToken.mint);
+					}
+			tokens = tokens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+			
+				tokenA = tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
+				tokenB = tokenA;
+				prices[reserve.config.liquidityToken.mint] =
+					reserve.stats.assetPriceUSD;
+				let test =	Math.floor(
+					(mod / prices[tokenA.address]) * 10 ** tokenA.decimals
+				)
+				if (new BN(test) < reserve.stats.reserveBorrowLimit){
+					done = true
+				}
+				else {
+					console.log(done)
+				}
+
+		}
+
+
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
