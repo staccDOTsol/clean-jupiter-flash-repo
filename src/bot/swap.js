@@ -247,17 +247,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			}
 
 			let balance = ata.account.data.parsed.info.tokenAmount.amount;
-			try {
-				instructions.push(
-				  Token.createTransferInstruction(new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
-					tokenAccount,
-					tokenAccount,
-					payer.publicKey,[],
-					Math.floor(balance)
-				  )
-				); 
-				
-  } catch (err){
+			
 	  instructions.push(
 		  createTransferInstruction(
 			tokenAccount,
@@ -266,7 +256,6 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			Math.floor(balance),[]
 		  )
 		); 
-  } 
 	  
 
 			let tinstructions = [];
