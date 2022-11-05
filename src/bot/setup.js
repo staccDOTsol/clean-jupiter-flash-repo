@@ -89,7 +89,7 @@ const setup = async () => {
 		);
 		//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 
-		configs = configs.filter((c) => (!c.isHidden && c.reserves.length > 4));
+		configs = configs.filter((c) => (!c.isHidden && !c.isPermissionless && c.reserves.length > 4));
 
 		let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
