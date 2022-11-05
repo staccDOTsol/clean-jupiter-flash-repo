@@ -118,6 +118,7 @@ for (var res of config.reserves){
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
 
 		// set input / output token
+		tokenA = {address: reserve.config.liquidityToken.mint, decimals: reserve.config.liquidityToken.decimals, symbol: reserve.config.asset}
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
 		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
 		console.log(inputToken.symbol);
