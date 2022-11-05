@@ -53,7 +53,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 
 		let temp = [];
 		let prices = {};
-		let config = configs[Math.floor(Math.random() * configs.length)];
+// configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
+let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
@@ -64,39 +65,21 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		config.reserves = market.reserves.filter(
 			(reserve) => reserve.stats.reserveBorrowLimit > new BN(0)
 		);
-
-		for (var reserve in market.reserves) {
-			if (true) {
-				if (process.env.tradingStrategy === "arbitrage") {
-					temp.push(reserve.config.liquidityToken.mint);
-				} else if (process.env.tradingStrategy != "arbitrage") {
-					temp.push(reserve.config.liquidityToken.mint);
-				}
-			}
-		}
+		if (config.reserves.length == 0) return
 		let done = false 
-		while (done == false){
-			tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));//okens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
-		
-			config = configs[Math.floor(Math.random() * configs.length)];
-			 market = await SolendMarket.initialize(
-				connection,
-				"production", // optional environment argument
-				new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
-			);
-			// 2. Read on-chain accounts for reserve data and cache
-			await market.loadReserves();
-			config.reserves = market.reserves.filter(
-				(reserve) => reserve.stats.reserveBorrowLimit > new BN(0)
-			);
-			market.reserves = config.reserves 
+			
+for (var res of config.reserves){
 
-			let reserve = market.reserves[ (Math.floor(Math.random() *config.reserves.length))]
 					if (process.env.tradingStrategy === "arbitrage") {
-						temp.push(reserve.config.liquidityToken.mint);
+						temp.push(res.config.liquidityToken.mint);
 					} else if (process.env.tradingStrategy != "arbitrage") {
-						temp.push(reserve.config.liquidityToken.mint);
+						temp.push(res.config.liquidityToken.mint);
 					}
+
+				}
+				console.log(temp.length)
+				let reserve = config.reserves[Math.floor(Math.random()* config.reserves.length)]
+				console.log(reserve.config.liquidityToken.mint)
 			tokens = tokens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
 			
 				tokenA = tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
@@ -111,9 +94,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 				}
 				else {
 					console.log(done)
+					return
 				}
-
-		}
 
 
 		//tokenB = tokenA
