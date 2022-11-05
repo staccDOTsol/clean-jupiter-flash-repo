@@ -8,7 +8,7 @@ let {
 	flashBorrowReserveLiquidityInstruction,
 	SOLEND_PRODUCTION_PROGRAM_ID,
 } = require("@solendprotocol/solend-sdk");
-const { createTransferCheckedInstruction, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@solana/spl-token");
+const { createTransferCheckedInstruction, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("../spl-token");
 const BN = require("bn.js");
 
 var { SolendMarket } = require("@solendprotocol/solend-sdk");

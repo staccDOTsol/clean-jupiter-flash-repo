@@ -24,10 +24,10 @@
 	],
 	"dependencies": {
 		"@jup-ag/core": "3.0.0-beta.0-prerelease",
-		"@solana/buffer-layout": "^4.0.0",
-		"@solana/spl-token": "^0.3.6",
+		"@solana/buffer-layout": "^4",
+		"@solana/spl-token": "^0.2.0",
 		"@solana/web3.js": "^1.66.2",
-		"@solendprotocol/solend-sdk": "^0.7.0",
+		"@solendprotocol/solend-sdk": "latest",
 		"@supercharge/promise-pool": "^2.3.2",
 		"axios": "^0.27.2",
 		"bn.js": "^5.2.1",
@@ -36,38 +36,7 @@
 		"jsbi": "^4.3.0",
 		"moment": "^2.29.3",
 		"open": "^8.4.0",
-		"promise-retry": "^2.0.1",
-		"random-org": "^2.2.0"
+		"promise-retry": "^2.0.1"
 	},
-	"ava": {
-		"require": [
-			"@babel/register"
-		]
-	},
-	"babel": {
-		"presets": [
-			"@babel/preset-env",
-			"@babel/preset-react"
-		]
-	},
-	"xo": {
-		"extends": "xo-react",
-		"rules": {
-			"react/prop-types": "off"
-		}
-	},
-	"devDependencies": {
-		"@ava/babel": "^2.0.0",
-		"@babel/preset-env": "^7.18.2",
-		"@babel/preset-react": "^7.17.12",
-		"@babel/register": "^7.17.7",
-		"eslint": "^8.19.0",
-		"eslint-config-prettier": "^8.5.0",
-		"eslint-config-xo-react": "^0.27.0",
-		"eslint-plugin-prettier": "^4.2.1",
-		"eslint-plugin-react": "^7.30.1",
-		"eslint-plugin-react-hooks": "^4.5.0",
-		"ink-testing-library": "^2.1.0",
-		"prettier": "2.7.1"
-	}
+	"devDependencies": {}
 }
