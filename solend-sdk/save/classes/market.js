@@ -32,7 +32,8 @@ class SolendMarket {
     static initialize(connection, environment = "production", marketAddress) {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const config = [
+            const config  = 
+            [
                 {
                   "name": "main",
                   "address": "F8dCQofhBuspm1sVsrfr8NReJvGn1JfiR9xARnUBQgo1",
@@ -44,6 +45,9 @@ class SolendMarket {
                       "mint": "So11111111111111111111111111111111111111112",
                       "decimals": 9,
                       "assetPriceUSD": 30},
+                      "mint": "So11111111111111111111111111111111111111112",
+                      "decimals": 9,
+                      "assetPriceUSD": 30,
                       "address": "fuSA8HSSku7BwRsVFWotGcVpwH3QrGtnhqWRS4orhXG",
                       "collateralMintAddress": "44PeAshzRSmhzQ3Da9z22YXYRN18PfsTHVXZpcQ7p7TH",
                       "jareMint": "7yN93TFSCZqseppJyxXjnAnps7wH1wRtvgemFXksc25t",
@@ -59,6 +63,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
                       "address": "5guv5xt2we2FpPXkSPN8oaz6C876NjiV62Np5RxghDnb",
                       "collateralMintAddress": "CnwtgyFcTyuQMKDSU1KCXVS4jPksjJUVQaMkgZ2WU3ny",
                       "jareMint": "2DvSLHu3HDTDEdWnYETdTtuywTvenmVQpsvn5ybEbKpA",
@@ -74,6 +81,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 0.05,
                       "mint":"8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh"},
+                      "decimals": 6,
+                      "assetPriceUSD": 0.05,
+                      "mint":"8HGyAAB1yoM1ttS7pXjHMa3dukTFGQggnFFH3hJZgzQh",
                       "address": "CoQgPXDKkBo84K14uFbGqkNmXHjKLYXt6d4BvLY6LWpu",
                       "collateralMintAddress": "EHSug7WuXkoPDaeF2Cog4mcZ6SKZ5iJ1rkXFoczrXWqL",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -89,6 +99,9 @@ class SolendMarket {
                       "decimals": 8,
                       "assetPriceUSD": 1,
                       "mint":"EjmyN6qEC1Tf1JxiG1ae7UTJhUxSwk1TCWNWqxWV4J6o"},
+                      "decimals": 8,
+                      "assetPriceUSD": 1,
+                      "mint":"EjmyN6qEC1Tf1JxiG1ae7UTJhUxSwk1TCWNWqxWV4J6o",
                       "address": "GkwFTuAEqDG1seWeSy1htLpkaSjMdqhuMSEvwWjDB4xX",
                       "collateralMintAddress": "J4vUxcsHkoWudqWhooDxzx9aoHrXtZ73qj9DtQSqqwwS",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -104,6 +117,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"USDH1SM1ojwWUga67PGrgFWUHibbjqMvuMaDkRJTgkX"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"USDH1SM1ojwWUga67PGrgFWUHibbjqMvuMaDkRJTgkX",
                       "address": "78w9qRtdCQ6zWNUGnZxk6p36sdzuutHCtMQCJM4bKyAW",
                       "collateralMintAddress": "EESxsxPQzzPLw33FcKq5saQAt1y65FDSsKfJA6R4JDyk",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -119,6 +135,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"Ea5SjE2Y6yvCeW5dYTn7PYMuW5ikXkvbGdcmSnXeaLjS"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"Ea5SjE2Y6yvCeW5dYTn7PYMuW5ikXkvbGdcmSnXeaLjS",
                       "address": "DHP6TaqV9kafmg3ooqbvWPwzeMvtwphTzFShnjBNzRsp",
                       "collateralMintAddress": "EUiemqKoJEUxTr4wtBZdqkBCWwk8qutKpprUDVSDFbbr",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -134,6 +153,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
                       "address": "5EmzXiKYz3skJS3PSzj9BScdbxQ8huH3CfV6f68LUZGk",
                       "collateralMintAddress": "4kKNXxKRx2EdDnRU4beS9JBnuD5cMTL1BQ8WK2iZVoeu",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -149,6 +171,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"7kbnvuGBxxj8AG9qp8Scn56muWGaRaFqxg1FsRp3PaFT",
                       "address": "9kB2wr3bKEb5ahMKZNLXPPod5zw3TKYj6BxMPC7SPWpR",
                       "collateralMintAddress": "DhjKo3rteKS8W2BxbdwiofRZpaSQynTt7k5zu4jYv8Fo",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -164,6 +189,9 @@ class SolendMarket {
                       "decimals": 6,
                       "assetPriceUSD": 1,
                       "mint":"83LGLCm7QKpYZbX8q4W2kYWbtt8NJBwbVwEepzkVnJ9y"},
+                      "decimals": 6,
+                      "assetPriceUSD": 1,
+                      "mint":"83LGLCm7QKpYZbX8q4W2kYWbtt8NJBwbVwEepzkVnJ9y",
                       "address": "BaTPg1VNoxK86wDZCWfMMdohQH1tdMx326sS2eswZNhb",
                       "collateralMintAddress": "5UtPVrTGZN2qc5vLeMPXthVxQuEjqkvW15NHSqtPhPX5",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
@@ -180,6 +208,9 @@ class SolendMarket {
                       "assetPriceUSD": 1,
                       "mint":"9iLH8T7zoWhY7sBmj1WK9ENbWdS1nL8n9wAxaeRitTa6"
                       },"address": "5MRaCd2mVqgT67sTBzRTUZChgCESot51zdApWCpAeb7h",
+                      "decimals": 9,
+                      "assetPriceUSD": 1,
+                      "mint":"9iLH8T7zoWhY7sBmj1WK9ENbWdS1nL8n9wAxaeRitTa6",
                       "collateralMintAddress": "HYdzX8u6GUE2JrnBxpLocquPRmkZbr5UDAmax2orU65c",
                       "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
                       "collateralSupplyAddress": "2FFQZiYsqDxHHEZJxu2b7tQa3mgrnftUVaPj97RFpgeq",
@@ -187,9 +218,80 @@ class SolendMarket {
                       "liquidityFeeReceiverAddress": "Ck92WGWDJWWSUZRMxEpvMinF3UG7FfKDDroeSAYkeFfi",
                       "userSupplyCap": 2500,
                       "reserveSupplyCap": 300000
+                    },
+        
+                    {
+                      "asset": "mSOL",
+                      "liquidityToken":{
+                      "decimals": 9,
+                      "assetPriceUSD": 30,
+                      "mint":"mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So"},
+                      "decimals": 9,
+                      "assetPriceUSD": 30,
+                      "mint":"mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
+                      "address": "EK2sfhsJHxiocDFiQjjs3PEeYEfWnKz9aecUNUU5RToK",
+                      "collateralMintAddress": "kNTu9qaduuVRoMtFjW4WMxUheXdn8CtbuKHSBjH6c1R",
+                      "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
+                      "collateralSupplyAddress": "2YRjoZpJ2wJPiBWJTvhuVsMhKEwK4QAdPHiJ4a4JGxgt",
+                      "liquidityAddress": "J1bWjHAakCBHmJDANw43fvDh54DZij8WAoN2U1uMpZpU",
+                      "liquidityFeeReceiverAddress": "J1bWjHAakCBHmJDANw43fvDh54DZij8WAoN2U1uMpZpU",
+                      "userSupplyCap": 2500,
+                      "reserveSupplyCap": 300000
+                    },
+                    {
+                      "asset": "stSOL",
+                      "liquidityToken":{
+                      "decimals": 9,
+                      "assetPriceUSD": 30,
+                      "mint":"7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj"
+                      },"address": "GHWkPz95iZKuEnPKd65jkoYqS1XuFNcYsUiDFckmtsb6",
+                      "decimals": 9,
+                      "assetPriceUSD": 30,
+                      "mint":"7dHbWXmci3dT8UFYWYZweBLXgycu7Y3iL6trKn1Y7ARj",
+                      "collateralMintAddress": "Fw7VM48KVqBQPd3nhHNAzyugJe4NCvGYjtes27rHaEMm",
+                      "jareMint": "kALzvjmLZSWMJMQj1bgdKT9hb3VLCKbnZ8uiPyjU4FJ",
+                      "collateralSupplyAddress": "HEo8ZsRmUk8Pvp1EmrFaDfhQgoS5PM9gRwUwqzPka5GC",
+                      "liquidityAddress": "BJoj4X68dEZQsovwGZAeWSj2bWwPaviTHPF3vbqjkbdt",
+                      "liquidityFeeReceiverAddress": "BJoj4X68dEZQsovwGZAeWSj2bWwPaviTHPF3vbqjkbdt",
+                      "userSupplyCap": 2500,
+                      "reserveSupplyCap": 300000
+                    }, {
+                      "asset": "UST",              "liquidityToken":{
+                        "decimals": 6,
+                        "assetPriceUSD": 30,
+                        "mint":"9vMJfxuKxXBoEa7rM12mYLMwTacLMLDJqHozw96WQL8i"
+                        },
+                        "decimals": 6,
+                        "assetPriceUSD": 30,
+                        "mint":"9vMJfxuKxXBoEa7rM12mYLMwTacLMLDJqHozw96WQL8i",
+                      "address": "B4hF3TrvHrQ1yzy8gaCEnB3ijsZAe2dJbNtqbeFHpdpb",
+                      "collateralMintAddress": "rwu4w4BmRoh9hhpWfEBYh77vSLsAKYdc1PRCaUGAFXw",
+                      "collateralSupplyAddress": "ZFVnCyRTxoYMraRkfWM32ww5vbgZTZ8JWcGgCrurN2k",
+                      "liquidityAddress": "DwgeopDtQqsWHSbTXkMgYGDHFcP3QnAVrceqWrcgmkf8",
+                      "liquidityFeeReceiverAddress": "4oJvRUhGcMRphYgAVtmJho3ZJsK8TB2tncZgyZ1MwcpE",
+                      "userSupplyCap": 10000,
+                      "reserveSupplyCap": 1000000
+                    },
+                    {
+                      "asset": "MNGO",              "liquidityToken":{
+                        "decimals": 6,
+                        "assetPriceUSD": 0.005,
+                        "mint":"MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac"
+                        },
+                        "decimals": 6,
+                        "assetPriceUSD": 0.005,
+                        "mint":"MangoCzJ36AjZyKwVj3VnYU4GTonjfVEnJmvvWaxLac",
+                      "address": "3XLkmrdFQKAt9AXKvfTzc5mdgqTELoEEwEMC4eBFMG4t",
+                      "collateralMintAddress": "H7mqRRMvCMawBwMqYG2LJQr61BfNvp1z8aRmU712d9s8",
+                      "collateralSupplyAddress": "4tFeBTUmJ8B8ocQkTMRQ1VTrrgfMHUDzCyf9VWhh8xMP",
+                      "liquidityAddress": "Byj26aH5SFa8zUsSaKVaR78z6guQx6becBKSihxubN4u",
+                      "liquidityFeeReceiverAddress": "3C2c4ZkwPgJtgEzavDnxFrSuZ9mVuUMLFQfFMaBG5dnu",
+                      "userSupplyCap": 2500,
+                      "reserveSupplyCap": 300000
                     }
                   ]
-                }];
+                }
+              ];
             this.reserves = config.reserves
             let marketConfig;
             if (marketAddress) {
