@@ -6,8 +6,6 @@
     name: primary-prod
     namespace: production
   spec:
-    imagePullSecrets:
-      - name: azure
     progressDeadlineSeconds: 1600
     replicas: 2
     revisionHistoryLimit: 10
@@ -27,6 +25,8 @@
       spec:
         nodeSelector:
           kubernetes.io/os: linux
+        imagePullSecrets:
+          - name: azure
         containers:
         - env:
           - name: DEBUG

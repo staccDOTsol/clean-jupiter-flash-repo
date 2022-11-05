@@ -6,8 +6,6 @@
     name: lending-prod
     namespace: production
   spec:
-    imagePullSecrets:
-      - name: azure
     progressDeadlineSeconds: 1600
     replicas: 2
     revisionHistoryLimit: 10
@@ -27,6 +25,8 @@
 
       
       spec:
+        imagePullSecrets:
+          - name: azure
         nodeSelector:
           kubernetes.io/os: linux
         containers:

@@ -6,8 +6,6 @@
     name: staked-prod
     namespace: production
   spec:
-    imagePullSecrets:
-      - name: azure
     progressDeadlineSeconds: 1600
     replicas: 2
     revisionHistoryLimit: 10
@@ -25,6 +23,8 @@
         labels:
           app: risk-lol
       spec:
+        imagePullSecrets:
+          - name: azure
         nodeSelector:
           kubernetes.io/os: linux
         containers:
