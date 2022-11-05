@@ -47,7 +47,7 @@ const {
 } = require("@solana/spl-token");
 const { ComputeBudgetProgram } = require("@solana/web3.js/lib/index.cjs");
 
-const swap = async (jupiter, route, route2, tokenA) => {
+const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 	if (process.env.tradingStrategy == "arbitrage") {
 		SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 			"E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
@@ -85,6 +85,30 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
 				"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
 			];
+			let luts = {}
+			try {
+				luts = JSON.parse(fs.readFileSync('./tluts.json').toString())
+			}
+			catch (err){
+				try {
+
+				}
+				catch (err){
+					luts = JSON.parse(fs.readFileSync('./luts.json').toString())
+
+				}
+			}
+//			console.log(Object.keys(luts).length)
+
+			for (var mi of [...route.marketInfos]) {
+				//}, ...route2.marketInfos]) {
+				try {
+					let maybeluts = luts[mi.amm.id].split(',')
+					goluts.push(...maybeluts);
+				} catch (err) {
+					//console.log(err);
+				}
+			}
 			let goaccs = [];
 			for (var golut of goluts) {
 				connection = new Connection(
@@ -95,34 +119,9 @@ const swap = async (jupiter, route, route2, tokenA) => {
 					(await connection.getAddressLookupTable(new PublicKey(golut))).value
 				);
 			}
-			const luts = JSON.parse(fs.readFileSync("./luts.json").toString());
 
-			console.log(goaccs.length);
-			let mint = tokenA.address;
-
-			let reserve, market;
-			for (var m of configs.reverse()) {
-				let aaa = await SolendMarket.initialize(
-					connection,
-					"production", // optional environment argument
-					new PublicKey(m.address) // optional m address (TURBO SOL). Defaults to 'Main' market
-				);
-				// 2. Read on-chain accounts for reserve data and cache
-				await aaa.loadReserves();
-				aaa.reserves = aaa.reserves.filter(
-					(reserve) => reserve.stats.reserveBorrowLimit > new BN(0)
-				);
-				try {
-					for (var r of aaa.reserves.reverse()) {
-						if (r.config.liquidityToken.mint == mint) {
-							reserve = r.config;
-							market = aaa;
-						}
-					}
-				} catch (err) {
-					console.log(err);
-				}
-			}
+		//	console.log(goaccs.length);
+		
 			let jaregm;
 			let signers = [];
 			let tinsts = [];
@@ -190,9 +189,9 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			let instructions = [...tinsts,
 				flashBorrowReserveLiquidityInstruction(
 					Math.ceil(JSBI.toNumber(route.inAmount) * 2),
-					new PublicKey(reserve.liquidityAddress),
+					new PublicKey(reserve.config.liquidityAddress),
 					tokenAccount,
-					new PublicKey(reserve.address),
+					new PublicKey(reserve.config.address),
 					new PublicKey(market.config.address),
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
@@ -203,7 +202,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 					instructions.push(instruction);
 				}
 			}
-			console.log(instructions.length);
+			//console.log(instructions.length);
 			/*
 			for (var instruction of execute2.transactions.swapTransaction.instructions){
 				if (!instructions.includes(instruction)){
@@ -211,43 +210,32 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				}
 			} */
 			if (process.env.tradingStrategy == "pingpong") {
-				console.log(
-					(Math.ceil(JSBI.toNumber(route.inAmount) * 2),
-					tinsts.length,
-					tokenAccount,
-					new PublicKey(reserve.liquidityAddress),
-					new PublicKey(reserve.liquidityFeeReceiverAddress),
-					tokenAccount,
-					new PublicKey(reserve.address),
-					new PublicKey(market.config.address),
-					payer.publicKey,
-					SOLEND_PRODUCTION_PROGRAM_ID)
-				);
+				
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 						0,
 						tokenAccount,
-						new PublicKey(reserve.liquidityAddress),
-						new PublicKey(reserve.liquidityFeeReceiverAddress),
+						new PublicKey(reserve.config.liquidityAddress),
+						new PublicKey(reserve.config.liquidityFeeReceiverAddress),
 						tokenAccount,
-						new PublicKey(reserve.address),
+						new PublicKey(reserve.config.address),
 						new PublicKey(market.config.address),
 						payer.publicKey,
 						SOLEND_PRODUCTION_PROGRAM_ID
 					)
 				);
 			} else {
-				console.log(jaregm);
+				//console.log(jaregm);
 				instructions.push(
 					fr2(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 						0,
 						tokenAccount,
-						new PublicKey(reserve.liquidityAddress),
-						new PublicKey(reserve.liquidityAddress),
+						new PublicKey(reserve.config.liquidityAddress),
+						new PublicKey(reserve.config.liquidityAddress),
 						tokenAccount,
-						new PublicKey(reserve.address),
+						new PublicKey(reserve.config.address),
 						new PublicKey(market.config.address),
 						payer.publicKey,
 						SOLEND_PRODUCTION_PROGRAM_ID,
@@ -284,7 +272,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			let goaccst = [];
 			for (var value of goaccs) {
 				try {
-					console.log(value.state.addresses.length);
+				//	console.log(value.state.addresses.length);
 					if (value.state.addresses.length > 0) {
 						goaccst.push(value);
 					}

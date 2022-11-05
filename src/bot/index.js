@@ -5,6 +5,7 @@ const BN = require("bn.js");
 const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
 const JSBI = require("jsbi");
+const WAD = new BN("1".concat(Array(18 + 1).join("0")));
 
 var { SolendMarket } = require("@solendprotocol/solend-sdk");
 if (process.env.tradingStrategy == "arbitrage") {
@@ -28,7 +29,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	const date = new Date();
 	const i = cache.iteration;
 	cache.queue[i] = -1;
-
+let market, reserve
 	try {
 		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
@@ -55,7 +56,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		let prices = {};
 // configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
 let config = configs[Math.floor(Math.random() * configs.length)];
-		let market = await SolendMarket.initialize(
+		 market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
 			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
@@ -67,7 +68,7 @@ let config = configs[Math.floor(Math.random() * configs.length)];
 		);
 		if (config.reserves.length == 0) return
 		let done = false 
-			
+				
 for (var res of config.reserves){
 
 					if (process.env.tradingStrategy === "arbitrage") {
@@ -77,10 +78,10 @@ for (var res of config.reserves){
 					}
 
 				}
-				console.log(temp.length)
-				let reserve = config.reserves[Math.floor(Math.random()* config.reserves.length)]
-				console.log(reserve.config.liquidityToken.mint)
-			tokens = tokens.filter((token) => temp.includes(token.address)); // && token.address != "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")
+				
+				for (var res of config.reserves){
+
+				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
 			
 				tokenA = tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
 				tokenB = tokenA;
@@ -89,15 +90,14 @@ for (var res of config.reserves){
 				let test =	Math.floor(
 					(mod / prices[tokenA.address]) * 10 ** tokenA.decimals
 				)
-				if (new BN(test) < reserve.stats.reserveBorrowLimit){
+				if ((test) < reserve.stats.totalLiquidityWads / WAD){
 					done = true
 				}
 				else {
-					console.log(done)
-					return
 				}
 
-
+			}
+			if (!done) return
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
@@ -180,7 +180,7 @@ for (var res of config.reserves){
 			JSBI.toNumber(route.inAmount),
 			JSBI.toNumber(route2.outAmount)
 		);
-		console.log(simulatedProfit);
+		if (simulatedProfit > parseFloat(process.env.minPercProfit) ) console.log(simulatedProfit);
 		// store max profit spotted
 		if (
 			simulatedProfit > cache.maxProfitSpotted[cache.sideBuy ? "buy" : "sell"]
@@ -231,7 +231,7 @@ for (var res of config.reserves){
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA);
+				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA, market, reserve);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
