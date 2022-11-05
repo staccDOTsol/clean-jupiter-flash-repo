@@ -7,11 +7,6 @@ const { PublicKey } = require("@solana/web3.js");
 const JSBI = require("jsbi");
 const WAD = new BN("1".concat(Array(18 + 1).join("0")));
 
-var { SolendMarket } = require("@solendprotocol/solend-sdk");
-if (process.env.tradingStrategy == "arbitrage") {
-	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
-}
-
 const {
 	calculateProfit,
 	toDecimal,
@@ -24,8 +19,15 @@ const { setup, getInitialOutAmountWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 100
-const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices) => {
+let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 100;
+const pingpongStrategy = async (
+	jupiter,
+	tokenA,
+	tokenB,
+	market,
+	reserve,
+	prices
+) => {
 	cache.iteration++;
 	const date = new Date();
 	const i = cache.iteration;
@@ -34,12 +36,14 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
-		
+
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
-			(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
-		); /*
+			(mod / reserve.stats.assetPriceUSD) *
+				10 ** reserve.config.liquidityToken.decimals
+		);
+		/*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
 				: cache.initialBalance[cache.sideBuy ? "tokenA" : "tokenB"];
@@ -51,7 +55,6 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
 
 		// set input / output token
-		tokenA = {address: reserve.config.liquidityToken.mint, decimals: reserve.config.liquidityToken.decimals, symbol: reserve.config.asset}
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
 		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
 		console.log(inputToken.symbol);
@@ -68,41 +71,36 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 		});
 
 		// choose first route
-		const route =  routes.routesInfos[Math.floor(Math.random() * 1)];
+		const route = routes.routesInfos[Math.floor(Math.random() * 1)];
 		let ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
 		} catch (err) {}
 		let goodluts = [];
 		for (var mi of [...route.marketInfos]) {
-			for (var abc of (Object.values((mi.amm)))){
+			for (var abc of Object.values(mi.amm)) {
 				try {
-					let hmm = (new PublicKey(abc))
-					if (!ammIds.includes(hmm.toBase58())){
-						ammIds.push(hmm.toBase58())
-					}				}
-				catch (err){
-					try {
-					for (var bca of (Object.values((abc)))){
-						try {
-							let hmm = (new PublicKey(bca))
-							if (!ammIds.includes(hmm.toBase58())){
-								ammIds.push(hmm.toBase58())
-							}
-						}
-						catch (err){
-						}
-					}}
-					catch (err){
+					let hmm = new PublicKey(abc);
+					if (!ammIds.includes(hmm.toBase58())) {
+						ammIds.push(hmm.toBase58());
 					}
-
+				} catch (err) {
+					try {
+						for (var bca of Object.values(abc)) {
+							try {
+								let hmm = new PublicKey(bca);
+								if (!ammIds.includes(hmm.toBase58())) {
+									ammIds.push(hmm.toBase58());
+								}
+							} catch (err) {}
+						}
+					} catch (err) {}
 				}
 			}
 			//}, ...route2.marketInfos]) {
 			try {
-				if (!ammIds.includes(mi.amm.id)){
-
-				ammIds.push(mi.amm.id);
+				if (!ammIds.includes(mi.amm.id)) {
+					ammIds.push(mi.amm.id);
 				}
 			} catch (err) {
 				console.log(err);
@@ -144,7 +142,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 			JSBI.toNumber(route.inAmount),
 			JSBI.toNumber(route2.outAmount)
 		);
-		if (simulatedProfit > parseFloat(process.env.minPercProfit) ) console.log(simulatedProfit);
+		if (simulatedProfit > parseFloat(process.env.minPercProfit))
+			console.log(simulatedProfit);
 		// store max profit spotted
 		if (
 			simulatedProfit > cache.maxProfitSpotted[cache.sideBuy ? "buy" : "sell"]
@@ -195,7 +194,15 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA, market, reserve, amountToTrade);
+				[tx, performanceOfTx] = await swap(
+					jupiter,
+					route,
+					route2,
+					tokenA,
+					market,
+					reserve,
+					amountToTrade
+				);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
@@ -244,9 +251,8 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices
 			} else {
 				mod = mod / 1.02;
 			}
-		}
-		else {
-			 mod = process.env.tradingStrategy == "arbitrage" ? 1 : 1000
+		} else {
+			mod = process.env.tradingStrategy == "arbitrage" ? 1 : 1000;
 		}
 	} catch (error) {
 		cache.queue[i] = 1;
@@ -401,12 +407,88 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 	}
 };
 
-const watcher = async (jupiter, tokenA, tokenB, market, reserve, prices) => {
+const watcher = async (jupiter, tokenA, tokenB, market) => {
 	if (
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
 	) {
+		let done = false;
 
+		let prices = {};
+		done = false;
+		for (var res of market.reserves) {
+			res = market.reserves[Math.floor(Math.random() * market.reserves.length)];
+			reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
+
+			tokenA = {
+				address: reserve.config.liquidityToken.mint,
+				decimals: reserve.config.liquidityToken.decimals,
+				symbol: reserve.config.asset,
+			};
+
+			tokenB = tokenA;
+		}
+		for (var res of market.reserves) {
+			if (!done) {
+				res =
+					market.reserves[Math.floor(Math.random() * market.reserves.length)];
+				reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
+
+				tokenA = {
+					address: reserve.config.liquidityToken.mint,
+					decimals: reserve.config.liquidityToken.decimals,
+					symbol: reserve.config.asset,
+				};
+
+				tokenB = tokenA;
+				
+				let test = Math.floor(
+					(mod / reserve.stats.assetPriceUSD) *
+						10 ** reserve.config.liquidityToken.decimals
+				);
+
+				if (test * 2 < reserve.stats.totalLiquidityWads / WAD) {
+					if (!goodies.includes(reserve.config.liquidityToken.mint)) {
+						const routes = await jupiter.computeRoutes({
+							inputMint: new PublicKey(reserve.config.liquidityToken.mint),
+							outputMint: new PublicKey(reserve.config.liquidityToken.mint),
+							amount: JSBI.BigInt(test), // raw input amount of tokens
+							slippageBps: 666,
+
+							forceFetch: true,
+						});
+
+						// choose first route
+						const route = routes.routesInfos[Math.floor(Math.random() * 1)];
+						try {
+							let hmm = route.marketInfos[0].amm.id;
+
+							done = true;
+							if (!goodies.includes(reserve.config.liquidityToken.mint)) {
+								goodies.push(reserve.config.liquidityToken.mint);
+								console.log(
+									"g: " +
+										goodies.length.toString() +
+										" & res length: " +
+										market.reserves.length.toString()
+								);
+							}
+						} catch (err) {
+							if (!baddies.includes(reserve.config.liquidityToken.mint)) {
+								baddies.push(reserve.config.liquidityToken.mint);
+								console.log(
+									"b: " +
+										baddies.length.toString() +
+										" & res length: " +
+										market.reserves.length.toString()
+								);
+							}
+						}
+					}
+				} else {
+				}
+			}
+		}
 		if (process.env.tradingStrategy === "pingpong") {
 			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 		}
@@ -416,11 +498,12 @@ const watcher = async (jupiter, tokenA, tokenB, market, reserve, prices) => {
 		}
 	}
 };
-
+let baddies = [];
+let goodies = [];
 const run = async () => {
 	try {
 		// set everything up
-		let { jupiter, tokenA, tokenB } = await setup();
+		let { jupiter, tokenA, tokenB, market } = await setup();
 
 		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
@@ -444,79 +527,17 @@ const run = async () => {
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
 		}
-		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-		configs = JSON.parse(
-			fs
-				.readFileSync(
-					process.env.tradingStrategy === "pingpong"
-						? "./configs.json"
-						: "./configs2.json"
-				)
-				.toString()
-		);
-//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
-		const connection = new Connection(
-			process.env.ALT_RPC_LIST.split(",")[
-				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			]
-		);
 
-		let temp = [];
-		let prices = {};
-
-// configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
-let config = configs[Math.floor(Math.random() * configs.length)];
-		 market = await SolendMarket.initialize(
-			connection,
-			"production", // optional environment argument
-			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
-		);
 		// 2. Read on-chain accounts for reserve data and cache
 		await market.loadReserves();
-		config.reserves = market.reserves.filter(
+		market.reserves = market.reserves.filter(
 			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
-		if (config.reserves.length == 0) return
-		let done = false 
-				
-for (var res of config.reserves){
-					if (process.env.tradingStrategy === "arbitrage") {
-						temp.push(res.config.liquidityToken.mint);
-					} else if (process.env.tradingStrategy != "arbitrage") {
-						temp.push(res.config.liquidityToken.mint);
-					}
+		if (market.reserves.length == 0) return;
 
-				}
-				
-
-		global.botInterval = setInterval( async function
-
-			()  {
-				done = false 
-				for (var res of config.reserves){
-					if (!done){
-
-					res = config.reserves[Math.floor(Math.random() * config.reserves.length)]
-				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
-			
-				tokenA =  tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
-				tokenB = tokenA;
-				prices[reserve.config.liquidityToken.mint] =
-					reserve.stats.assetPriceUSD;
-				let test =	Math.floor(
-					(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
-				)
-				
-				if ((test * 2) < reserve.stats.totalLiquidityWads / WAD){
-					done = true
-				}
-				else {
-				}
-			}
-			}
-			 watcher(jupiter, tokenA, tokenA, market, reserve, prices) },
-			cache.config.minInterval
-		);
+		global.botInterval = setInterval(async function () {
+			watcher(jupiter, tokenA, tokenA, market);
+		}, cache.config.minInterval);
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;

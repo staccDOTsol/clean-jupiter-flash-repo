@@ -6,6 +6,10 @@ const BN = require("bn.js");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
+var { SolendMarket } = require("@solendprotocol/solend-sdk");
+if (process.env.tradingStrategy == "arbitrage") {
+	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
+}
 const setup = async () => {
 	let spinner, tokens, tokenA, tokenB, wallet;
 	try {
@@ -69,12 +73,31 @@ const setup = async () => {
 
 		cache.isSetupDone = true;
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-		
+
 		// find tokens full Object
 		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
 		tokenB = tokenB; //tokens.find((t) => t.address === cache.config.tokenB.address);
+		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+		configs = JSON.parse(
+			fs
+				.readFileSync(
+					process.env.tradingStrategy === "pingpong"
+						? "./configs.json"
+						: "./configs2.json"
+				)
+				.toString()
+		);
+		//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 
-		return { jupiter, tokenA, tokenA };
+		configs = configs.filter((c) => !c.isHidden);
+
+		let config = configs[Math.floor(Math.random() * configs.length)];
+		let market = await SolendMarket.initialize(
+			connection,
+			"production", // optional environment argument
+			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+		);
+		return { jupiter, tokenA, tokenA, market };
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;

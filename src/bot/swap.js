@@ -8,7 +8,11 @@ let {
 	flashBorrowReserveLiquidityInstruction,
 	SOLEND_PRODUCTION_PROGRAM_ID,
 } = require("@solendprotocol/solend-sdk");
-const { createTransferCheckedInstruction, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("../spl-token");
+const {
+	createTransferCheckedInstruction,
+	ASSOCIATED_TOKEN_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,
+} = require("../spl-token");
 const BN = require("bn.js");
 
 var { SolendMarket } = require("@solendprotocol/solend-sdk");
@@ -47,7 +51,15 @@ const {
 } = require("@solana/spl-token");
 const { ComputeBudgetProgram } = require("@solana/web3.js/lib/index.cjs");
 
-const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTrade) => {
+const swap = async (
+	jupiter,
+	route,
+	route2,
+	tokenA,
+	market,
+	reserve,
+	amountToTrade
+) => {
 	if (process.env.tradingStrategy == "arbitrage") {
 		SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 			"E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
@@ -86,48 +98,38 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 				"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
 				"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
 			];
-			let luts = {}
+			let luts = {};
 			try {
-				luts = JSON.parse(fs.readFileSync('./tluts.json').toString())
-			}
-			catch (err){
+				luts = JSON.parse(fs.readFileSync("./tluts.json").toString());
+			} catch (err) {
 				try {
-
-				}
-				catch (err){
-					luts = JSON.parse(fs.readFileSync('./luts.json').toString())
-
+				} catch (err) {
+					luts = JSON.parse(fs.readFileSync("./luts.json").toString());
 				}
 			}
-//			console.log(Object.keys(luts).length)
+			//			console.log(Object.keys(luts).length)
 
 			for (var mi of [...route.marketInfos]) {
 				//}, ...route2.marketInfos]) {
 				try {
-					let maybeluts = luts[mi.amm.id].split(',')
+					let maybeluts = luts[mi.amm.id].split(",");
 					goluts.push(...maybeluts);
 				} catch (err) {
 					//console.log(err);
 				}
-				for (var abc of (Object.values((mi.amm)))){
+				for (var abc of Object.values(mi.amm)) {
 					try {
-						let maybeluts = luts[abc].split(',')
-						goluts.push(...maybeluts);	
-							}
-					catch (err){
+						let maybeluts = luts[abc].split(",");
+						goluts.push(...maybeluts);
+					} catch (err) {
 						try {
-						for (var bca of (Object.values((abc)))){
-							try {
-
-								let maybeluts = luts[bca].split(',')
-								goluts.push(...maybeluts);	
+							for (var bca of Object.values(abc)) {
+								try {
+									let maybeluts = luts[bca].split(",");
+									goluts.push(...maybeluts);
+								} catch (err) {}
 							}
-							catch (err){
-							}
-						}}
-						catch (err){
-						}
-	
+						} catch (err) {}
 					}
 				}
 			}
@@ -135,30 +137,33 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			for (var golut of goluts) {
 				connection = new Connection(
 					process.env.ALT_RPC_LIST.split(",")[
-						Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-					])
+						Math.floor(
+							Math.random() * process.env.ALT_RPC_LIST.split(",").length
+						)
+					]
+				);
 				goaccs.push(
 					(await connection.getAddressLookupTable(new PublicKey(golut))).value
 				);
 			}
 
-		//	console.log(goaccs.length);
-		
+			//	console.log(goaccs.length);
+
 			let jaregm;
 			let signers = [];
-			let units = 366642
-			const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({ 
+			let units = 366642;
+			const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 				//234907
-				units: units 
-			  });
-			  
-			  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({ 
-				microLamports: Math.floor(units / 1000000 * 50)
-			  });
-			  
-			  tinsts.push(modifyComputeUnits)
-			  tinsts.push(addPriorityFee)
-			
+				units: units,
+			});
+
+			const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
+				microLamports: Math.floor((units / 1000000) * 50),
+			});
+
+			tinsts.push(modifyComputeUnits);
+			tinsts.push(addPriorityFee);
+
 			let ata = (
 				await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 					mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -176,14 +181,14 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 						new PublicKey(reserve.config.liquidityToken.mint), // mint
 						ata2.publicKey, // ata
 						payer.publicKey,
-						payer.publicKey, // payer
+						payer.publicKey // payer
 					)
 				);
 
 				tokenAccount = ata2.publicKey;
 				signers.push(ata2);
 			}
-  
+
 			try {
 				jaregm = (
 					await connection.getTokenAccountsByOwner(
@@ -193,28 +198,29 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 				).value[0].pubkey;
 			} catch (err) {
 				let ata2 = new Keypair();
-				
-				let t = (
-					await createAssociatedTokenAccountInstruction(
-						ASSOCIATED_TOKEN_PROGRAM_ID,
-						TOKEN_PROGRAM_ID,
-						new PublicKey(reserve.config.liquidityToken.mint), // mint
-						ata2.publicKey, // ata
-						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
-						payer.publicKey, // payer
-					)
+
+				let t = await createAssociatedTokenAccountInstruction(
+					ASSOCIATED_TOKEN_PROGRAM_ID,
+					TOKEN_PROGRAM_ID,
+					new PublicKey(reserve.config.liquidityToken.mint), // mint
+					ata2.publicKey, // ata
+					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
+					payer.publicKey // payer
 				);
-				if (payer.publicKey.toBase58() != "5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"){
-					tinsts.push(t)
+				if (
+					payer.publicKey.toBase58() !=
+					"5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"
+				) {
+					tinsts.push(t);
 					jaregm = ata2.publicKey;
-				}
-				else {
-					jaregm = tokenAccount
+				} else {
+					jaregm = tokenAccount;
 				}
 				signers.push(ata2);
 			}
-			console.log(tinsts.length)
-			let instructions = [...tinsts,
+			console.log(tinsts.length);
+			let instructions = [
+				...tinsts,
 				flashBorrowReserveLiquidityInstruction(
 					Math.ceil(amountToTrade * 1.2),
 					new PublicKey(reserve.config.liquidityAddress),
@@ -238,7 +244,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 				}
 			} */
 			if (process.env.tradingStrategy == "pingpong") {
-				console.log(tinsts.length)
+				console.log(tinsts.length);
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
 						Math.ceil(amountToTrade * 1.2),
@@ -276,21 +282,16 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			let balance = 0;
 			try {
 				balance = ata.account.data.parsed.info.tokenAmount.amount;
-			}
-			catch (err){
-
-			}
+			} catch (err) {}
 
 			instructions.push(
 				createTransferCheckedInstruction(
-			
-      tokenAccount, // from (should be a token account)
-	  new PublicKey(reserve.config.liquidityToken.mint),
-      tokenAccount, // to (should be a token account)
-      payer.publicKey, // from's owner
-	  Math.floor(balance),
-	  reserve.config.liquidityToken.decimals
-
+					tokenAccount, // from (should be a token account)
+					new PublicKey(reserve.config.liquidityToken.mint),
+					tokenAccount, // to (should be a token account)
+					payer.publicKey, // from's owner
+					Math.floor(balance),
+					reserve.config.liquidityToken.decimals
 				)
 			);
 
@@ -304,7 +305,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			let goaccst = [];
 			for (var value of goaccs) {
 				try {
-				//	console.log(value.state.addresses.length);
+					//	console.log(value.state.addresses.length);
 					if (value.state.addresses.length > 0) {
 						goaccst.push(value);
 					}
@@ -320,8 +321,8 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 				instructions: tinstructions,
 			}).compileToV0Message(goaccst);
 			const transaction = new VersionedTransaction(messageV00);
-			if (tinsts.length  > 0 ){
-			//	transaction.sign(signers)
+			if (tinsts.length > 0) {
+				//	transaction.sign(signers)
 			}
 			transaction.sign([payer]);
 			const result = await connection.sendTransaction(transaction, {
@@ -441,7 +442,10 @@ const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 		// update trade history
 		let tempHistory = cache.tradeHistory;
 
-		tradeEntry.inAmount = toDecimal(inAmountFromSolscanParser, reserve.config.liquidityToken.decimals);
+		tradeEntry.inAmount = toDecimal(
+			inAmountFromSolscanParser,
+			reserve.config.liquidityToken.decimals
+		);
 		tradeEntry.outAmount = toDecimal(
 			outAmountFromSolscanParser,
 			reserve.config.liquidityToken.decimals
