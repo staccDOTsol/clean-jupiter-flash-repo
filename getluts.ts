@@ -46,8 +46,14 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.f
       // @ts-ignore
       var connection= new Connection(ALT_RPC_LIST?.split(',')[ran])
 
-      let ammIdspks = JSON.parse(fs.readFileSync('./ammIds.json').toString())
+      let ammIdspks  = []
       
+      try {
+        ammIdspks = JSON.parse(fs.readFileSync('./ammIds.json').toString())
+      } 
+      catch (err){
+        
+      }
       let ammIds: any = []
       for (var ammId of ammIdspks){
         let ammIdpk = new PublicKey(ammId)
