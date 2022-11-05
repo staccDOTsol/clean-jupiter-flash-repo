@@ -135,7 +135,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
       new PublicKey(tokenA.address) // mint
     ))
 
-				jaregm = ata.publicKey;
+				jaregm = ata2.publicKey;
 				signers.push(ata2)
 			}
 			let ata = (
@@ -155,7 +155,7 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
       new PublicKey(tokenA.address) // mint
     ))
 
-				tokenAccount = ata.publicKey;
+				tokenAccount = ata2.publicKey;
 				signers.push(ata2)
 			}
 			let instructions = [
@@ -229,8 +229,11 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 				);
 			}
 
-			let balance = ata.account.data.parsed.info.tokenAmount.amount;
+			let balance = 0 
+			if (ata){
 			
+			balance =  ata.account.data.parsed.info.tokenAmount.amount;
+			}
 	  instructions.push(
 		  createTransferInstruction(
 			tokenAccount,
