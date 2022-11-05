@@ -177,7 +177,7 @@
     namespace: default
   spec:
     progressDeadlineSeconds: 1600
-    replicas: 16
+    replicas: 10
     revisionHistoryLimit: 10
     selector:
       matchLabels:
