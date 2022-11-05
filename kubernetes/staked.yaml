@@ -49,7 +49,7 @@
             value: "HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:mad138
           imagePullPolicy: Always
-          name: production-1
+          name: staked
           resources:
                 requests:
                   cpu: '0.1'

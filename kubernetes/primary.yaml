@@ -46,10 +46,10 @@
           - name: minPercProfit
             value: "0.29"
           - name: marketKey
-            value: "HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy"
+            value: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:mad138
           imagePullPolicy: Always
-          name: production-1
+          name: primary
           resources:
                 requests:
                   cpu: '0.1'

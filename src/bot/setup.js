@@ -90,12 +90,15 @@ const setup = async () => {
 		//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 
 		configs = configs.filter((c) => (!c.isHidden && !c.isPermissionless && c.reserves.length > 4));
-
+		if (process.env.tradingStrategy == 'pingpong'){
+			let welike = ["HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy",
+		]
+		}
 		let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
-			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			process.env.tradingStrategy == 'arbitrage' ? process.env.marketKey : new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { jupiter, tokenA, tokenA, market };
 	} catch (error) {
