@@ -42,6 +42,7 @@ let {
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { createAssociatedTokenAccount } = require("@solana/spl-token");
 const { Token, createTransferInstruction } = require('@solana/spl-token');
+const { createAssociatedTokenAccountInstruction } = require("@solana/spl-token");
 
 const swap = async (jupiter, route, route2, tokenA) => {
 	if (process.env.tradingStrategy == "arbitrage") {
@@ -117,20 +118,25 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				}
 			}
 			let jaregm;
+			let signers = []
+			tinsts = []
 			try {
 				jaregm = (await connection.getTokenAccountsByOwner(
 					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
 					{ mint: new PublicKey(tokenA.address) }
 				)).value[0].pubkey;
 			} catch (err) {
-				let hmmm = await createAssociatedTokenAccount(
-					connection, // connection
-					payer, // fee payer
-					new PublicKey(tokenA.address), // mint
-					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // owner,
-				);
 
-				jaregm = hmmm.address;
+				let ata2 = new Keypair()
+				tinsts.push( await createAssociatedTokenAccountInstruction(
+      payer.publicKey, // payer
+      ata2.publicKey, // ata
+      new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") , // owner
+      new PublicKey(tokenA.address) // mint
+    ))
+
+				jaregm = ata.publicKey;
+				signers.push(ata2)
 			}
 			let ata = (
 				await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
@@ -141,14 +147,16 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			try {
 				tokenAccount = ata.pubkey;
 			} catch (err) {
-				let hmm = await createAssociatedTokenAccount(
-					connection, // connection
-					payer, // fee payer
-					new PublicKey(tokenA.address), // mint
-					payer.publicKey // owner,
-				);
+let ata2 = new Keypair()
+tinsts.push( await createAssociatedTokenAccountInstruction(
+      payer.publicKey, // payer
+      ata2.publicKey, // ata
+      payer.publicKey, // owner
+      new PublicKey(tokenA.address) // mint
+    ))
 
-				tokenAccount = hmm.address;
+				tokenAccount = ata.publicKey;
+				signers.push(ata2)
 			}
 			let instructions = [
 				flashBorrowReserveLiquidityInstruction(
@@ -160,6 +168,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
+			instructions.push(...tinsts)
 			for (var instruction of execute1.transactions.swapTransaction
 				.instructions) {
 				if (!instructions.includes(instruction)) {
@@ -258,7 +267,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				instructions: tinstructions,
 			}).compileToV0Message(goaccst);
 			const transaction = new VersionedTransaction(messageV00);
-			transaction.sign([payer]);
+			transaction.sign([payer, ...signers]);
 			const result = await connection.sendTransaction(transaction, {
 				maxRetries: 5,
 			});
