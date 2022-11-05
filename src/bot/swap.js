@@ -8,7 +8,7 @@ let {
 	flashBorrowReserveLiquidityInstruction,
 	SOLEND_PRODUCTION_PROGRAM_ID,
 } = require("@solendprotocol/solend-sdk");
-const { createTransferCheckedInstruction } = require("@solana/spl-token");
+const { createTransferCheckedInstruction, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } = require("@solana/spl-token");
 const BN = require("bn.js");
 
 var { SolendMarket } = require("@solendprotocol/solend-sdk");
@@ -45,6 +45,7 @@ const { Token, createTransferInstruction } = require("@solana/spl-token");
 const {
 	createAssociatedTokenAccountInstruction,
 } = require("@solana/spl-token");
+const { ComputeBudgetProgram } = require("@solana/web3.js/lib/index.cjs");
 
 const swap = async (jupiter, route, route2, tokenA) => {
 	if (process.env.tradingStrategy == "arbitrage") {
@@ -72,7 +73,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 		const execute2 = await jupiter.exchange({
 			routeInfo: route2,
 		}); */
-			const connection = new Connection(
+			let connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 				]
@@ -86,6 +87,10 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			];
 			let goaccs = [];
 			for (var golut of goluts) {
+				connection = new Connection(
+					process.env.ALT_RPC_LIST.split(",")[
+						Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+					])
 				goaccs.push(
 					(await connection.getAddressLookupTable(new PublicKey(golut))).value
 				);
@@ -121,6 +126,19 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			let jaregm;
 			let signers = [];
 			let tinsts = [];
+			let units = 366642
+			const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({ 
+				//234907
+				units: units 
+			  });
+			  
+			  const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({ 
+				microLamports: Math.floor(units / 1000000 * 50)
+			  });
+			  
+			  tinsts.push(modifyComputeUnits)
+			  tinsts.push(addPriorityFee)
+			  
 			try {
 				jaregm = (
 					await connection.getTokenAccountsByOwner(
@@ -132,10 +150,12 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				let ata2 = new Keypair();
 				tinsts.push(
 					await createAssociatedTokenAccountInstruction(
-						payer.publicKey, // payer
+						ASSOCIATED_TOKEN_PROGRAM_ID,
+						TOKEN_PROGRAM_ID,
+						new PublicKey(tokenA.address), // mint
 						ata2.publicKey, // ata
 						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
-						new PublicKey(tokenA.address) // mint
+						payer.publicKey, // payer
 					)
 				);
 
@@ -154,17 +174,20 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				let ata2 = new Keypair();
 				tinsts.push(
 					await createAssociatedTokenAccountInstruction(
-						payer.publicKey, // payer
+						ASSOCIATED_TOKEN_PROGRAM_ID,
+						TOKEN_PROGRAM_ID,
+						new PublicKey(tokenA.address), // mint
 						ata2.publicKey, // ata
-						payer.publicKey, // owner
-						new PublicKey(tokenA.address) // mint
+						payer.publicKey,
+						payer.publicKey, // payer
 					)
 				);
 
 				tokenAccount = ata2.publicKey;
 				signers.push(ata2);
 			}
-			let instructions = [
+
+			let instructions = [...tinsts,
 				flashBorrowReserveLiquidityInstruction(
 					Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 					new PublicKey(reserve.liquidityAddress),
@@ -174,7 +197,6 @@ const swap = async (jupiter, route, route2, tokenA) => {
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
-			instructions.push(...tinsts);
 			for (var instruction of execute1.transactions.swapTransaction
 				.instructions) {
 				if (!instructions.includes(instruction)) {
@@ -191,7 +213,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			if (process.env.tradingStrategy == "pingpong") {
 				console.log(
 					(Math.ceil(JSBI.toNumber(route.inAmount) * 2),
-					0,
+					tinsts.length,
 					tokenAccount,
 					new PublicKey(reserve.liquidityAddress),
 					new PublicKey(reserve.liquidityFeeReceiverAddress),
@@ -240,7 +262,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				balance = ata.account.data.parsed.info.tokenAmount.amount;
 			}
 			catch (err){
-				
+
 			}
 			instructions.push(
 				createTransferInstruction(
@@ -278,7 +300,10 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				instructions: tinstructions,
 			}).compileToV0Message(goaccst);
 			const transaction = new VersionedTransaction(messageV00);
-			transaction.sign([payer, ...signers]);
+			if (tinsts.length  > 0 ){
+			//	transaction.sign(signers)
+			}
+			transaction.sign([payer]);
 			const result = await connection.sendTransaction(transaction, {
 				maxRetries: 5,
 			});
