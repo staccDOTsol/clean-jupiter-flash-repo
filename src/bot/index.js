@@ -419,11 +419,12 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 		for (var res of market.reserves) {
 			res = market.reserves[Math.floor(Math.random() * market.reserves.length)];
 			reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
+			let symbol 			= process.env.tradingStrategy == "arbitrage" ?	reserve.config.asset : reserve.config.liquidityToken.symbol
 
 			tokenA = {
 				address: reserve.config.liquidityToken.mint,
 				decimals: reserve.config.liquidityToken.decimals,
-				symbol: reserve.config.asset,
+				symbol: symbol
 			};
 
 			tokenB = tokenA;
@@ -433,13 +434,14 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 				res =
 					market.reserves[Math.floor(Math.random() * market.reserves.length)];
 				reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
+				let symbol 			= process.env.tradingStrategy == "arbitrage" ?	reserve.config.asset : reserve.config.liquidityToken.symbol
 
 				tokenA = {
 					address: reserve.config.liquidityToken.mint,
 					decimals: reserve.config.liquidityToken.decimals,
-					symbol: reserve.config.asset,
+					symbol: symbol
 				};
-
+	
 				tokenB = tokenA;
 				
 				let test = Math.floor(
