@@ -112,7 +112,7 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 		});
 
 		// choose first route
-		const route = await routes.routesInfos[Math.floor(Math.random() * 2)];
+		const route = await routes.routesInfos[Math.floor(Math.random() * 1)];
 		let ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
