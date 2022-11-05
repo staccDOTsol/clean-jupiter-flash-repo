@@ -142,9 +142,35 @@ for (var res of config.reserves){
 		} catch (err) {}
 		let goodluts = [];
 		for (var mi of [...route.marketInfos]) {
+			for (var abc of (Object.values((mi.amm)))){
+				try {
+					let hmm = (new PublicKey(abc))
+					if (!ammIds.includes(hmm.toBase58())){
+						ammIds.push(hmm.toBase58())
+					}				}
+				catch (err){
+					try {
+					for (var bca of (Object.values((abc)))){
+						try {
+							let hmm = (new PublicKey(bca))
+							if (!ammIds.includes(hmm.toBase58())){
+								ammIds.push(hmm.toBase58())
+							}
+						}
+						catch (err){
+						}
+					}}
+					catch (err){
+					}
+
+				}
+			}
 			//}, ...route2.marketInfos]) {
 			try {
+				if (!ammIds.includes(mi.amm.id)){
+
 				ammIds.push(mi.amm.id);
+				}
 			} catch (err) {
 				console.log(err);
 			}

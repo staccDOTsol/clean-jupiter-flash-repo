@@ -56,9 +56,11 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.f
       }
       let ammIds: any = []
       for (var ammId of ammIdspks){
+        try {
         let ammIdpk = new PublicKey(ammId)
         if (!ammIds.includes(ammIdpk))
         ammIds.push(ammIdpk)
+        } catch (err){}
       }
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
@@ -69,6 +71,7 @@ if(maybemine.value?.state.addresses.length as number > 57){
 let addypk = addy.toBase58()
 for (var pk of ammIdspks){
 
+    try {
     if ( pk === addypk && !Object.keys(theluts).includes(pk)){
         theluts[pk] = [lut.pubkey.toBase58()]
         console.log(Object.keys(theluts).length)
@@ -76,7 +79,9 @@ for (var pk of ammIdspks){
     } else if ( pk === addypk){
         if (!theluts[pk].includes(lut.pubkey.toBase58())){
     theluts[pk].push (lut.pubkey.toBase58())
-        
+        }catch (err){
+            
+        }
 }
 
     fs.writeFileSync('./tluts.json', JSON.stringify(theluts))

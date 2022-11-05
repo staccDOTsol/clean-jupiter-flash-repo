@@ -54,8 +54,8 @@ setTimeout(async function(){        // Step 1 - Create Transaction Instruction
 let add: any = []
 let abc = 0 
 let which = -1
-let LOOKUP_TABLE_ADDRESS = new PublicKey("9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC")
-
+let luts = ["2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi"
+]
 
 
 let units = 366642
@@ -84,32 +84,21 @@ const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
             SIGNER_WALLET.publicKey, // payer
         )
     )
-    let keys: any = []
-for (var ix of tinsts){
-    keys.push(ix.programId)
-    for (var k of ix.keys){
-
-        keys.push(k.pubkey)
-    }
-}
-console.log(keys)
-const addAddressesInstruction = AddressLookupTableProgram.extendLookupTable({
-    payer: SIGNER_WALLET.publicKey,
-    authority: SIGNER_WALLET.publicKey,
-    lookupTable: LOOKUP_TABLE_ADDRESS,
-    addresses: keys,
-});
-// Step 2 - Generate a transaction and send it to the network
-   await createAndSendV0Tx([addAddressesInstruction]);
-  console.log(`Lookup Table Entries: `,`https://explorer.solana.com/address/${LOOKUP_TABLE_ADDRESS.toString()}/entries?cluster=devnet`)
-
+    console.log(...tinsts)
+    
             /*
 
         const addAddressesInstruction = AddressLookupTableProgram.extendLookupTable({
             payer: SIGNER_WALLET.publicKey,
             authority: SIGNER_WALLET.publicKey,
             lookupTable: LOOKUP_TABLE_ADDRESS,
-            addresses: keys,
+            addresses: [
+                Keypair.generate().publicKey,
+                Keypair.generate().publicKey,
+                Keypair.generate().publicKey,
+                Keypair.generate().publicKey,
+                Keypair.generate().publicKey
+            ],
         });*/
         // Step 2 - Generate a transaction and send it to the network
      //   await createAndSendV0Tx([addAddressesInstruction]);
