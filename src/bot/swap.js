@@ -280,21 +280,17 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			catch (err){
 
 			}
+
 			instructions.push(
-				createTransferInstruction(
-					/*
-      programId: PublicKey,
-      source: PublicKey,
-      destination: PublicKey,
-      owner: PublicKey,
-      multiSigners: Array<Signer>,
-      amount: number | u64,*/
-	  TOKEN_PROGRAM_ID,
-					tokenAccount,
-					tokenAccount,
-					payer.publicKey,
-					[],
-					Math.floor(balance)
+				createTransferCheckedInstruction(
+			
+      tokenAccount, // from (should be a token account)
+	  new PublicKey(reserve.config.liquidityToken.mint),
+      tokenAccount, // to (should be a token account)
+      payer.publicKey, // from's owner
+	  Math.floor(balance),
+	  reserve.config.liquidityToken.decimals
+
 				)
 			);
 
