@@ -1,0 +1,10 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: production
+
+spec:
+  finalizers:
+    - kubernetes
+status:
+  phase: Active
