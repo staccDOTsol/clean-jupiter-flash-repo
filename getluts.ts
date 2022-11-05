@@ -26,9 +26,12 @@ const configOrCommitment: GetProgramAccountsConfig = {
      
     ],
   };
+  console.log(Object.keys(theluts).length)
 let myluts: any = {}
 
     let luts = await connection.getProgramAccounts(AddressLookupTableProgram.programId)
+    console.log(Object.keys(luts).length)
+
     await PromisePool.withConcurrency(10)
     .for(luts)
     // @ts-ignore
@@ -51,7 +54,6 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.f
         if (!ammIds.includes(ammIdpk))
         ammIds.push(ammIdpk)
       }
-    
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
@@ -63,11 +65,13 @@ for (var pk of ammIdspks){
 
     if ( pk === addypk && !Object.keys(theluts).includes(pk)){
         theluts[pk] = [lut.pubkey.toBase58()]
+        console.log(Object.keys(theluts).length)
 
     } else if ( pk === addypk){
         if (!theluts[pk].includes(lut.pubkey.toBase58())){
     theluts[pk].push (lut.pubkey.toBase58())
-        }
+        
+}
 
     fs.writeFileSync('./tluts.json', JSON.stringify(theluts))
         //console.log(theluts[pk] .length)
@@ -82,10 +86,9 @@ for (var pk of ammIdspks){
 }
 
     })
-    console.log(Object.keys(theluts).length)
     fs.writeFileSync('./luts.json', JSON.stringify(theluts))
 } catch (err){
-
+console.log(err)
 }
 }
 })

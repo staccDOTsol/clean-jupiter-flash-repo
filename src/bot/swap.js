@@ -88,33 +88,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				);
 			}
 			const luts = JSON.parse(fs.readFileSync("./luts.json").toString());
-			let ammIds = [];
-			try {
-				ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
-			} catch (err) {}
-			let goodluts = [];
-			for (var mi of [...route.marketInfos, ...route2.marketInfos]) {
-				try {
-					ammIds.push(mi.amm.id);
-					console.log(mi.amm.id);
-					for (var lut of luts[mi.amm.id]) {
-						try {
-							if (!goodluts.includes(mi.amm.id)) {
-								goodluts.push(mi.amm.id);
-								let test = (
-									await connection.getAddressLookupTable(new PublicKey(lut))
-								).value;
-								if (!goaccs.includes(test)) {
-									goaccs.push(test);
-								}
-							}
-						} catch (err) {}
-					}
-				} catch (err) {
-					console.log(err);
-				}
-			}
-			fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+
 
 			console.log(goaccs.length);
 			let mint = tokenA.address;
