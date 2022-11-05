@@ -79,15 +79,15 @@ for (var pk of ammIdspks){
     } else if ( pk === addypk){
         if (!theluts[pk].includes(lut.pubkey.toBase58())){
     theluts[pk].push (lut.pubkey.toBase58())
-        }catch (err){
-            
-        }
+        
 }
 
     fs.writeFileSync('./tluts.json', JSON.stringify(theluts))
         //console.log(theluts[pk] .length)
 
        
+}}catch (err){
+            
 }
 
 }
