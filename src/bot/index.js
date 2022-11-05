@@ -95,7 +95,7 @@ for (var res of config.reserves){
 				let test =	Math.floor(
 					(mod / prices[tokenA.address]) * 10 ** tokenA.decimals
 				)
-				if ((test) < reserve.stats.totalLiquidityWads / WAD){
+				if ((test * 2) < reserve.stats.totalLiquidityWads / WAD){
 					done = true
 				}
 				else {
