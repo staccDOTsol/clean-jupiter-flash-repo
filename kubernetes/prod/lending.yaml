@@ -6,6 +6,8 @@
     name: lending-prod
     namespace: production
   spec:
+    imagePullSecrets:
+      - name: azure
     progressDeadlineSeconds: 1600
     replicas: 2
     revisionHistoryLimit: 10
@@ -52,6 +54,7 @@
           - name: marketKey
             value: "C3VQi4sKNXVsG36zhUnvNasXPhzGmWWVpaeSPv5Tf2AB"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:latest
+  
           imagePullPolicy: Always
           name: lending
           resources:
