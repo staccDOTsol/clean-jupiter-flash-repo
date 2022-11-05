@@ -510,15 +510,11 @@ class MessageAccountKeys {
     };
 
     return instructions.map(instruction => {
-      try {
       return {
         programIdIndex: findKeyIndex(instruction.programId),
         accountKeyIndexes: instruction.keys.map(meta => findKeyIndex(meta.pubkey)),
         data: instruction.data
       };
-    } catch (err){
-      console.log(err)
-    }
     });
   }
 
@@ -678,7 +674,7 @@ class CompiledKeys {
     const keyMetaMap = new Map();
 
     const getOrInsertDefault = pubkey => {
-      pubkey = payer
+      try {
       const address = pubkey.toBase58();
       let keyMeta = keyMetaMap.get(address);
 
@@ -692,6 +688,8 @@ class CompiledKeys {
       }
 
       return keyMeta;
+    } catch (err){
+    }
     };
 
     const payerKeyMeta = getOrInsertDefault(payer);
@@ -756,7 +754,7 @@ class CompiledKeys {
   drainKeysFoundInLookupTable(lookupTableEntries, keyMetaFilter) {
     const lookupTableIndexes = new Array();
     const drainedKeys = new Array();
-console.log(this.keyMetaMap)
+
     for (const [address, keyMeta] of this.keyMetaMap.entries()) {
       if (keyMetaFilter(keyMeta)) {
         const key = new PublicKey(address);

@@ -28,7 +28,7 @@ export const flashRepayReserveLiquidityInstruction = (
     Layout.uint64("liquidityAmount"),
     BufferLayout.u8("borrowInstructionIndex"),
   ]);
-
+console.log(rake)
   const data = Buffer.alloc(dataLayout.span);
   dataLayout.encode(
     {

@@ -23,7 +23,7 @@ const {
 	TransactionMessage,
 	VersionedTransaction,
 	sendAndConfirmTransaction,
-} = require("@solana/web3.js");
+} = require("../web3.js");
 const bs58 = require("bs58");
 
 let payer;
@@ -144,7 +144,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			}
 			let jaregm;
 			try {
-				(jaregm = await connection.getTokenAccountsByOwner(
+				jaregm = (await connection.getTokenAccountsByOwner(
 					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
 					{ mint: new PublicKey(tokenA.address) }
 				)).value[0].pubkey;
@@ -227,6 +227,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 					)
 				);
 			} else {
+				console.log(jaregm)
 				instructions.push(
 					fr2(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
@@ -278,6 +279,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			let goaccst = [];
 			for (var value of goaccs) {
 				try {
+					console.log(value.state.addresses.length)
 				if (value.state.addresses.length > 0) {
 					goaccst.push(value);
 				}
