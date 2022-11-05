@@ -58,8 +58,8 @@ const setup = async () => {
 
 		// connect to RPC
 		const connection = new Connection(
-			process.env.DEFAULT_RPC.split(",")[
-				Math.floor(Math.random() * process.env.DEFAULT_RPC.split(",").length)
+			process.env.ALT_RPC_LIST.split(",")[
+				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 			]
 		);
 
