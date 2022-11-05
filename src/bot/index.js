@@ -24,7 +24,7 @@ const { setup, getInitialOutAmountWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 10
+let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 100
 const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	cache.iteration++;
 	const date = new Date();
@@ -306,10 +306,13 @@ for (var res of config.reserves){
 		}
 		if (mod > 0.1) {
 			if (simulatedProfit > 0) {
-				mod = mod * 1.05;
+				mod = mod * 1.01;
 			} else {
-				mod = mod / 1.2;
+				mod = mod / 1.02;
 			}
+		}
+		else {
+			 mod = process.env.tradingStrategy == "arbitrage" ? 1 : 1000
 		}
 	} catch (error) {
 		cache.queue[i] = 1;
