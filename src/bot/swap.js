@@ -41,8 +41,10 @@ let {
 	flashRepayReserveLiquidityInstruction: fr2,
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { createAssociatedTokenAccount } = require("@solana/spl-token");
-const { Token, createTransferInstruction } = require('@solana/spl-token');
-const { createAssociatedTokenAccountInstruction } = require("@solana/spl-token");
+const { Token, createTransferInstruction } = require("@solana/spl-token");
+const {
+	createAssociatedTokenAccountInstruction,
+} = require("@solana/spl-token");
 
 const swap = async (jupiter, route, route2, tokenA) => {
 	if (process.env.tradingStrategy == "arbitrage") {
@@ -59,7 +61,7 @@ const swap = async (jupiter, route, route2, tokenA) => {
 		if (process.env.tradingStrategy == "arbitrage") {
 			configs = JSON.parse(fs.readFileSync("./configs2.json").toString());
 		}
-		
+
 		if (true) {
 			////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
@@ -90,7 +92,6 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			}
 			const luts = JSON.parse(fs.readFileSync("./luts.json").toString());
 
-
 			console.log(goaccs.length);
 			let mint = tokenA.address;
 
@@ -118,25 +119,28 @@ const swap = async (jupiter, route, route2, tokenA) => {
 				}
 			}
 			let jaregm;
-			let signers = []
-			tinsts = []
+			let signers = [];
+			let tinsts = [];
 			try {
-				jaregm = (await connection.getTokenAccountsByOwner(
-					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-					{ mint: new PublicKey(tokenA.address) }
-				)).value[0].pubkey;
+				jaregm = (
+					await connection.getTokenAccountsByOwner(
+						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
+						{ mint: new PublicKey(tokenA.address) }
+					)
+				).value[0].pubkey;
 			} catch (err) {
-
-				let ata2 = new Keypair()
-				tinsts.push( await createAssociatedTokenAccountInstruction(
-      payer.publicKey, // payer
-      ata2.publicKey, // ata
-      new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") , // owner
-      new PublicKey(tokenA.address) // mint
-    ))
+				let ata2 = new Keypair();
+				tinsts.push(
+					await createAssociatedTokenAccountInstruction(
+						payer.publicKey, // payer
+						ata2.publicKey, // ata
+						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
+						new PublicKey(tokenA.address) // mint
+					)
+				);
 
 				jaregm = ata2.publicKey;
-				signers.push(ata2)
+				signers.push(ata2);
 			}
 			let ata = (
 				await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
@@ -147,16 +151,18 @@ const swap = async (jupiter, route, route2, tokenA) => {
 			try {
 				tokenAccount = ata.pubkey;
 			} catch (err) {
-let ata2 = new Keypair()
-tinsts.push( await createAssociatedTokenAccountInstruction(
-      payer.publicKey, // payer
-      ata2.publicKey, // ata
-      payer.publicKey, // owner
-      new PublicKey(tokenA.address) // mint
-    ))
+				let ata2 = new Keypair();
+				tinsts.push(
+					await createAssociatedTokenAccountInstruction(
+						payer.publicKey, // payer
+						ata2.publicKey, // ata
+						payer.publicKey, // owner
+						new PublicKey(tokenA.address) // mint
+					)
+				);
 
 				tokenAccount = ata2.publicKey;
-				signers.push(ata2)
+				signers.push(ata2);
 			}
 			let instructions = [
 				flashBorrowReserveLiquidityInstruction(
@@ -168,7 +174,7 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
-			instructions.push(...tinsts)
+			instructions.push(...tinsts);
 			for (var instruction of execute1.transactions.swapTransaction
 				.instructions) {
 				if (!instructions.includes(instruction)) {
@@ -183,8 +189,8 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 				}
 			} */
 			if (process.env.tradingStrategy == "pingpong") {
-				console.log((
-					Math.ceil(JSBI.toNumber(route.inAmount) * 2),
+				console.log(
+					(Math.ceil(JSBI.toNumber(route.inAmount) * 2),
 					0,
 					tokenAccount,
 					new PublicKey(reserve.liquidityAddress),
@@ -193,8 +199,8 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 					new PublicKey(reserve.address),
 					new PublicKey(market.config.address),
 					payer.publicKey,
-					SOLEND_PRODUCTION_PROGRAM_ID
-				))
+					SOLEND_PRODUCTION_PROGRAM_ID)
+				);
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
@@ -210,7 +216,7 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 					)
 				);
 			} else {
-				console.log(jaregm)
+				console.log(jaregm);
 				instructions.push(
 					fr2(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
@@ -229,20 +235,22 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 				);
 			}
 
-			let balance = 0 
-			if (ata){
-			
-			balance =  ata.account.data.parsed.info.tokenAmount.amount;
+			let balance = 0;
+			try {
+				balance = ata.account.data.parsed.info.tokenAmount.amount;
 			}
-	  instructions.push(
-		  createTransferInstruction(
-			tokenAccount,
-			tokenAccount,
-			payer.publicKey,
-			Math.floor(balance),[]
-		  )
-		); 
-	  
+			catch (err){
+				
+			}
+			instructions.push(
+				createTransferInstruction(
+					tokenAccount,
+					tokenAccount,
+					payer.publicKey,
+					Math.floor(balance),
+					[]
+				)
+			);
 
 			let tinstructions = [];
 			for (var ix of instructions) {
@@ -254,13 +262,13 @@ tinsts.push( await createAssociatedTokenAccountInstruction(
 			let goaccst = [];
 			for (var value of goaccs) {
 				try {
-					console.log(value.state.addresses.length)
-				if (value.state.addresses.length > 0) {
-					goaccst.push(value);
+					console.log(value.state.addresses.length);
+					if (value.state.addresses.length > 0) {
+						goaccst.push(value);
+					}
+				} catch (err) {
+					console.log(err);
 				}
-			} catch (err){
-				console.log(err)
-			}
 			}
 			const messageV00 = new TransactionMessage({
 				payerKey: payer.publicKey,

@@ -118,10 +118,10 @@ const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
 		} catch (err) {}
 		let goodluts = [];
-		for (var mi of [...route.marketInfos]){//}, ...route2.marketInfos]) {
+		for (var mi of [...route.marketInfos]) {
+			//}, ...route2.marketInfos]) {
 			try {
 				ammIds.push(mi.amm.id);
-				
 			} catch (err) {
 				console.log(err);
 			}
