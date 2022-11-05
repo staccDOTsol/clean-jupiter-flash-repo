@@ -36,7 +36,8 @@
 		"jsbi": "^4.3.0",
 		"moment": "^2.29.3",
 		"open": "^8.4.0",
-		"promise-retry": "^2.0.1"
+		"promise-retry": "^2.0.1",
+		"random-org": "^2.2.0"
 	},
 	"ava": {
 		"require": [

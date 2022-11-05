@@ -11,6 +11,7 @@ var { SolendMarket } = require("@solendprotocol/solend-sdk");
 if (process.env.tradingStrategy == "arbitrage") {
 	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
 }
+
 const {
 	calculateProfit,
 	toDecimal,
@@ -54,8 +55,10 @@ let market, reserve
 
 		let temp = [];
 		let prices = {};
+
 // configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
 let config = configs[Math.floor(Math.random() * configs.length)];
+console.log(configs.length)
 		 market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
@@ -63,14 +66,15 @@ let config = configs[Math.floor(Math.random() * configs.length)];
 		);
 		// 2. Read on-chain accounts for reserve data and cache
 		await market.loadReserves();
+		console.log(config.reserves.length)
 		config.reserves = market.reserves.filter(
-			(reserve) => reserve.stats.reserveBorrowLimit > new BN(0)
+			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
+		console.log(config.reserves.length)
 		if (config.reserves.length == 0) return
 		let done = false 
 				
 for (var res of config.reserves){
-
 					if (process.env.tradingStrategy === "arbitrage") {
 						temp.push(res.config.liquidityToken.mint);
 					} else if (process.env.tradingStrategy != "arbitrage") {
@@ -81,6 +85,7 @@ for (var res of config.reserves){
 				
 				for (var res of config.reserves){
 
+					res = config.reserves[Math.floor(Math.random() * config.reserves.length)]
 				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
 			
 				tokenA = tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
