@@ -3,6 +3,8 @@
   kind: Deployment
   metadata:
     generation: 0
+    name: staked-prod
+    namespace: production
   spec:
     progressDeadlineSeconds: 1600
     replicas: 2

@@ -3,6 +3,8 @@
   kind: Deployment
   metadata:
     generation: 0
+    name: lending-prod
+    namespace: production
   spec:
     progressDeadlineSeconds: 1600
     replicas: 2
@@ -21,8 +23,7 @@
         labels:
           app: risk-lol
 
-      name: lending
-      namespace: production
+      
       spec:
         nodeSelector:
           kubernetes.io/os: linux
