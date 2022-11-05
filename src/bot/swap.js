@@ -23,7 +23,7 @@ const {
 	TransactionMessage,
 	VersionedTransaction,
 	sendAndConfirmTransaction,
-} = require("../web3.js");
+} = require("@solana/web3.js");
 const bs58 = require("bs58");
 
 let payer;
