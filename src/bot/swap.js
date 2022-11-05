@@ -55,6 +55,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 	}
 
 	try {
+		let tinsts = [];
 		const performanceOfTxStart = performance.now();
 
 		cache.performanceOfTxStart = performanceOfTxStart;
@@ -108,6 +109,27 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				} catch (err) {
 					//console.log(err);
 				}
+				for (var abc of (Object.values((mi.amm)))){
+					try {
+						let maybeluts = luts[abc].split(',')
+						goluts.push(...maybeluts);	
+							}
+					catch (err){
+						try {
+						for (var bca of (Object.values((abc)))){
+							try {
+
+								let maybeluts = luts[bca].split(',')
+								goluts.push(...maybeluts);	
+							}
+							catch (err){
+							}
+						}}
+						catch (err){
+						}
+	
+					}
+				}
 			}
 			let goaccs = [];
 			for (var golut of goluts) {
@@ -124,7 +146,6 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 		
 			let jaregm;
 			let signers = [];
-			let tinsts = [];
 			let units = 366642
 			const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({ 
 				//234907
@@ -210,11 +231,11 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				}
 			} */
 			if (process.env.tradingStrategy == "pingpong") {
-				
+				console.log(tinsts.length)
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
-						0,
+						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
 						new PublicKey(reserve.config.liquidityFeeReceiverAddress),
@@ -230,7 +251,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				instructions.push(
 					fr2(
 						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
-						0,
+						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
 						new PublicKey(reserve.config.liquidityAddress),
