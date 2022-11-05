@@ -58,8 +58,8 @@ const setup = async () => {
 
 		// connect to RPC
 		const connection = new Connection(
-			process.env.ALT_RPC_LIST.split(",")[
-				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+			process.env.DEFAULT_RPC.split(",")[
+				Math.floor(Math.random() * process.env.DEFAULT_RPC.split(",").length)
 			]
 		);
 
@@ -90,10 +90,7 @@ const setup = async () => {
 		//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 
 		configs = configs.filter((c) => (!c.isHidden && !c.isPermissionless && c.reserves.length > 4));
-		if (process.env.tradingStrategy == 'pingpong'){
-			let welike = ["HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy",
-		]
-		}
+		
 		let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
 			connection,

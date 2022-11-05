@@ -42,7 +42,7 @@
           - name: SOLANA_WALLET_PRIVATE_KEY
             value: "2tjGyZ6Vv5V71rQvxaPhaEuokT2XnVT8vr5i3Rn7HkLhUW2TANo6cuzFkawieEGgsvpMQE1vRxe7UvBBQzi25cjL"
           - name: DEFAULT_RPC
-            value: "http://191.101.160.247:8899"
+            value: "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn,https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-,https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk,https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
           - name: ALT_RPC_LIST
             value: "http://191.101.160.247:8899"
           - name: tradingStrategy

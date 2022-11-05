@@ -289,6 +289,11 @@ console.log(err)
 				//	transaction.sign(signers)
 			}
 			transaction.sign([payer]);
+			const connection2 = new Connection(
+				process.env.ALT_RPC_LIST.split(",")[
+					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+				]
+			);
 			const result = await sendAndConfirmTransaction(connection, transaction)
 			console.log("tx: " + result);
 			//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
