@@ -25,83 +25,16 @@ const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
 let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 100
-const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
+const pingpongStrategy = async (jupiter, tokenA, tokenB, market, reserve, prices) => {
 	cache.iteration++;
 	const date = new Date();
 	const i = cache.iteration;
 	cache.queue[i] = -1;
-let market, reserve
 	try {
 		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
-		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-		tokenB = tokens[Math.floor(Math.random() * tokens.length) % 2]; //.find((t) => t.address === cache.config.tokenB.address);
-		configs = JSON.parse(
-			fs
-				.readFileSync(
-					process.env.tradingStrategy === "pingpong"
-						? "./configs.json"
-						: "./configs2.json"
-				)
-				.toString()
-		);
-//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
-		const connection = new Connection(
-			process.env.ALT_RPC_LIST.split(",")[
-				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			]
-		);
-
-		let temp = [];
-		let prices = {};
-
-// configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
-let config = configs[Math.floor(Math.random() * configs.length)];
-		 market = await SolendMarket.initialize(
-			connection,
-			"production", // optional environment argument
-			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
-		);
-		// 2. Read on-chain accounts for reserve data and cache
-		await market.loadReserves();
-		config.reserves = market.reserves.filter(
-			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
-		);
-		if (config.reserves.length == 0) return
-		let done = false 
-				
-for (var res of config.reserves){
-					if (process.env.tradingStrategy === "arbitrage") {
-						temp.push(res.config.liquidityToken.mint);
-					} else if (process.env.tradingStrategy != "arbitrage") {
-						temp.push(res.config.liquidityToken.mint);
-					}
-
-				}
-				
-				for (var res of config.reserves){
-					if (!done){
-
-					res = config.reserves[Math.floor(Math.random() * config.reserves.length)]
-				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
-			
-				tokenA =  tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
-				tokenB = tokenA;
-				prices[reserve.config.liquidityToken.mint] =
-					reserve.stats.assetPriceUSD;
-				let test =	Math.floor(
-					(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
-				)
-				
-				if ((test * 2) < reserve.stats.totalLiquidityWads / WAD){
-					done = true
-				}
-				else {
-				}
-			}
-			}
-			if (!done) return
+		
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
@@ -468,16 +401,17 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 	}
 };
 
-const watcher = async (jupiter, tokenA, tokenB) => {
+const watcher = async (jupiter, tokenA, tokenB, market, reserve, prices) => {
 	if (
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
 	) {
+
 		if (process.env.tradingStrategy === "pingpong") {
-			await pingpongStrategy(jupiter, tokenA, tokenB);
+			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 		}
 		if (process.env.tradingStrategy === "arbitrage") {
-			await pingpongStrategy(jupiter, tokenA, tokenB);
+			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
 	}
@@ -486,7 +420,7 @@ const watcher = async (jupiter, tokenA, tokenB) => {
 const run = async () => {
 	try {
 		// set everything up
-		const { jupiter, tokenA, tokenB } = await setup();
+		let { jupiter, tokenA, tokenB } = await setup();
 
 		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
@@ -510,9 +444,77 @@ const run = async () => {
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
 		}
+		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+		configs = JSON.parse(
+			fs
+				.readFileSync(
+					process.env.tradingStrategy === "pingpong"
+						? "./configs.json"
+						: "./configs2.json"
+				)
+				.toString()
+		);
+//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
+		const connection = new Connection(
+			process.env.ALT_RPC_LIST.split(",")[
+				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+			]
+		);
 
-		global.botInterval = setInterval(
-			() => watcher(jupiter, tokenA, tokenA),
+		let temp = [];
+		let prices = {};
+
+// configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
+let config = configs[Math.floor(Math.random() * configs.length)];
+		 market = await SolendMarket.initialize(
+			connection,
+			"production", // optional environment argument
+			new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+		);
+		// 2. Read on-chain accounts for reserve data and cache
+		await market.loadReserves();
+		config.reserves = market.reserves.filter(
+			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
+		);
+		if (config.reserves.length == 0) return
+		let done = false 
+				
+for (var res of config.reserves){
+					if (process.env.tradingStrategy === "arbitrage") {
+						temp.push(res.config.liquidityToken.mint);
+					} else if (process.env.tradingStrategy != "arbitrage") {
+						temp.push(res.config.liquidityToken.mint);
+					}
+
+				}
+				
+
+		global.botInterval = setInterval( async function
+
+			()  {
+				done = false 
+				for (var res of config.reserves){
+					if (!done){
+
+					res = config.reserves[Math.floor(Math.random() * config.reserves.length)]
+				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
+			
+				tokenA =  tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
+				tokenB = tokenA;
+				prices[reserve.config.liquidityToken.mint] =
+					reserve.stats.assetPriceUSD;
+				let test =	Math.floor(
+					(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
+				)
+				
+				if ((test * 2) < reserve.stats.totalLiquidityWads / WAD){
+					done = true
+				}
+				else {
+				}
+			}
+			}
+			 watcher(jupiter, tokenA, tokenA, market, reserve, prices) },
 			cache.config.minInterval
 		);
 	} catch (error) {
