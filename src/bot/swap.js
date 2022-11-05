@@ -158,30 +158,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			  
 			  tinsts.push(modifyComputeUnits)
 			  tinsts.push(addPriorityFee)
-			  
-			try {
-				jaregm = (
-					await connection.getTokenAccountsByOwner(
-						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-						{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
-					)
-				).value[0].pubkey;
-			} catch (err) {
-				let ata2 = new Keypair();
-				tinsts.push(
-					await createAssociatedTokenAccountInstruction(
-						ASSOCIATED_TOKEN_PROGRAM_ID,
-						TOKEN_PROGRAM_ID,
-						new PublicKey(reserve.config.liquidityToken.mint), // mint
-						ata2.publicKey, // ata
-						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
-						payer.publicKey, // payer
-					)
-				);
-
-				jaregm = ata2.publicKey;
-				signers.push(ata2);
-			}
+			
 			let ata = (
 				await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 					mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -206,7 +183,37 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 				tokenAccount = ata2.publicKey;
 				signers.push(ata2);
 			}
-
+  
+			try {
+				jaregm = (
+					await connection.getTokenAccountsByOwner(
+						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
+						{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
+					)
+				).value[0].pubkey;
+			} catch (err) {
+				let ata2 = new Keypair();
+				
+				let t = (
+					await createAssociatedTokenAccountInstruction(
+						ASSOCIATED_TOKEN_PROGRAM_ID,
+						TOKEN_PROGRAM_ID,
+						new PublicKey(reserve.config.liquidityToken.mint), // mint
+						ata2.publicKey, // ata
+						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
+						payer.publicKey, // payer
+					)
+				);
+				if (payer.publicKey.toBase58() != "5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"){
+					tinsts.push(t)
+					jaregm = ata2.publicKey;
+				}
+				else {
+					jaregm = tokenAccount
+				}
+				signers.push(ata2);
+			}
+			console.log(tinsts.length)
 			let instructions = [...tinsts,
 				flashBorrowReserveLiquidityInstruction(
 					Math.ceil(amountToTrade * 1.2),
@@ -275,11 +282,19 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTra
 			}
 			instructions.push(
 				createTransferInstruction(
+					/*
+      programId: PublicKey,
+      source: PublicKey,
+      destination: PublicKey,
+      owner: PublicKey,
+      multiSigners: Array<Signer>,
+      amount: number | u64,*/
+	  TOKEN_PROGRAM_ID,
 					tokenAccount,
 					tokenAccount,
 					payer.publicKey,
-					Math.floor(balance),
-					[]
+					[],
+					Math.floor(balance)
 				)
 			);
 
