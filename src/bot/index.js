@@ -33,10 +33,10 @@ const pingpongStrategy = async (
 	const i = cache.iteration;
 	cache.queue[i] = -1;
 	try {
+
 		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
-
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
@@ -60,7 +60,6 @@ const pingpongStrategy = async (
 		console.log(inputToken.symbol);
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
-
 		const routes = await jupiter.computeRoutes({
 			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -72,6 +71,7 @@ const pingpongStrategy = async (
 
 		// choose first route
 		const route = routes.routesInfos[Math.floor(Math.random() * 1)];
+		if (!route) return
 		let ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
@@ -440,6 +440,7 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 
 		let prices = {};
 		done = false;
+		market.refreshAll()
 		for (var res of market.reserves) {
 			res = market.reserves[Math.floor(Math.random() * market.reserves.length)];
 			reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
@@ -454,68 +455,6 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 			tokenB = tokenA;
 		}
 		done = false 
-		for (var res of market.reserves) {
-			if (!done) {
-				res =
-					market.reserves[Math.floor(Math.random() * market.reserves.length)];
-				reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
-				let symbol 			= process.env.tradingStrategy == "arbitrage" ?	reserve.config.asset : reserve.config.liquidityToken.symbol
-
-				tokenA = {
-					address: reserve.config.liquidityToken.mint,
-					decimals: reserve.config.liquidityToken.decimals,
-					symbol: symbol
-				};
-	
-				tokenB = tokenA;
-				
-				let test = Math.floor(
-					(mod / reserve.stats.assetPriceUSD) *
-						10 ** reserve.config.liquidityToken.decimals
-				);
-
-				if (test * 2 < reserve.stats.totalLiquidityWads / WAD) {
-					if (true) {
-						const routes = await jupiter.computeRoutes({
-							inputMint: new PublicKey(reserve.config.liquidityToken.mint),
-							outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-							amount: JSBI.BigInt(test), // raw input amount of tokens
-							slippageBps: 666,
-
-							forceFetch: true,
-						});
-
-						// choose first route
-						const route = routes.routesInfos[Math.floor(Math.random() * 1)];
-						try {
-							let hmm = route.marketInfos[0].amm.id;
-
-							done = true;
-							if (!goodies.includes(reserve.config.liquidityToken.mint)) {
-								goodies.push(reserve.config.liquidityToken.mint);
-								console.log(
-									"g: " +
-										goodies.length.toString() +
-										" & res length: " +
-										market.reserves.length.toString()
-								);
-							}
-						} catch (err) {
-							if (!baddies.includes(reserve.config.liquidityToken.mint)) {
-								baddies.push(reserve.config.liquidityToken.mint);
-								console.log(
-									"b: " +
-										baddies.length.toString() +
-										" & res length: " +
-										market.reserves.length.toString()
-								);
-							}
-						}
-					}
-				} else {
-				}
-			}
-		}
 		if (process.env.tradingStrategy === "pingpong") {
 			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 		}
@@ -557,12 +496,14 @@ const run = async () => {
 
 		// 2. Read on-chain accounts for reserve data and cache
 		await market.loadReserves();
+		market.refreshAll();
 		market.reserves = market.reserves.filter(
 			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
 		if (market.reserves.length == 0) return;
 
 		global.botInterval = setInterval(async function () {
+			market.refreshAll();
 			watcher(jupiter, tokenA, tokenA, market);
 		}, cache.config.minInterval);
 	} catch (error) {
