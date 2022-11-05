@@ -47,7 +47,7 @@ const {
 } = require("@solana/spl-token");
 const { ComputeBudgetProgram } = require("@solana/web3.js/lib/index.cjs");
 
-const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
+const swap = async (jupiter, route, route2, tokenA, market, reserve, amountToTrade) => {
 	if (process.env.tradingStrategy == "arbitrage") {
 		SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 			"E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
@@ -163,7 +163,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				jaregm = (
 					await connection.getTokenAccountsByOwner(
 						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-						{ mint: new PublicKey(tokenA.address) }
+						{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
 					)
 				).value[0].pubkey;
 			} catch (err) {
@@ -172,7 +172,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 					await createAssociatedTokenAccountInstruction(
 						ASSOCIATED_TOKEN_PROGRAM_ID,
 						TOKEN_PROGRAM_ID,
-						new PublicKey(tokenA.address), // mint
+						new PublicKey(reserve.config.liquidityToken.mint), // mint
 						ata2.publicKey, // ata
 						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"), // owner
 						payer.publicKey, // payer
@@ -184,7 +184,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 			}
 			let ata = (
 				await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-					mint: new PublicKey(tokenA.address),
+					mint: new PublicKey(reserve.config.liquidityToken.mint),
 				})
 			).value[0];
 			let tokenAccount;
@@ -196,7 +196,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 					await createAssociatedTokenAccountInstruction(
 						ASSOCIATED_TOKEN_PROGRAM_ID,
 						TOKEN_PROGRAM_ID,
-						new PublicKey(tokenA.address), // mint
+						new PublicKey(reserve.config.liquidityToken.mint), // mint
 						ata2.publicKey, // ata
 						payer.publicKey,
 						payer.publicKey, // payer
@@ -209,7 +209,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 
 			let instructions = [...tinsts,
 				flashBorrowReserveLiquidityInstruction(
-					Math.ceil(JSBI.toNumber(route.inAmount) * 2),
+					Math.ceil(amountToTrade * 1.2),
 					new PublicKey(reserve.config.liquidityAddress),
 					tokenAccount,
 					new PublicKey(reserve.config.address),
@@ -234,7 +234,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				console.log(tinsts.length)
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
-						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
+						Math.ceil(amountToTrade * 1.2),
 						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
@@ -250,7 +250,7 @@ const swap = async (jupiter, route, route2, tokenA, market, reserve) => {
 				//console.log(jaregm);
 				instructions.push(
 					fr2(
-						Math.ceil(JSBI.toNumber(route.inAmount) * 2),
+						Math.ceil(amountToTrade * 1.2),
 						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
@@ -389,11 +389,11 @@ const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 
 		tradeEntry.inAmount = toDecimal(
 			tx.inputAmount,
-			cache.sideBuy ? tokenA.decimals : tokenB.decimals
+			cache.sideBuy ? reserve.config.liquidityToken.decimals : tokenB.decimals
 		);
 		tradeEntry.outAmount = toDecimal(
 			tx.outputAmount,
-			cache.sideBuy ? tokenB.decimals : tokenA.decimals
+			cache.sideBuy ? tokenB.decimals : reserve.config.liquidityToken.decimals
 		);
 
 		tradeEntry.profit = calculateProfit(
@@ -430,10 +430,10 @@ const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 		// update trade history
 		let tempHistory = cache.tradeHistory;
 
-		tradeEntry.inAmount = toDecimal(inAmountFromSolscanParser, tokenA.decimals);
+		tradeEntry.inAmount = toDecimal(inAmountFromSolscanParser, reserve.config.liquidityToken.decimals);
 		tradeEntry.outAmount = toDecimal(
 			outAmountFromSolscanParser,
-			tokenA.decimals
+			reserve.config.liquidityToken.decimals
 		);
 
 		tradeEntry.profit = calculateProfit(

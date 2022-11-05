@@ -24,7 +24,7 @@ const { setup, getInitialOutAmountWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = 10;
+let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 10
 const pingpongStrategy = async (jupiter, tokenA, tokenB) => {
 	cache.iteration++;
 	const date = new Date();
@@ -58,7 +58,6 @@ let market, reserve
 
 // configs = configs.filter((c) => c.reserves.filter((r)=>((r.stats.reserveBorrowLimit > new BN(0)))))
 let config = configs[Math.floor(Math.random() * configs.length)];
-console.log(configs.length)
 		 market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
@@ -66,11 +65,9 @@ console.log(configs.length)
 		);
 		// 2. Read on-chain accounts for reserve data and cache
 		await market.loadReserves();
-		console.log(config.reserves.length)
 		config.reserves = market.reserves.filter(
 			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
-		console.log(config.reserves.length)
 		if (config.reserves.length == 0) return
 		let done = false 
 				
@@ -84,29 +81,31 @@ for (var res of config.reserves){
 				}
 				
 				for (var res of config.reserves){
+					if (!done){
 
 					res = config.reserves[Math.floor(Math.random() * config.reserves.length)]
 				 reserve = res//config.reserves[Math.floor(Math.random()* config.reserves.length)]
 			
-				tokenA = tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
+				tokenA =  tokens.find((t) => t.address === reserve.config.liquidityToken.mint);
 				tokenB = tokenA;
 				prices[reserve.config.liquidityToken.mint] =
 					reserve.stats.assetPriceUSD;
 				let test =	Math.floor(
-					(mod / prices[tokenA.address]) * 10 ** tokenA.decimals
+					(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
 				)
+				
 				if ((test * 2) < reserve.stats.totalLiquidityWads / WAD){
 					done = true
 				}
 				else {
 				}
-
+			}
 			}
 			if (!done) return
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
 		const amountToTrade = Math.floor(
-			(mod / prices[tokenA.address]) * 10 ** tokenA.decimals
+			(mod / prices[reserve.config.liquidityToken.mint]) * 10 ** reserve.config.liquidityToken.decimals
 		); /*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
@@ -126,8 +125,8 @@ for (var res of config.reserves){
 		const performanceOfRouteCompStart = performance.now();
 
 		const routes = await jupiter.computeRoutes({
-			inputMint: new PublicKey(inputToken.address),
-			outputMint: new PublicKey(outputToken.address),
+			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
+			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
 			slippageBps: 666,
 
@@ -178,8 +177,8 @@ for (var res of config.reserves){
 		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
 		/*
 		const routes2 = await jupiter.computeRoutes({
-			inputMint: new PublicKey(outputToken.address),
-			outputMint: new PublicKey(inputToken.address),
+			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
+			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			            amount: (JSBI.BigInt(parseInt(((JSBI.toNumber(route.outAmount) * 1.002))))), // raw input amount of tokens
             slippageBps: 99,
 			forceFetch: true
@@ -262,7 +261,7 @@ for (var res of config.reserves){
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA, market, reserve);
+				[tx, performanceOfTx] = await swap(jupiter, route, route2, tokenA, market, reserve, amountToTrade);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
@@ -346,8 +345,8 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
 		const routes = await jupiter.computeRoutes({
-			inputMint: new PublicKey(inputToken.address),
-			outputMint: new PublicKey(outputToken.address),
+			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
+			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			inputAmount: amountToTrade,
 			slippage,
 			forceFetch: true,
@@ -485,12 +484,12 @@ const run = async () => {
 		// set everything up
 		const { jupiter, tokenA, tokenB } = await setup();
 
-		if (true) {
+		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
-				tokenA.decimals
+				reserve.config.liquidityToken.decimals
 			);
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
@@ -502,7 +501,7 @@ const run = async () => {
 			// set initial & current & last balance for tokenA
 			cache.initialBalance.tokenA = toNumber(
 				cache.config.tradeSize.value,
-				tokenA.decimals
+				reserve.config.liquidityToken.decimals
 			);
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
