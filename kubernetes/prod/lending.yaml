@@ -20,6 +20,9 @@
       
         labels:
           app: risk-lol
+
+      name: lending
+      namespace: production
       spec:
         nodeSelector:
           kubernetes.io/os: linux

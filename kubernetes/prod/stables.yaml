@@ -20,6 +20,8 @@
       
         labels:
           app: risk-lol
+      name: stables
+      namespace: production
       spec:
         nodeSelector:
           kubernetes.io/os: linux
