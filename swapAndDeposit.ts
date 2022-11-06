@@ -10,9 +10,10 @@ const { Prism } = require("@prism-hq/prism-ag");
 const configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
 
 let payer : Keypair 
-try { payer = Keypair.fromSecretKey(
-   bs58.decode(fs.readFileSync('./goup.priv').toString()) 
-  );
+try { payer =Keypair.fromSecretKey(
+    // @ts-ignore
+	bs58.decode(process.env.goup)
+);
 } catch (err){
   payer = Keypair.fromSecretKey(
     new Uint8Array(JSON.parse(fs.readFileSync('/Users/jarettdunn/notjaregm.json').toString()))
