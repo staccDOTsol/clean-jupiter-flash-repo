@@ -100,7 +100,7 @@ const setup = async () => {
 		let market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
-			process.env.tradingStrategy == 'arbitrage' ? process.env.marketKey : new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			process.env.tradingStrategy == 'pingpong' ? process.env.marketKey : new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { jupiter, tokenA, tokenA, market };
 	} catch (error) {

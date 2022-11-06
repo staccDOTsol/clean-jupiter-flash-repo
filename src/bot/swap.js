@@ -107,8 +107,7 @@ const swap = async (
 try {
 } catch (err){
 }
-let  file = route 
-if (true){
+for (var file of [route, route2]){
 try {
 
 				for (var rd of Object.values(file.routeData)){
@@ -243,11 +242,11 @@ console.log(err)
 			];
 			const swapTransaction = await jupiter.generateSwapTransactions(route); 
 			
-	//const swapTransaction2 = await prism2.generateSwapTransactions(route2); 
+	const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
 			
 					  await Promise.all(
-						[swapTransaction.preTransaction, swapTransaction.mainTransaction, swapTransaction.postTransaction/*,
-					  swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction*/]
+						[swapTransaction.preTransaction, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+					  swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]
 						  .filter(Boolean)
 						  .map(async (serializedTransaction) => {
 							instructions.push(...serializedTransaction.instructions)
