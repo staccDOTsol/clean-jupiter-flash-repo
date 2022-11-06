@@ -5,6 +5,7 @@ import { depositReserveLiquidityInstruction ,redeemReserveCollateralInstruction,
 import { bs58 } from "@project-serum/anchor/dist/cjs/utils/bytes";
 let connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/Zf8WbWIes5Ivksj_dLGL_txHMoRA7-Kr")
 import fs from 'fs'
+import { closeAccount } from "./src/spl-token/";
 
 const { Prism } = require("@prism-hq/prism-ag");
 const configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
@@ -23,16 +24,40 @@ try { payer =Keypair.fromSecretKey(
    let prism =  await Prism.init({
 			user: payer,
 			connection: connection,
-			slippage:1,
+			slippage:10,
 		
 		})
     for (var reserve of configs[0].reserves.reverse()){
       console.log(reserve.mint)
-      let usdcbal = await connection.getTokenAccountBalance(new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1"))
+      let usdcbal = await connection.getTokenAccountBalance(new PublicKey("8CtsE2gUUjc9KsfNEfFJSpxctZRPwoqWksy6m7UsjLSf"))
       let juicy = Math.floor((parseInt(usdcbal.value.amount) / configs[0].reserves.length) / 100)
-        
+     let ua=  prism.getUserAccounts();
+for(var a of ua ){
+ if (a.mint == 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' && a.balance == 0)    {
+    console.log(a)
+    closeAccount(
+        connection, // connection
+        payer, // payer
+       new PublicKey( a.address ), // token account which you want to close
+        payer.publicKey, // destination
+        payer.publicKey // owner of token account
+      );
+    
+ }
+}
+      // unwrap all wSOL accounts for user
+      let txIds = await prism.unwrapWSolAccounts();
+      console.log(txIds)
+      // get user Serum OpenOrders accounts
+      let openOrders: Array<any> = prism.getUserOpenOrders();
+      
+      console.log(openOrders)
+      // close user OpenOrders accounts and claim SOL paid for rent exemption 
+   //   let txIds2 = await prism.closeOpenOrders(openOrdersToClose);
+    //  console.log(txIds2)
+
     await prism.loadRoutes(
-      "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      "USDC",
       reserve.liquidityToken.mint
     )
         const routes = prism.getRoutes(juicy / 10 ** reserve.liquidityToken.decimals)
