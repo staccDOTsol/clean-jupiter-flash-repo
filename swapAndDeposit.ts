@@ -10,7 +10,6 @@ const { Prism } = require("@prism-hq/prism-ag");
 const configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
 
 let payer : Keypair 
-c
 try { payer = Keypair.fromSecretKey(
    bs58.decode(fs.readFileSync('/home/ubuntu/goup.priv').toString()) 
   );
