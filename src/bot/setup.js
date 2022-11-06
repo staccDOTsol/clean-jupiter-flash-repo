@@ -68,6 +68,7 @@ const setup = async () => {
 			cluster: cache.config.network,
 			user: wallet,
 			restrictIntermediateTokens: false,
+			platformFeeAndAccounts: wallet.publicKey,
 			wrapUnwrapSOL: cache.wrapUnwrapSOL,
 		});
 
