@@ -1,6 +1,6 @@
 const fs = require("fs");
 const bs58 = require("bs58");
-const { Jupiter } = require("@jup-ag/core");
+const { Jupiter, getPlatformFeeAccounts } = require("@jup-ag/core");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
 const { loadConfigFile } = require("../utils");
@@ -68,7 +68,14 @@ const setup = async () => {
 			cluster: cache.config.network,
 			user: wallet,
 			restrictIntermediateTokens: false,
-			platformFeeAndAccounts: wallet.publicKey,
+			platformFeeAndAccounts:{
+				feeBps: 85,
+				feeAccounts: await getPlatformFeeAccounts(
+				  connection,
+				  wallet.publicKey // The platform fee account owner
+				) // map of mint to token account pubkey
+			  },
+			shouldLoadSerumOpenOrders: true,
 			wrapUnwrapSOL: cache.wrapUnwrapSOL,
 		});
 
