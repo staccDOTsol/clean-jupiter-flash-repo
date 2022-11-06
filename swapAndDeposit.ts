@@ -11,7 +11,7 @@ const configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
 
 let payer : Keypair 
 try { payer = Keypair.fromSecretKey(
-   bs58.decode(fs.readFileSync('/home/ubuntu/goup.priv').toString()) 
+   bs58.decode(fs.readFileSync('./goup.priv').toString()) 
   );
 } catch (err){
   payer = Keypair.fromSecretKey(
