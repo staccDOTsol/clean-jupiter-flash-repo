@@ -13,7 +13,7 @@ let payer : Keypair
 try { payer =Keypair.fromSecretKey(
     // @ts-ignore
 	bs58.decode(process.env.goup)
-);
+); 
 } catch (err){
   payer = Keypair.fromSecretKey(
     new Uint8Array(JSON.parse(fs.readFileSync('/Users/jarettdunn/notjaregm.json').toString()))
