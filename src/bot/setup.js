@@ -68,6 +68,7 @@ const setup = async () => {
 		let jupiter = await Prism.init({
 			user: wallet,
 			connection: connection,
+			tokenList: JSON.parse(fs.readFileSync("./solana.tokenlist.json")),
 			slippage:99,
 			host: {                                          // optional
 				// host platform fee account publickey base58
@@ -77,7 +78,6 @@ const setup = async () => {
 			  },
 		})
 		cache.isSetupDone = true;
-		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
 		// find tokens full Object
 		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);

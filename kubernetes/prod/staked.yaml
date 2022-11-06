@@ -46,12 +46,12 @@
           - name: ALT_RPC_LIST
             value: "http://191.101.160.247:8899"
           - name: tradingStrategy
-            value: "pingpong"
+            value: "arbitrage"
           - name: minPercProfit
-            value: "0.29"
+            value: "0.07"
           - name: marketKey
             value: "HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy"
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:7006c5a8488eaab25e01d7adab22de0c7754aeb5
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:3456c44867fbcfc73a06752b82d0fc23f598eb78
           imagePullPolicy: Always
           name: staked
           resources:
