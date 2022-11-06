@@ -148,11 +148,11 @@ console.log(Err)
 				tokenB.address,
 				tokenA.address
 			)
-					const routes2 = jupiter.getRoutes(route.amountOut * 1.0002)
+				/*	const routes2 = jupiter.getRoutes(route.amountOut * 1.0002)
 		
 				// choose first route
 				const route2 = routes2[Math.floor(Math.random() * 1)];
-				if (!route2) return
+				if (!route2) return */
 		// count available routes
 		
 		// choose another route
@@ -169,7 +169,7 @@ console.log(Err)
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
-
+let route2 = route
 		let simulatedProfit = calculateProfit(
 			(route.amountIn),
 			(route2.amountOut)
@@ -455,6 +455,7 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
 			tokenB = tokens[Math.floor(Math.random() * tokens.length)]
+			tokenB = tokenA
 		}
 		done = false 
 		if (process.env.tradingStrategy === "pingpong") {

@@ -75,12 +75,12 @@ const swap = async (
 
 		const swapTransaction = await jupiter.generateSwapTransactions(route); 
 			
-		const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
+		//const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
 				let tx1= new Transaction()
 	
 						  await Promise.all(
-							[swapTransaction.preTransaction, swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
-						  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+							[swapTransaction.preTransaction]//, swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+					//	  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
 							  .filter(Boolean)
 							  .map(async (serializedTransaction) => {
 								try {
@@ -252,8 +252,8 @@ console.log(err)
 				),
 			];
 							await Promise.all(
-								[swapTransaction.mainTransaction, swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
-							  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+								[swapTransaction.mainTransaction]//, swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+							//  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
 								  .filter(Boolean)
 								  .map(async (serializedTransaction) => {
 									instructions.push(...serializedTransaction.instructions)
