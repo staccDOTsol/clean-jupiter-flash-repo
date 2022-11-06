@@ -53,7 +53,7 @@
             value: "0.07"
           - name: marketKey
             value: "C3VQi4sKNXVsG36zhUnvNasXPhzGmWWVpaeSPv5Tf2AB"
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:55b0cd59934f6d1e5651df47517eee7fd697401c
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:732d156834d039a147381f3f16cb7d8e3091235a
   
           imagePullPolicy: Always
           name: lending

@@ -108,7 +108,7 @@ const swap = async (
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 				]
-			);
+			, {commitment: 'singleGossip'});
 			let goluts = [
 				"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
 				"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
@@ -360,7 +360,7 @@ console.log(err)
 				]
 			);
 			let result
-			 result = await sendAndConfirmTransaction(connection, transaction)
+			 result = await connection.sendTransaction(transaction,{skipPreflight: false})
 			console.log("tx: " + result);
 		
 			let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {mint: new PublicKey(reserve.config.liquidityToken.mint)})
