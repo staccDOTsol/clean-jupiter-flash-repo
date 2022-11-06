@@ -76,9 +76,6 @@ const swap = async (
 		if (true) {
 			////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
-			const execute1 = await jupiter.exchange({
-				routeInfo: route,
-			});
 			/*
 		const execute2 = await jupiter.exchange({
 			routeInfo: route2,
@@ -105,29 +102,77 @@ const swap = async (
 				}
 			}
 			//			console.log(Object.keys(luts).length)
+			let ammIds = [ ]
+			let ammIdspks = []
+try {
+} catch (err){
+}
+let  file = route 
+if (true){
+try {
 
-			for (var mi of [...route.marketInfos]) {
+				for (var rd of Object.values(file.routeData)){
+					try {
+						// @ts-ignore
+						for(var rd2 of Object.values(rd.routeData)){
+							try {
+								try {
+												// @ts-ignore 
+				
+												
+								if ((rd2.orcaPool) != undefined){
+									let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+										// @ts-ignore 
+	
+						ammIdspks.push(dothedamnthing.toBase58())
+						ammIds.push(dothedamnthing)
+					}
+				}
+								} catch (err){}
+								if ((rd2.ammId) != undefined){
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.ammId)
+								// @ts-ignore 
+								if (!ammIdspks.includes(dothedamnthing.toBase58())){
+													// @ts-ignore 
+				
+									ammIdspks.push(dothedamnthing.toBase58())
+									ammIds.push(dothedamnthing)
+								}
+								}
+								if ((rd2.swapAccount) != undefined){
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.swapAccount)
+								// @ts-ignore 
+								if (!ammIdspks.includes(dothedamnthing.toBase58())){
+													// @ts-ignore 
+				
+									ammIdspks.push(dothedamnthing.toBase58())
+									ammIds.push(dothedamnthing)
+								}
+								}
+							} catch (err){
+				
+							}
+						}
+					}
+					catch (err){
+				
+					}
+				}
+			} catch (err){
+
+			}
+
+		}
+			for (var mi of ammIdspks) {
 				//}, ...route2.marketInfos]) {
 				try {
-					let maybeluts = luts[mi.amm.id].split(",");
+					let maybeluts = luts[mi].split(",");
 					goluts.push(...maybeluts);
 				} catch (err) {
 					//console.log(err);
-				}
-				for (var abc of Object.values(mi.amm)) {
-					try {
-						let maybeluts = luts[abc].split(",");
-						goluts.push(...maybeluts);
-					} catch (err) {
-						try {
-							for (var bca of Object.values(abc)) {
-								try {
-									let maybeluts = luts[bca].split(",");
-									goluts.push(...maybeluts);
-								} catch (err) {}
-							}
-						} catch (err) {}
-					}
 				}
 			}
 			let goaccs = [];
@@ -196,12 +241,17 @@ console.log(err)
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
-			for (var instruction of execute1.transactions.swapTransaction
-				.instructions) {
-				if (!instructions.includes(instruction)) {
-					instructions.push(instruction);
-				}
-			}
+			const swapTransaction = await jupiter.generateSwapTransactions(route); 
+			
+	//const swapTransaction2 = await prism2.generateSwapTransactions(route2); 
+			
+					  await Promise.all(
+						[swapTransaction.preTransaction, swapTransaction.mainTransaction, swapTransaction.postTransaction/*,
+					  swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction*/]
+						  .filter(Boolean)
+						  .map(async (serializedTransaction) => {
+							instructions.push(...serializedTransaction.instructions)
+						  }))
 			//console.log(instructions.length);
 			/*
 			for (var instruction of execute2.transactions.swapTransaction.instructions){

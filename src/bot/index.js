@@ -15,7 +15,7 @@ const {
 	checkRoutesResponse,
 } = require("../utils");
 const cache = require("./cache");
-const { setup, getInitialOutAmountWithSlippage } = require("./setup");
+const { setup, getInitialamountOutWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
@@ -60,17 +60,17 @@ const pingpongStrategy = async (
 		console.log(inputToken.symbol);
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
-		const routes = await jupiter.computeRoutes({
-			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			amount: JSBI.BigInt(amountToTrade), // raw input amount of tokens
-			slippageBps: 666,
+	
+		
 
-			forceFetch: true,
-		});
+	await jupiter.loadRoutes(
+		tokenA.address,
+		tokenB.address
+	)
+			const routes = jupiter.getRoutes(amountToTrade /  10 ** tokenA.decimals)
 
 		// choose first route
-		const route = routes.routesInfos[Math.floor(Math.random() * 1)];
+		const route = routes[Math.floor(Math.random() * 1)];
 		if (!route) return
 		let ammIds = [];
 		try {
@@ -78,7 +78,6 @@ const pingpongStrategy = async (
 		} catch (err) {}
 		let goodluts = [];
 	
-			
 		try {
 			if (!goodies.includes(reserve.config.liquidityToken.mint)) {
 				goodies.push(reserve.config.liquidityToken.mint);
@@ -89,53 +88,90 @@ const pingpongStrategy = async (
 						market.reserves.length.toString()
 				);
 			}
-		for (var mi of [...route.marketInfos]) {
-			for (var abc of Object.values(mi.amm)) {
-				try {
-					let hmm = new PublicKey(abc);
-					if (!ammIds.includes(hmm.toBase58())) {
-						ammIds.push(hmm.toBase58());
-					}
-				} catch (err) {
-					try {
-						for (var bca of Object.values(abc)) {
-							try {
-								let hmm = new PublicKey(bca);
-								if (!ammIds.includes(hmm.toBase58())) {
-									ammIds.push(hmm.toBase58());
-								}
-							} catch (err) {}
-						}
-					} catch (err) {}
-				}
-			}
-			//}, ...route2.marketInfos]) {
+		} catch (err){
+
+		}
 			try {
-				if (!ammIds.includes(mi.amm.id)) {
-					ammIds.push(mi.amm.id);
-				}
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
-	} catch (err) {
-		if (!baddies.includes(reserve.config.liquidityToken.mint)) {
-			baddies.push(reserve.config.liquidityToken.mint);
-			console.log(
-				"b: " +
-					baddies.length.toString() +
-					" & res length: " +
-					market.reserves.length.toString()
-			);
-		}
+				let ammIds = [ ]
+				let ammIdspks = []
+	try {
+				ammIds =  JSON.parse(fs.readFileSync('./ammIds.json').toString())
+				
+				ammIdspks = JSON.parse(fs.readFileSync('./ammIdspks.json').toString())
+	} catch (err){
 	}
+			for (var file of [...routes]){//},...routes2]){//{//}),...routes2]){
+				try {
+	
+					for (var rd of Object.values(file.routeData)){
+						try {
+							// @ts-ignore
+							for(var rd2 of Object.values(rd.routeData)){
+								try {
+									try {
+													// @ts-ignore 
+					
+													
+									if ((rd2.orcaPool) != undefined){
+										let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
+										if (!ammIdspks.includes(dothedamnthing.toBase58())){
+											// @ts-ignore 
+		
+							ammIdspks.push(dothedamnthing.toBase58())
+							ammIds.push(dothedamnthing)
+						}
+					}
+									} catch (err){}
+									if ((rd2.ammId) != undefined){
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.ammId)
+									// @ts-ignore 
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+														// @ts-ignore 
+					
+										ammIdspks.push(dothedamnthing.toBase58())
+										ammIds.push(dothedamnthing)
+									}
+									}
+									if ((rd2.swapAccount) != undefined){
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.swapAccount)
+									// @ts-ignore 
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+														// @ts-ignore 
+					
+										ammIdspks.push(dothedamnthing.toBase58())
+										ammIds.push(dothedamnthing)
+									}
+									}
+								} catch (err){
+					
+								}
+							}
+						}
+						catch (err){
+					
+						}
+					}
+				} catch (err){
+
+				}
+
+			}
+		} catch (err)
+		{
+
+		}
+					
+					
+		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+
 
 		/*
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			            amount: (JSBI.BigInt(parseInt(((JSBI.toNumber(route.outAmount) * 1.002))))), // raw input amount of tokens
+			            amount: (JSBI.BigInt(parseInt((((route.amountOut) * 1.002))))), // raw input amount of tokens
             slippageBps: 99,
 			forceFetch: true
 		});
@@ -144,9 +180,7 @@ const pingpongStrategy = async (
 		*/
 		const route2 = route;
 		// count available routes
-		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
-			routes.routesInfos.length; //+ routes2.routesInfos.length;
-
+		
 		// choose another route
 		//const route = await routes2.routesInfos[Math.floor(Math.random() * 2)];
 
@@ -163,8 +197,8 @@ const pingpongStrategy = async (
 		}
 
 		let simulatedProfit = calculateProfit(
-			JSBI.toNumber(route.inAmount),
-			JSBI.toNumber(route2.outAmount)
+			(route.amountIn),
+			(route2.amountOut)
 		);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
@@ -201,12 +235,12 @@ const pingpongStrategy = async (
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					inAmount: toDecimal(
-						JSBI.toNumber(route.inAmount),
+					amountIn: toDecimal(
+						(route.amountIn),
 						inputToken.decimals
 					),
-					expectedOutAmount: toDecimal(
-						JSBI.toNumber(route2.outAmount),
+					expectedamountOut: toDecimal(
+						(route2.amountOut),
 						outputToken.decimals
 					),
 					expectedProfit: simulatedProfit,
@@ -242,7 +276,7 @@ const pingpongStrategy = async (
 
 					tradeEntry = {
 						...tradeEntry,
-						outAmount: tx.outputAmount || 0,
+						amountOut: tx.outputAmount || 0,
 						profit,
 						performanceOfTx,
 						error: tx.error?.message || null,
@@ -311,15 +345,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
-		const routes = await jupiter.computeRoutes({
-			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			inputAmount: amountToTrade,
-			slippage,
-			forceFetch: true,
-		});
-
-		checkRoutesResponse(routes);
+		
 
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
@@ -341,7 +367,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 		// calculate profitability
 
-		let simulatedProfit = calculateProfit(baseAmount, await route.outAmount);
+		let simulatedProfit = calculateProfit(baseAmount, await route.amountOut);
 
 		// store max profit spotted
 		if (simulatedProfit > cache.maxProfitSpotted["buy"]) {
@@ -374,11 +400,11 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					inAmount: toDecimal(
-						JSBI.toNumber(route.inAmount),
+					amountIn: toDecimal(
+						(route.amountIn),
 						inputToken.decimals
 					),
-					expectedOutAmount: toDecimal(route.outAmount, outputToken.decimals),
+					expectedamountOut: toDecimal(route.amountOut, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -400,7 +426,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 				tradeEntry = {
 					...tradeEntry,
-					outAmount: tx.outputAmount || 0,
+					amountOut: tx.outputAmount || 0,
 					profit,
 					performanceOfTx,
 					error: tx.error?.message || null,

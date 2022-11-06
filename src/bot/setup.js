@@ -3,6 +3,8 @@ const bs58 = require("bs58");
 const { Jupiter, getPlatformFeeAccounts } = require("@jup-ag/core");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
+const { Prism } = require("@prism-hq/prism-ag");
+
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
@@ -63,22 +65,17 @@ const setup = async () => {
 			]
 		);
 
-		const jupiter = await Jupiter.load({
-			connection,
-			cluster: cache.config.network,
+		let jupiter = await Prism.init({
 			user: wallet,
-			restrictIntermediateTokens: false,
-			platformFeeAndAccounts:{
-				feeBps: 85,
-				feeAccounts: await getPlatformFeeAccounts(
-				  connection,
-				  wallet.publicKey // The platform fee account owner
-				) // map of mint to token account pubkey
+			connection: connection,
+			slippage:99,
+			host: {                                          // optional
+				// host platform fee account publickey base58
+				publicKey: "EDfPVAZmGLq1XhKgjpTby1byXMS2HcRqRf5j7zuQYcUg",
+				// fee bps e.g 5 => 0.05%
+				fee: 138,
 			  },
-			shouldLoadSerumOpenOrders: true,
-			wrapUnwrapSOL: cache.wrapUnwrapSOL,
-		});
-
+		})
 		cache.isSetupDone = true;
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
