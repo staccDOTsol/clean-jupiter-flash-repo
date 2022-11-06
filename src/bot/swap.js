@@ -73,6 +73,30 @@ const swap = async (
 			configs = JSON.parse(fs.readFileSync("./configs2.json").toString());
 		}
 
+		const swapTransaction = await jupiter.generateSwapTransactions(route); 
+			
+		const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
+				let tx1= new Transaction()
+	
+						  await Promise.all(
+							[swapTransaction.preTransaction,swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+						  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+							  .filter(Boolean)
+							  .map(async (serializedTransaction) => {
+								try {
+								tx1.push(...serializedTransaction.instructions)
+								} catch (err){
+	
+								}
+							  }))
+							  if (tx1.instructions.length>0){
+								tx1.recentBlockhash = await (
+								  await connection.getLatestBlockhash()
+								).blockhash;
+								tx1.sign(payer)
+								var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
+								console.log(hm2) 
+								}
 		if (true) {
 			////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
@@ -240,30 +264,6 @@ console.log(err)
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
-			const swapTransaction = await jupiter.generateSwapTransactions(route); 
-			
-	const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
-			let tx1= new Transaction()
-
-					  await Promise.all(
-						[swapTransaction.preTransaction,swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
-					  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
-						  .filter(Boolean)
-						  .map(async (serializedTransaction) => {
-							try {
-							tx1.push(...serializedTransaction.instructions)
-							} catch (err){
-
-							}
-						  }))
-						  if (tx1.instructions.length>0){
-							tx1.recentBlockhash = await (
-							  await connection.getLatestBlockhash()
-							).blockhash;
-							tx1.sign(payer)
-							var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
-							console.log(hm2) 
-							}
 							await Promise.all(
 								[swapTransaction.mainTransaction,swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
 							  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
