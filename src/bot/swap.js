@@ -258,7 +258,6 @@ try {
 			} catch (err) {
 console.log(err)
 			}
-			tinsts = []
 			console.log(tinsts.length);
 			let instructions = [
 				
