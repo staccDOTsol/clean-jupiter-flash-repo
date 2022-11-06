@@ -11,47 +11,42 @@ const { Prism } = require("@prism-hq/prism-ag");
 const configs = JSON.parse(fs.readFileSync('./configs2.json').toString())
 
 let payer : Keypair 
-try { payer =Keypair.fromSecretKey(
+ payer =Keypair.fromSecretKey(
     // @ts-ignore
 	bs58.decode(process.env.goup)
 ); 
-} catch (err){
-  payer = Keypair.fromSecretKey(
-    new Uint8Array(JSON.parse(fs.readFileSync('/Users/jarettdunn/notjaregm.json').toString()))
-   );
-}
   setTimeout(async function(){
+    let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {mint: new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v")})
+console.log(tas2.value.length)
+    for (var ta of tas2.value){
+        try {
+            if (ta.pubkey.toBase58() != "8CtsE2gUUjc9KsfNEfFJSpxctZRPwoqWksy6m7UsjLSf"){
+    let hm = await closeAccount(
+        connection, // connection
+        payer, // payer
+      ta.pubkey, // token account which you want to close
+        payer.publicKey, // destination
+        payer // owner of token account
+      );
+    console.log(hm)
+    }
+    else {console.log('hehe')}       
+} catch (err)
+
+        {console.log(err)}
+    }
    let prism =  await Prism.init({
 			user: payer,
 			connection: connection,
 			slippage:10,
 		
 		})
-    for (var reserve of configs[0].reserves.reverse()){
+
+    for (var reserve of configs[0].reserves){
       console.log(reserve.mint)
       let usdcbal = await connection.getTokenAccountBalance(new PublicKey("8CtsE2gUUjc9KsfNEfFJSpxctZRPwoqWksy6m7UsjLSf"))
       let juicy = Math.floor((parseInt(usdcbal.value.amount) / configs[0].reserves.length) / 100)
-     let ua=  prism.getUserAccounts();
-for(var a of ua ){
- if (a.mint == 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' && a.balance == 0)    {
-    console.log(a)
-    closeAccount(
-        connection, // connection
-        payer, // payer
-       new PublicKey( a.address ), // token account which you want to close
-        payer.publicKey, // destination
-        payer.publicKey // owner of token account
-      );
-    
- }
-}
-      // unwrap all wSOL accounts for user
-      let txIds = await prism.unwrapWSolAccounts();
-      console.log(txIds)
-      // get user Serum OpenOrders accounts
-      let openOrders: Array<any> = prism.getUserOpenOrders();
-      
-      console.log(openOrders)
+
       // close user OpenOrders accounts and claim SOL paid for rent exemption 
    //   let txIds2 = await prism.closeOpenOrders(openOrdersToClose);
     //  console.log(txIds2)
