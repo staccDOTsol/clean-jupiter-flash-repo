@@ -28,7 +28,7 @@ try { payer = Keypair.fromSecretKey(
     for (var reserve of configs[0].reserves.reverse()){
       console.log(reserve.mint)
       let usdcbal = await connection.getTokenAccountBalance(new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1"))
-      let juicy = Math.floor(parseInt(usdcbal.value.amount) / configs[0].reserves.length)
+      let juicy = Math.floor(parseInt(usdcbal.value.amount) / configs[0].reserves.length / 100)
         
     await prism.loadRoutes(
       "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
