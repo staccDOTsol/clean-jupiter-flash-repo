@@ -69,7 +69,7 @@ const setup = async () => {
 			user: wallet,
 			connection: connection,
 			tokenList: JSON.parse(fs.readFileSync("./solana.tokenlist.json")),
-			slippage:99,
+			slippage:1,
 			host: {                                          // optional
 				// host platform fee account publickey base58
 				publicKey: "EDfPVAZmGLq1XhKgjpTby1byXMS2HcRqRf5j7zuQYcUg",
