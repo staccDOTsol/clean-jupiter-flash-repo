@@ -20,7 +20,7 @@ let payer : Keypair
 console.log(tas2.value.length)
     for (var ta of tas2.value){
         try {
-            if (ta.pubkey.toBase58() != "8CtsE2gUUjc9KsfNEfFJSpxctZRPwoqWksy6m7UsjLSf"){
+            if (false){//ta.pubkey.toBase58() != "8CtsE2gUUjc9KsfNEfFJSpxctZRPwoqWksy6m7UsjLSf"){
     let hm = await closeAccount(
         connection, // connection
         payer, // payer
@@ -38,7 +38,6 @@ console.log(tas2.value.length)
    let prism =  await Prism.init({
 			user: payer,
 			connection: connection,
-			slippage:10,
 		
 		})
 
@@ -55,10 +54,51 @@ console.log(tas2.value.length)
       "USDC",
       reserve.liquidityToken.mint
     )
-        const routes = prism.getRoutes(juicy / 10 ** reserve.liquidityToken.decimals)
-			const swapTransaction = await prism.swap(routes[0]); 
-      let swapStatus = await prism.confirmSwap(swapTransaction); // Check Swap Status
-console.log(swapStatus)
+        let routes = prism.getRoutes(juicy / 10 ** reserve.liquidityToken.decimals)
+        console.log(routes[0].providers.length)
+        //routes = routes.filter((r: any) => r.providers.length <= 1)
+        console.log(routes.length)
+			const swapTransaction = await prism.generateSwapTransactions(routes[0]); 
+            let tx1 = new Transaction()
+
+            await Promise.all(
+                [swapTransaction.preTransaction/*,
+              swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction*/]
+                  .filter(Boolean)
+                  .map(async (serializedTransaction) => {
+                
+                try {    tx1.add(...serializedTransaction.instructions)
+                } catch (err){
+
+                } 
+                }))
+                  if (tx1.instructions.length>0){
+                  tx1.recentBlockhash = await (
+                    await connection.getLatestBlockhash()
+                  ).blockhash;
+                  tx1.sign(payer)
+                  var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
+                  console.log(hm2) 
+                  }
+                  tx1 = new Transaction()
+                  await Promise.all(
+                    [swapTransaction.mainTransaction/*,
+                  swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction*/]
+                      .filter(Boolean)
+                      .map(async (serializedTransaction) => {
+                        tx1.add(...serializedTransaction.instructions)
+                      }))
+    
+                      tx1.recentBlockhash = await (
+                        await connection.getLatestBlockhash()
+                      ).blockhash;
+                      tx1.sign(payer)
+                     var  hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
+                      console.log(hm2) 
+    
+
+                  }
+                  for (var reserve of configs[0].reserves){
 let tokenAccounts = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {mint: new PublicKey(reserve.liquidityToken.mint)})
 
 for (var ta of tokenAccounts.value){

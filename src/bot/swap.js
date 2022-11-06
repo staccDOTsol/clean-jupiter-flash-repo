@@ -46,7 +46,7 @@ let {
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { Token, createTransferInstruction } = require("../spl-token");
 
-const { ComputeBudgetProgram } = require("@solana/web3.js/lib/index.cjs");
+const { ComputeBudgetProgram, Transaction } = require("@solana/web3.js/lib/index.cjs");
 
 const swap = async (
 	jupiter,
@@ -107,8 +107,7 @@ const swap = async (
 try {
 } catch (err){
 }
-let  file = route 
-if (true){
+for (var file of [route, route2]){
 try {
 
 				for (var rd of Object.values(file.routeData)){
@@ -243,15 +242,36 @@ console.log(err)
 			];
 			const swapTransaction = await jupiter.generateSwapTransactions(route); 
 			
-	//const swapTransaction2 = await prism2.generateSwapTransactions(route2); 
-			
+	const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
+			let tx1= new Transaction()
+
 					  await Promise.all(
-						[swapTransaction.preTransaction, swapTransaction.mainTransaction, swapTransaction.postTransaction/*,
-					  swapTransaction2.preTransaction, swapTransaction2.mainTransaction, swapTransaction2.postTransaction*/]
+						[swapTransaction.preTransaction,swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+					  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
 						  .filter(Boolean)
 						  .map(async (serializedTransaction) => {
-							instructions.push(...serializedTransaction.instructions)
+							try {
+							tx1.push(...serializedTransaction.instructions)
+							} catch (err){
+
+							}
 						  }))
+						  if (tx1.instructions.length>0){
+							tx1.recentBlockhash = await (
+							  await connection.getLatestBlockhash()
+							).blockhash;
+							tx1.sign(payer)
+							var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
+							console.log(hm2) 
+							}
+							await Promise.all(
+								[swapTransaction.mainTransaction,swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+							  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+								  .filter(Boolean)
+								  .map(async (serializedTransaction) => {
+									instructions.push(...serializedTransaction.instructions)
+								  }))
+								 
 			//console.log(instructions.length);
 			/*
 			for (var instruction of execute2.transactions.swapTransaction.instructions){
