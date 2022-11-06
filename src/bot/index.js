@@ -171,7 +171,7 @@ const pingpongStrategy = async (
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
 			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			            amount: (JSBI.BigInt(parseInt(((JSBI.toNumber(route.amountOut) * 1.002))))), // raw input amount of tokens
+			            amount: (JSBI.BigInt(parseInt((((route.amountOut) * 1.002))))), // raw input amount of tokens
             slippageBps: 99,
 			forceFetch: true
 		});
@@ -197,8 +197,8 @@ const pingpongStrategy = async (
 		}
 
 		let simulatedProfit = calculateProfit(
-			JSBI.toNumber(route.amountIn),
-			JSBI.toNumber(route2.amountOut)
+			(route.amountIn),
+			(route2.amountOut)
 		);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
@@ -236,11 +236,11 @@ const pingpongStrategy = async (
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
 					amountIn: toDecimal(
-						JSBI.toNumber(route.amountIn),
+						(route.amountIn),
 						inputToken.decimals
 					),
 					expectedamountOut: toDecimal(
-						JSBI.toNumber(route2.amountOut),
+						(route2.amountOut),
 						outputToken.decimals
 					),
 					expectedProfit: simulatedProfit,
@@ -401,7 +401,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
 					amountIn: toDecimal(
-						JSBI.toNumber(route.amountIn),
+						(route.amountIn),
 						inputToken.decimals
 					),
 					expectedamountOut: toDecimal(route.amountOut, outputToken.decimals),
