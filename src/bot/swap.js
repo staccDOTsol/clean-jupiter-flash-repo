@@ -159,13 +159,21 @@ catch (err){
 		}
 	} catch (Err){}
 }
-	
+let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+let hmms = []
+for (var tok of tokens){
+	hmms.push(tok.address)
+}
+ammIds.filter((id) => !hmms.includes(id))
 			for (var mi of ammIds) {
+				
 				//}, ...route2.marketInfos]) {
 				try {
-					let maybeluts = luts[mi].split(",");
+					let maybeluts = luts[mi];
+					if (maybeluts.length < 10){
 					goluts.push(...maybeluts);
-					console.log('maybeluts: ' + luts[mi])
+					console.log('maybeluts: ' + luts[mi].length.toString())
+					}
 				} catch (err) {
 					//console.log(err);
 				}

@@ -131,11 +131,17 @@ if (!ammIds.includes(test)) ammIds.push(test)
 					}
 				} catch (Err){}
 					
-				
+				let hmms = []
+				let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+
+for (var tok of tokens){
+	hmms.push(tok.address)
+}
+ammIds.filter((id) => !hmms.includes(id))
 		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
 				}	} catch (Err)
 			{
-
+console.log(Err)
 			}
 
 			await jupiter.loadRoutes(
