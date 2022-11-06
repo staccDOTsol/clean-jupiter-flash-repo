@@ -6,7 +6,7 @@ const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
 const JSBI = require("jsbi");
 const WAD = new BN("1".concat(Array(18 + 1).join("0")));
-
+const bs58 = require('bs58')
 const {
 	calculateProfit,
 	toDecimal,
@@ -19,7 +19,7 @@ const { setup, getInitialamountOutWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 1 : 100;
+let mod = process.env.tradingStrategy == "arbitrage" ? 100 : 1000;
 const pingpongStrategy = async (
 	jupiter,
 	tokenA,
@@ -43,6 +43,7 @@ const pingpongStrategy = async (
 			(mod / reserve.stats.assetPriceUSD) *
 				10 ** reserve.config.liquidityToken.decimals
 		);
+		console.log('amountToTrade: ' + (amountToTrade /  10 ** tokenA.decimals).toString())
 		/*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
@@ -108,77 +109,44 @@ const pingpongStrategy = async (
 							// @ts-ignore
 							for(var rd2 of Object.values(rd.routeData)){
 								try {
-									try {
-													// @ts-ignore 
-					
-													
-									if ((rd2.orcaPool) != undefined){
-										let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
-										if (!ammIdspks.includes(dothedamnthing.toBase58())){
-											// @ts-ignore 
-		
-							ammIdspks.push(dothedamnthing.toBase58())
-							ammIds.push(dothedamnthing)
-						}
-					}
-									} catch (err){}
-									if ((rd2.ammId) != undefined){
-										// @ts-ignore
-										let dothedamnthing = new PublicKey(rd2.ammId)
-									// @ts-ignore 
-									if (!ammIdspks.includes(dothedamnthing.toBase58())){
-														// @ts-ignore 
-					
-										ammIdspks.push(dothedamnthing.toBase58())
-										ammIds.push(dothedamnthing)
-									}
-									}
-									if ((rd2.swapAccount) != undefined){
-										// @ts-ignore
-										let dothedamnthing = new PublicKey(rd2.swapAccount)
-									// @ts-ignore 
-									if (!ammIdspks.includes(dothedamnthing.toBase58())){
-														// @ts-ignore 
-					
-										ammIdspks.push(dothedamnthing.toBase58())
-										ammIds.push(dothedamnthing)
-									}
-									}
-								} catch (err){
-					
-								}
+							for(var rd3 of Object.values(rd2)){
+try {
+if (rd3.length > 20) {
+	let test= (new PublicKey(rd3)).toBase58()
+if (!ammIds.includes(test)) ammIds.push(test)
+}
+}
+ catch (err){
+
+ }
 							}
-						}
-						catch (err){
-					
-						}
-					}
-				} catch (err){
-
-				}
-
-			}
 		} catch (err)
 		{
 
 		}
+	}
+} catch (err){
+
+}
+					}
+				} catch (Err){}
 					
-					
+				
 		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+				}	} catch (Err)
+			{
 
+			}
 
-		/*
-		const routes2 = await jupiter.computeRoutes({
-			inputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			outputMint: new PublicKey(reserve.config.liquidityToken.mint),
-			            amount: (JSBI.BigInt(parseInt((((route.amountOut) * 1.002))))), // raw input amount of tokens
-            slippageBps: 99,
-			forceFetch: true
-		});
-
-		const route2 = await routes2.routesInfos[Math.floor(Math.random() * 1)];
-		*/
-		const route2 = route;
+			await jupiter.loadRoutes(
+				tokenB.address,
+				tokenA.address
+			)
+					const routes2 = jupiter.getRoutes(route.amountOut * 1.0002)
+		
+				// choose first route
+				const route2 = routes2[Math.floor(Math.random() * 1)];
+				if (!route2) return
 		// count available routes
 		
 		// choose another route
@@ -310,8 +278,9 @@ const pingpongStrategy = async (
 				mod = mod / 1.02;
 			}
 		} else {
-			mod = process.env.tradingStrategy == "arbitrage" ? 1 : 1000;
+			mod = process.env.tradingStrategy == "arbitrage" ? 100 : 1000;
 		}
+		console.log('mod: ' + mod.toString())
 	} catch (error) {
 		cache.queue[i] = 1;
 		console.log(error);
@@ -477,8 +446,9 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 				decimals: reserve.config.liquidityToken.decimals,
 				symbol: symbol
 			};
+let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
-			tokenB = tokenA;
+			tokenB = tokens[Math.floor(Math.random() * tokens.length)]
 		}
 		done = false 
 		if (process.env.tradingStrategy === "pingpong") {

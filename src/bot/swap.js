@@ -75,11 +75,11 @@ const swap = async (
 
 		const swapTransaction = await jupiter.generateSwapTransactions(route); 
 			
-//		const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
+		const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
 				let tx1= new Transaction()
 	
 						  await Promise.all(
-							[swapTransaction.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+							[swapTransaction.preTransaction, swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
 						  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
 							  .filter(Boolean)
 							  .map(async (serializedTransaction) => {
@@ -128,72 +128,44 @@ const swap = async (
 			//			console.log(Object.keys(luts).length)
 			let ammIds = [ ]
 			let ammIdspks = []
-try {
-} catch (err){
-}
-for (var file of [route, route2]){
-try {
 
-				for (var rd of Object.values(file.routeData)){
+for (var file of [route]){//},...routes2]){//{//}),...routes2]){
+	try {
+
+		for (var rd of Object.values(file.routeData)){
+			try {
+				// @ts-ignore
+				for(var rd2 of Object.values(rd.routeData)){
 					try {
-						// @ts-ignore
-						for(var rd2 of Object.values(rd.routeData)){
-							try {
-								try {
-												// @ts-ignore 
-				
-												
-								if ((rd2.orcaPool) != undefined){
-									let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
-									if (!ammIdspks.includes(dothedamnthing.toBase58())){
-										// @ts-ignore 
-	
-						ammIdspks.push(dothedamnthing.toBase58())
-						ammIds.push(dothedamnthing)
-					}
-				}
-								} catch (err){}
-								if ((rd2.ammId) != undefined){
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.ammId)
-								// @ts-ignore 
-								if (!ammIdspks.includes(dothedamnthing.toBase58())){
-													// @ts-ignore 
-				
-									ammIdspks.push(dothedamnthing.toBase58())
-									ammIds.push(dothedamnthing)
-								}
-								}
-								if ((rd2.swapAccount) != undefined){
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.swapAccount)
-								// @ts-ignore 
-								if (!ammIdspks.includes(dothedamnthing.toBase58())){
-													// @ts-ignore 
-				
-									ammIdspks.push(dothedamnthing.toBase58())
-									ammIds.push(dothedamnthing)
-								}
-								}
-							} catch (err){
-				
-							}
-						}
-					}
-					catch (err){
-				
-					}
-				}
-			} catch (err){
+				for(var rd3 of Object.values(rd2)){
+try {
+if (rd3.length > 20) {
+let test= (new PublicKey(rd3)).toBase58()
+if (!ammIds.includes(test)) ammIds.push(test)
+}
+}
+catch (err){
 
-			}
+}
+				}
+} catch (err)
+{
 
+}
+}
+} catch (err){
+
+}
 		}
-			for (var mi of ammIdspks) {
+	} catch (Err){}
+}
+	
+			for (var mi of ammIds) {
 				//}, ...route2.marketInfos]) {
 				try {
 					let maybeluts = luts[mi].split(",");
 					goluts.push(...maybeluts);
+					console.log('maybeluts: ' + luts[mi])
 				} catch (err) {
 					//console.log(err);
 				}
@@ -272,7 +244,7 @@ console.log(err)
 				),
 			];
 							await Promise.all(
-								[swapTransaction.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+								[swapTransaction.mainTransaction, swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
 							  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
 								  .filter(Boolean)
 								  .map(async (serializedTransaction) => {
@@ -330,25 +302,14 @@ console.log(err)
 					tinstructions.push(ix);
 				}
 			}
-
-			let goaccst = [];
-			for (var value of goaccs) {
-				try {
-					//	console.log(value.state.addresses.length);
-					if (value.state.addresses.length > 0) {
-						goaccst.push(value);
-					}
-				} catch (err) {
-					console.log(err);
-				}
-			}
+console.log('luts: ' + (goaccs.length - 5).toString())
 			const messageV00 = new TransactionMessage({
 				payerKey: payer.publicKey,
 				recentBlockhash: await (
 					await connection.getLatestBlockhash()
 				).blockhash,
 				instructions: tinstructions,
-			}).compileToV0Message(goaccst);
+			}).compileToV0Message(goaccs);
 			const transaction = new VersionedTransaction(messageV00);
 			if (tinsts.length > 0) {
 				//	transaction.sign(signers)
