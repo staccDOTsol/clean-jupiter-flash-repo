@@ -4,7 +4,7 @@
 
 replicaCount: 40
 
-image: staccregistry.azurecr.io/clean-jupiter-flash-repo:3456c44867fbcfc73a06752b82d0fc23f598eb78
+image: staccregistry.azurecr.io/clean-jupiter-flash-repo:1892a9a29d3e9253fec723dfd75815915ae0be66
 imagePullPolicy: IfNotPresent
 
 
