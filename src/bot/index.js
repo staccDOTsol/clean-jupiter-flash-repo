@@ -21,7 +21,7 @@ const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
 let mod = process.env.tradingStrategy == "arbitrage" ? 10 : 100;
 const pingpongStrategy = async (
-	prism,
+	jupiter,
 	tokenA,
 	tokenB,
 	market,
@@ -58,17 +58,30 @@ const pingpongStrategy = async (
 
 		// set input / output token
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
-		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
+		const outputToken = tokenB; //cache.sideSell ? tokenB : tokenA;
 		//console.log(inputToken.symbol);
 		// check current routes
-		const performanceOfRouteCompStart = performance.now();
 
-		await prism.loadRoutes(tokenA.address, tokenB.address);
-		const routes = prism.getRoutes(amountToTrade / 10 ** tokenA.decimals);
+		const performanceOfRouteCompStart = performance.now();
+		const routes = await jupiter.computeRoutes({
+			inputMint: new PublicKey(inputToken.address),
+			outputMint: new PublicKey(outputToken.address),
+			amount: amountToTrade,
+			slippageBps: 500,
+			forceFetch: true,
+		});
+		checkRoutesResponse(routes);
+
+		// count available routes
+		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
+			routes.routesInfos.length;
+
+		// update status as OK
+		cache.queue[i] = 0;
 
 		// choose first route
-		const route = routes[Math.floor(Math.random() * 2)];
-		if (!route) return;
+		const route = await routes.routesInfos[Math.floor(Math.random()*4)];
+		if (!route) return
 		let ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
@@ -88,55 +101,18 @@ const pingpongStrategy = async (
 		} catch (err) {}
 		try {
 			let ammIds = [];
-			let ammIdspks = [];
 			try {
 				ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
-
-				ammIdspks = JSON.parse(fs.readFileSync("./ammIdspks.json").toString());
 			} catch (err) {}
-			
-			for (var file of [...routes]) {
-				//},...routes2]){//{//}),...routes2]){
-				try {
-					for (var rd of Object.values(file.routeData)) {
-						try {
-							for (var rd3 of Object.keys(rd)) {
-								if (rd3.indexOf("amm") != -1) {
-									try {
-										if (rd2[rd].length > 20) {
-											let test = new PublicKey(rd2[rd]).toBase58();
-											if (!ammIds.includes(test)) ammIds.push(test);
-										}
-									} catch (err) {}
-								}
-							}
-							// @ts-ignore
-							for (var rd2 of Object.values(rd.routeData)) {
-								try {
-									for (var rd3 of Object.keys(rd2)) {
-										if (rd3.indexOf("amm") != -1) {
-											try {
-												if (rd2[rd3].length > 20) {
-													let test = new PublicKey(rd2[rd3]).toBase58();
-													if (!ammIds.includes(test)) ammIds.push(test);
-												}
-											} catch (err) {}
-										}
-									}
-								} catch (err) {}
-							}
-						} catch (err) {}
-					}
-				} catch (Err) {}
+			for (var mi of route.marketInfos) {
+				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
 			}
-				fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
-		
+			fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
 		} catch (Err) {
 			console.log(Err);
 		}
 
-		await prism.loadRoutes(tokenB.address, tokenA.address);
-		/*	const routes2 = prism.getRoutes(route.amountWithFees * 1.0002)
+		/*	const routes2 = prism.getRoutes(route.outAmount * 1.0002)
 		
 				// choose first route
 				const route2 = routes2[Math.floor(Math.random() * 1)];
@@ -157,8 +133,57 @@ const pingpongStrategy = async (
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
-		let route2 = route;
-		let simulatedProfit = calculateProfit(route.amountIn, route2.amountWithFees);
+
+		const routes2 = await jupiter.computeRoutes({
+			inputMint: new PublicKey(outputToken.address),
+			outputMint: new PublicKey(inputToken.address),
+			amount: (route.outAmount),
+			slippageBps: 500,
+			forceFetch: true,
+		});
+		checkRoutesResponse(routes2);
+
+		// count available routes
+		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
+			routes.routesInfos.length;
+
+		// update status as OK
+		cache.queue[i] = 0;
+
+		// choose first route
+		const route2 = await routes2.routesInfos[Math.floor(Math.random()*1)];
+		if (!route) return
+		 ammIds = [];
+		try {
+			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
+		} catch (err) {}
+		 goodluts = [];
+
+		try {
+			if (!goodies.includes(reserve.config.liquidityToken.mint)) {
+				goodies.push(reserve.config.liquidityToken.mint);
+				console.log(
+					"g: " +
+						goodies.length.toString() +
+						" & res length: " +
+						market.reserves.length.toString()
+				);
+			}
+		} catch (err) {}
+		try {
+			let ammIds = [];
+			try {
+				ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
+			} catch (err) {}
+			for (var mi of route.marketInfos) {
+				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
+			}
+			fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+		} catch (Err) {
+			console.log(Err);
+		}
+		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
+		console.log(simulatedProfit)
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
 		// store max profit spotted
@@ -194,8 +219,8 @@ const pingpongStrategy = async (
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					amountIn: toDecimal(route.amountIn, inputToken.decimals),
-					expectedamountWithFees: toDecimal(route2.amountWithFees, outputToken.decimals),
+					amountIn: toDecimal(route.inAmount, inputToken.decimals),
+					expectedamountWithFees: toDecimal(route2.outAmount, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -206,7 +231,7 @@ const pingpongStrategy = async (
 				}, 500);
 
 				[tx, performanceOfTx] = await swap(
-					prism,
+					jupiter,
 					route,
 					route2,
 					tokenA,
@@ -274,7 +299,7 @@ const pingpongStrategy = async (
 	}
 };
 
-const arbitrageStrategy = async (prism, tokenA) => {
+const arbitrageStrategy = async (jupiter, tokenA) => {
 	cache.iteration++;
 	const date = new Date();
 	const i = cache.iteration;
@@ -295,7 +320,7 @@ const arbitrageStrategy = async (prism, tokenA) => {
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
 		// set input / output token
 		const inputToken = tokenA;
-		const outputToken = tokenA;
+		const outputToken = tokenB;
 
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
@@ -320,7 +345,7 @@ const arbitrageStrategy = async (prism, tokenA) => {
 
 		// calculate profitability
 
-		let simulatedProfit = calculateProfit(baseAmount, await route.amountWithFees);
+		let simulatedProfit = calculateProfit(JSBI.toNumber(baseAmount), await route.outAmount);
 
 		// store max profit spotted
 		if (simulatedProfit > cache.maxProfitSpotted["buy"]) {
@@ -353,8 +378,8 @@ const arbitrageStrategy = async (prism, tokenA) => {
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					amountIn: toDecimal(route.amountIn, inputToken.decimals),
-					expectedamountWithFees: toDecimal(route.amountWithFees, outputToken.decimals),
+					amountIn: toDecimal(route.inAmount, inputToken.decimals),
+					expectedamountWithFees: toDecimal(route.outAmount, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -364,7 +389,7 @@ const arbitrageStrategy = async (prism, tokenA) => {
 					}
 				}, 500);
 
-				[tx, performanceOfTx] = await swap(prism, route);
+				[tx, performanceOfTx] = await swap(jupiter, route);
 
 				// stop refreshing status
 				clearInterval(printTxStatus);
@@ -407,7 +432,7 @@ const arbitrageStrategy = async (prism, tokenA) => {
 	}
 };
 
-const watcher = async (prism, tokenA, tokenB, market) => {
+const watcher = async (jupiter, tokenA, tokenB, market) => {
 	if (
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
@@ -433,15 +458,15 @@ const watcher = async (prism, tokenA, tokenB, market) => {
 			let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
 			tokenB = tokens[Math.floor(Math.random() * tokens.length)];
-			tokenB = tokenA;
+			//tokenB = tokenA;
 		}
 		done = false;
 		if (process.env.tradingStrategy === "pingpong") {
-			await pingpongStrategy(prism, tokenA, tokenB, market, reserve, prices);
+			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 		}
 		if (process.env.tradingStrategy === "arbitrage") {
-			await pingpongStrategy(prism, tokenA, tokenB, market, reserve, prices);
-			//await arbitrageStrategy(prism, tokenA, tokenB);
+			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
+			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
 	}
 };
@@ -450,7 +475,7 @@ let goodies = [];
 const run = async () => {
 	try {
 		// set everything up
-		let { prism, tokenA, tokenB, market } = await setup();
+		let { jupiter, tokenA, tokenB, market } = await setup();
 
 		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
@@ -485,7 +510,7 @@ const run = async () => {
 
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
-			watcher(prism, tokenA, tokenA, market);
+			watcher(jupiter, tokenA, tokenA, market);
 		}, cache.config.minInterval);
 	} catch (error) {
 		console.log(error);

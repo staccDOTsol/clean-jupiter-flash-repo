@@ -2,7 +2,7 @@ const fs = require("fs");
 const bs58 = require("bs58");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
-const { Prism } = require("@prism-hq/prism-ag");
+const { Jupiter } = require("@jup-ag/core");
 
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
@@ -64,18 +64,13 @@ const setup = async () => {
 			]
 		);
 
-		let prism = await Prism.init({
+
+		const jupiter = await Jupiter.load({
+			connection,
+			cluster: cache.config.network,
 			user: wallet,
-			connection: connection,
-			tokenList: JSON.parse(fs.readFileSync("./solana.tokenlist.json")),
-			slippage: 8000,
-			host: {
-				// optional
-				// host platform fee account publickey base58
-				publicKey: "EDfPVAZmGLq1XhKgjpTby1byXMS2HcRqRf5j7zuQYcUg",
-				// fee bps e.g 5 => 0.05%
-				fee: 138,
-			},
+			restrictIntermediateTokens: true,
+			wrapUnwrapSOL: cache.wrapUnwrapSOL,
 		});
 		cache.isSetupDone = true;
 
@@ -106,7 +101,7 @@ const setup = async () => {
 				? process.env.marketKey
 				: */new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
-		return { prism, tokenA, tokenA, market };
+		return { jupiter, tokenA, tokenA, market };
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;
