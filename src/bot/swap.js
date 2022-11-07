@@ -54,7 +54,7 @@ const {
 } = require("@solana/web3.js/lib/index.cjs");
 
 const swap = async (
-	jupiter,
+	prism,
 	route,
 	route2,
 	tokenA,
@@ -78,9 +78,9 @@ const swap = async (
 			configs = JSON.parse(fs.readFileSync("./configs2.json").toString());
 		}
 
-		const swapTransaction = await jupiter.generateSwapTransactions(route);
+		const swapTransaction = await prism.generateSwapTransactions(route);
 
-		//const swapTransaction2 = await jupiter.generateSwapTransactions(route2);
+		//const swapTransaction2 = await prism.generateSwapTransactions(route2);
 		let tx1 = new Transaction();
 
 		await Promise.all(
@@ -105,7 +105,7 @@ const swap = async (
 			////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
 			/*
-		const execute2 = await jupiter.exchange({
+		const execute2 = await prism.exchange({
 			routeInfo: route2,
 		}); */
 			let connection = new Connection(
@@ -506,7 +506,7 @@ const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 		cache.tradeHistory = tempHistory;
 	}
 	if (true) {
-		/** check real amounts on solscan because Jupiter SDK returns wrong amounts
+		/** check real amounts on solscan because Prism SDK returns wrong amounts
 		 *  when we trading TokenA <> TokenA (arbitrage)
 		 */
 		const [inAmountFromSolscanParser, outAmountFromSolscanParser] =

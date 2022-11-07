@@ -9,13 +9,13 @@ const wizard = importJsx("./wizard/index");
 
 const cli = meow(`
 	Usage
-	  $ solana-jupiter-bot
+	  $ solana-prism-bot
 
 	Options
 		--name  Your name
 
 	Examples
-	  $ solana-jupiter-bot --name=Jane
+	  $ solana-prism-bot --name=Jane
 	  Hello, Jane
 `);
 

@@ -1,5 +1,5 @@
-$ /workspace/solana-jupiter-bot/node_modules/.bin/ts-node getluts
-$ /workspace/solana-jupiter-bot/node_modules/.bin/ts-node getluts.ts
+$ /workspace/solana-prism-bot/node_modules/.bin/ts-node getluts
+$ /workspace/solana-prism-bot/node_modules/.bin/ts-node getluts.ts
 4392
 1816
 1816

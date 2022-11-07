@@ -1,8 +1,8 @@
 version: '3.4'
 
 services:
-  solanajupiterbot:
-    image: solanajupiterbot
+  solanaprismbot:
+    image: solanaprismbot
     build:
       context: .
       dockerfile: ./Dockerfile

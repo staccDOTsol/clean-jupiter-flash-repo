@@ -1,6 +1,5 @@
 const fs = require("fs");
 const bs58 = require("bs58");
-const { Jupiter, getPlatformFeeAccounts } = require("@jup-ag/core");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
 const { Prism } = require("@prism-hq/prism-ag");
@@ -65,7 +64,7 @@ const setup = async () => {
 			]
 		);
 
-		let jupiter = await Prism.init({
+		let prism = await Prism.init({
 			user: wallet,
 			connection: connection,
 			tokenList: JSON.parse(fs.readFileSync("./solana.tokenlist.json")),
@@ -107,7 +106,7 @@ const setup = async () => {
 				? process.env.marketKey
 				: new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
-		return { jupiter, tokenA, tokenA, market };
+		return { prism, tokenA, tokenA, market };
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;
@@ -115,7 +114,7 @@ const setup = async () => {
 };
 
 const getInitialOutAmountWithSlippage = async (
-	jupiter,
+	prism,
 	inputToken,
 	outputToken,
 	amountToTrade
