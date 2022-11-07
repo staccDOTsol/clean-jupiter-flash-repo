@@ -144,9 +144,12 @@ const swap = async (
 			try {
 			for (var lut of luts[mi.amm.id]) {
 				try {
+					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
+					if (test.state.deactivationSlot < 159408000 * 100						){
 					goaccs.push(
-						(await connection.getAddressLookupTable(new PublicKey(lut))).value
+						test
 					);
+					}
 				} catch (err) {}
 			}
 		} catch (err) {}
