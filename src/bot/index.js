@@ -150,7 +150,7 @@ const pingpongStrategy = async (
 		cache.queue[i] = 0;
 
 		// choose first route
-		const route2 = await routes2.routesInfos[Math.floor(Math.random()*1)];
+		const route2 = await routes2.routesInfos[Math.floor(Math.random()*3)];
 		if (!route) return
 		 ammIds = [];
 		try {
