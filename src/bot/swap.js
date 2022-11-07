@@ -245,14 +245,14 @@ const swap = async (
 				).value[0].pubkey;
 			} catch (err) {
 				console.log(err); 
-				let ata = await createAssociatedTokenAccount(
+				/* let ata = await createAssociatedTokenAccount(
 					connection, // connection
 					payer, // fee payer
 					new PublicKey(reserve.config.liquidityToken.mint)
 					,							new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx")// mint
 					);
 				  
-				  tokenAccount = ata 
+				  tokenAccount = ata */
 			}
 			console.log(tinsts.length);
 			tinsts = []

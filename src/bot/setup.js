@@ -7,7 +7,7 @@ const { Prism } = require("@prism-hq/prism-ag");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
-var { SolendMarket } = require("../../solend-sdk");
+var { SolendMarket } = require("@solendprotocol/solend-sdk");
 if (process.env.tradingStrategy == "arbitrage") {
 	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
 }
@@ -102,9 +102,9 @@ const setup = async () => {
 		let market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
-			process.env.tradingStrategy == "pingpong"
+			/*process.env.tradingStrategy == "pingpong"
 				? process.env.marketKey
-				: new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+				: */new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { prism, tokenA, tokenA, market };
 	} catch (error) {
