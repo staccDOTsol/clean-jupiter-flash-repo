@@ -48,7 +48,7 @@
           - name: tradingStrategy
             value: "arbitrage"
           - name: minPercProfit
-            value: "0.07"
+            value: "0.025"
           - name: marketKey
             value: "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:a9fe46bb0db1e81792f340093b3517ea4b84be13
