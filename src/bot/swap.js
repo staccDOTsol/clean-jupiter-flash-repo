@@ -432,7 +432,8 @@ const swap = async (
 	} catch (error) {
 		cache.swappingRightNow = false;
 
-		console.log("Swap error: ", error);
+		console.log("Swap error: " + error.toString() + ', market ' + market.config.address + ', reserve ' + reserve.config.address);
+
 		return [false, false];
 	}
 };
