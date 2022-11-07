@@ -135,9 +135,13 @@ const swap = async (
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 				]
 			);
+			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
+			console.log(test.state.deactivationSlot)
+			if (test.state.deactivationSlot < BigInt(test.state.deactivationSlot)						){
 			goaccs.push(
-				(await connection.getAddressLookupTable(new PublicKey(golut))).value
+				test
 			);
+			}
 		}
 		for (var mi of route.marketInfos) {
 		
@@ -145,7 +149,7 @@ const swap = async (
 			for (var lut of luts[mi.amm.id]) {
 				try {
 					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
-					if (test.state.deactivationSlot < 159408000 * 100						){
+					if (test.state.deactivationSlot < BigInt(test.state.deactivationSlot)						){
 					goaccs.push(
 						test
 					);
@@ -163,7 +167,14 @@ const swap = async (
 				)
 			).value[0].pubkey;
 		} catch (err) {
-			console.log(err);
+			
+			let ata = await createAssociatedTokenAccount(
+				connection, // connection
+				payer, // fee payer
+				new PublicKey(reserve.config.liquidityToken.mint),
+				new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // mint
+			);
+			jaregm = ata
 		}
 		//tinsts = []
 		let instructions = [
