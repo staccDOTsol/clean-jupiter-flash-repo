@@ -136,7 +136,8 @@ const swap = async (
 				]
 			);
 			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
-			if (test.state.deactivationSlot < BigInt(159408000 * 2)						){
+			console.log(test.state.deactivationSlot )
+			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
 			goaccs.push(
 				test
 			);
@@ -148,7 +149,7 @@ const swap = async (
 			for (var lut of luts[mi.amm.id]) {
 				try {
 					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
-					if (test.state.deactivationSlot < BigInt(159408000 * 2)						){
+					if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
 					goaccs.push(
 						test
 					);
