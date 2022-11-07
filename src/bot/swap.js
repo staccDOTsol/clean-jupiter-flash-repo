@@ -76,7 +76,7 @@ const swap = async (
 		try {
 			tokenAccount = ata[0].pubkey;
 		} catch (err) {
-			/*
+			
 			let ata = await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
@@ -85,10 +85,10 @@ const swap = async (
 			);
 
 			tokenAccount = ata;
-		*/
+		
 		}
-		if (ata.length > 0){
-			for (var i = 1; i < ata.length; i++){
+		if (ata.length > 1){
+			for (var i = 2; i <= ata.length; i++){
 				try{
 			await closeAccount(
 				new Connection(
@@ -104,7 +104,6 @@ const swap = async (
 				payer.publicKey, // destination
 				payer, // owner of token account
 				[],
-				{ skipPreflight: false }
 			);
 		} catch (Err){
 			
@@ -136,7 +135,6 @@ const swap = async (
 				]
 			);
 			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
-			console.log(test.state.deactivationSlot )
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
 			goaccs.push(
 				test
@@ -147,6 +145,7 @@ const swap = async (
 		
 			try {
 			for (var lut of luts[mi.amm.id]) {
+				if (goaccs.length < 15){
 				try {
 					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
 					if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
@@ -155,6 +154,8 @@ const swap = async (
 					);
 					}
 				} catch (err) {}
+			}
+			console.log(goaccs.length)
 			}
 		} catch (err) {}
 		}
@@ -177,6 +178,26 @@ const swap = async (
 			jaregm = ata
 		}
 		//tinsts = []
+		console.log(execute.transactions)
+		if (execute.transactions.setupTransaction){
+		
+
+			let tx = new Transaction();
+			tx.add(...execute.transactions.setupTransaction.instructions)
+			tx.recentBlockhash = await (
+				await connection.getLatestBlockhash()
+			).blockhash;
+			tx.sign(payer);
+			try {
+			let hmm = await	sendAndConfirmTransaction(tx);
+				console.log('temp1: ' + hmm)
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		else {
+		//	process.exit()
+		}
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
@@ -229,8 +250,8 @@ const swap = async (
 		let result;
 		result = await sendAndConfirmTransaction(connection2,
 			transaction,
-			{ skipPreflight: false },
-			{ skipPreflight: false }
+			{ skipPreflight: false},
+			{ skipPreflight: false}
 		);
 		console.log("tx: " + result);
 
@@ -239,7 +260,7 @@ const swap = async (
 		});
 
 		let jaregms = await connection.getParsedTokenAccountsByOwner(
-			new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"),
+			new PublicKey("GoUPK9AX5yuxSMdovRZetzrzLVAuep7P9axWc9jyb7LC"),
 			{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
 		);
 
@@ -264,7 +285,7 @@ const swap = async (
 						connection, // connection
 						payer, // fee payer
 						new PublicKey(reserve.config.liquidityToken.mint),
-						new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm") // mint
+						new PublicKey("GoUPK9AX5yuxSMdovRZetzrzLVAuep7P9axWc9jyb7LC") // mint
 					);
 					tx.add(
 						createTransferInstruction(
@@ -282,15 +303,14 @@ const swap = async (
 				tx.sign(payer);
 				try {
 					connection.sendTransaction(tx, [payer], {
-						skipPreflight: true,
 						commitment: "singleGossip",
 					});
 				} catch (err) {
 					console.log(err);
 				}
-			} else {
+			}
 				tac++;
-				if (tac >= 1) {
+				if (tac >= 2) {
 					await closeAccount(
 						new Connection(
 							process.env.ALT_RPC_LIST.split(",")[
@@ -305,10 +325,8 @@ const swap = async (
 						payer.publicKey, // destination
 						payer, // owner of token account
 						[],
-						{ skipPreflight: false }
 					);
 				}
-			}
 		}
 
 		const performanceOfTx = performance.now() - performanceOfTxStart;
