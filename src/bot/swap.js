@@ -1,6 +1,6 @@
 const { calculateProfit, toDecimal, storeItInTempAsJSON } = require("../utils");
 const cache = require("./cache");
-const { closeAccount, createTransferInstruction, createAssociatedTokenAccount } = require ('/Users/jarettdunn/forks/clean-jupiter-flash-repo/src/spl-token')
+const { closeAccount, createTransferInstruction, createAssociatedTokenAccount } = require ('../../src/spl-token')
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 const {
 	flashRepayReserveLiquidityInstruction,
