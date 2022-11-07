@@ -68,7 +68,7 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.f
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
-if(maybemine.value?.state.addresses.length as number > 200){
+if(maybemine.value?.state.addresses.length as number > 100){
     // @ts-ignore
     for (var addy of maybemine.value?.state.addresses){
 let addypk = addy.toBase58()
