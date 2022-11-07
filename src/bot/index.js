@@ -58,7 +58,7 @@ const pingpongStrategy = async (
 
 		// set input / output token
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
-		const outputToken = tokenB; //cache.sideSell ? tokenB : tokenA;
+		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
 		//console.log(inputToken.symbol);
 		// check current routes
 
@@ -133,6 +133,7 @@ const pingpongStrategy = async (
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
+		/*
 
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(outputToken.address),
@@ -148,7 +149,6 @@ const pingpongStrategy = async (
 
 		// update status as OK
 		cache.queue[i] = 0;
-
 		// choose first route
 		const route2 = await routes2.routesInfos[Math.floor(Math.random()*3)];
 		if (!route) return
@@ -181,6 +181,8 @@ const pingpongStrategy = async (
 		} catch (Err) {
 			console.log(Err);
 		}
+		*/
+		const route2 = route 
 		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
 		console.log(simulatedProfit)
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
@@ -319,7 +321,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
 		// set input / output token
 		const inputToken = tokenA;
-		const outputToken = tokenB;
+		const outputToken = tokenA;
 
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();

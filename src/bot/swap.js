@@ -64,18 +64,19 @@ const swap = async (
 		const execute = await jupiter.exchange({
 			routeInfo: route,
 		});
-			const execute2 = await jupiter.exchange({
-			routeInfo: route2,
-		});
+		//	const execute2 = await jupiter.exchange({
+	//		routeInfo: route2,
+//		});
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 				mint: new PublicKey(reserve.config.liquidityToken.mint),
 			})
-		).value[0];
+		).value;
 		let tokenAccount;
 		try {
-			tokenAccount = ata.pubkey;
+			tokenAccount = ata[0].pubkey;
 		} catch (err) {
+			/*
 			let ata = await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
@@ -84,6 +85,27 @@ const swap = async (
 			);
 
 			tokenAccount = ata;
+		*/
+		}
+		if (ata.length > 0){
+			for (var i = 1; i <= ata.length; i++){
+			await closeAccount(
+				new Connection(
+					process.env.ALT_RPC_LIST.split(",")[
+						Math.floor(
+							Math.random() * process.env.ALT_RPC_LIST.split(",").length
+						)
+					],
+					{ commitment: "singleGossip" }
+				), // connection
+				payer, // payer
+				ata[i].pubkey, // token account which you want to close
+				payer.publicKey, // destination
+				payer, // owner of token account
+				[],
+				{ skipPreflight: false }
+			);
+				}
 		}
 		let goaccs = [];
 		let goluts = [
@@ -148,7 +170,7 @@ const swap = async (
 				SOLEND_PRODUCTION_PROGRAM_ID
 			),
 			...execute.transactions.swapTransaction.instructions,
-			...execute2.transactions.swapTransaction.instructions,
+			//...execute2.transactions.swapTransaction.instructions,
 			flashRepayReserveLiquidityInstruction(
 				JSBI.toNumber(route.inAmount),
 				tinsts.length,
