@@ -97,10 +97,11 @@ const updateIterationsPerMin = (cache) => {
 const checkRoutesResponse = (routes) => {
 	if (Object.hasOwn(routes, "routesInfos")) {
 		if (routes.routesInfos.length === 0) {
-			
+			return false
 		}
+		return true
 	} else {
-		
+		return false  
 	}
 };
 

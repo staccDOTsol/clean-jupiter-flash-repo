@@ -70,7 +70,7 @@ const pingpongStrategy = async (
 			slippageBps: 500,
 			forceFetch: true,
 		});
-		checkRoutesResponse(routes);
+		if (!checkRoutesResponse(routes)) return
 
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
@@ -141,8 +141,7 @@ const pingpongStrategy = async (
 			slippageBps: 500,
 			forceFetch: true,
 		});
-		checkRoutesResponse(routes2);
-
+		if (!checkRoutesResponse(routes)) return
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
 			routes.routesInfos.length;
@@ -219,8 +218,8 @@ const pingpongStrategy = async (
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					amountIn: toDecimal(route.inAmount, inputToken.decimals),
-					expectedamountWithFees: toDecimal(route2.outAmount, outputToken.decimals),
+					amountIn: toDecimal(JSBI.toNumber(route.inAmount), inputToken.decimals),
+					expectedamountWithFees: toDecimal(JSBI.toNumber(route2.outAmount), outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 

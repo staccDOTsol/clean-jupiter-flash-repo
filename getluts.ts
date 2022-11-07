@@ -35,7 +35,7 @@ let myluts: any = {}
     let luts = await connection.getProgramAccounts(AddressLookupTableProgram.programId)
     console.log(Object.keys(luts).length)
 
-    await PromisePool.withConcurrency(10)
+    await PromisePool.withConcurrency(3)
     .for(luts)
     // @ts-ignore
     .handleError(async (err, asset) => {

@@ -28,7 +28,14 @@ let market = JSON.parse(fs.readFileSync("./configs.json").toString())[0];
 let payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
-const swap = async (jupiter, route, tokenA) => {
+const swap = async (
+	jupiter,
+	route,
+	route2,
+	tokenA,
+	market,
+	reserve,
+	amountToTrade) => {
 	try {
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
@@ -37,11 +44,11 @@ const swap = async (jupiter, route, tokenA) => {
 		);
 
 		const reserve = market.reserves.find(
-			(res) => res.liquidityToken.mint === tokenA.address
+			(res) => res.config.liquidityToken.mint === tokenA.address
 		);
 
-		if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 166642;
+		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
+		let units = 266642;
 		let tinsts = [];
 		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
@@ -57,9 +64,12 @@ const swap = async (jupiter, route, tokenA) => {
 		const execute = await jupiter.exchange({
 			routeInfo: route,
 		});
+			const execute2 = await jupiter.exchange({
+			routeInfo: route2,
+		});
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-				mint: new PublicKey(reserve.liquidityToken.mint),
+				mint: new PublicKey(reserve.config.liquidityToken.mint),
 			})
 		).value[0];
 		let tokenAccount;
@@ -69,7 +79,7 @@ const swap = async (jupiter, route, tokenA) => {
 			let ata = await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
-				new PublicKey(reserve.liquidityToken.mint),
+				new PublicKey(reserve.config.liquidityToken.mint),
 				payer.publicKey // mint
 			);
 
@@ -120,7 +130,7 @@ const swap = async (jupiter, route, tokenA) => {
 			jaregm = (
 				await connection.getTokenAccountsByOwner(
 					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-					{ mint: new PublicKey(reserve.liquidityToken.mint) }
+					{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
 				)
 			).value[0].pubkey;
 		} catch (err) {
@@ -131,22 +141,23 @@ const swap = async (jupiter, route, tokenA) => {
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
 				JSBI.toNumber(route.inAmount),
-				new PublicKey(reserve.liquidityAddress),
+				new PublicKey(reserve.config.liquidityAddress),
 				tokenAccount,
-				new PublicKey(reserve.address),
-				new PublicKey(market.address),
+				new PublicKey(reserve.config.address),
+				new PublicKey(market.config.address),
 				SOLEND_PRODUCTION_PROGRAM_ID
 			),
 			...execute.transactions.swapTransaction.instructions,
+			...execute2.transactions.swapTransaction.instructions,
 			flashRepayReserveLiquidityInstruction(
 				JSBI.toNumber(route.inAmount),
 				tinsts.length,
 				tokenAccount,
-				new PublicKey(reserve.liquidityAddress),
-				new PublicKey(reserve.liquidityAddress),
+				new PublicKey(reserve.config.liquidityAddress),
+				new PublicKey(reserve.config.liquidityAddress),
 				tokenAccount,
-				new PublicKey(reserve.address),
-				new PublicKey(market.address),
+				new PublicKey(reserve.config.address),
+				new PublicKey(market.config.address),
 				payer.publicKey,
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
@@ -184,12 +195,12 @@ const swap = async (jupiter, route, tokenA) => {
 		console.log("tx: " + result);
 
 		let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-			mint: new PublicKey(reserve.liquidityToken.mint),
+			mint: new PublicKey(reserve.config.liquidityToken.mint),
 		});
 
 		let jaregms = await connection.getParsedTokenAccountsByOwner(
 			new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"),
-			{ mint: new PublicKey(reserve.liquidityToken.mint) }
+			{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
 		);
 
 		console.log(tas2.value.length);
@@ -212,7 +223,7 @@ const swap = async (jupiter, route, tokenA) => {
 					let ata = await createAssociatedTokenAccount(
 						connection, // connection
 						payer, // fee payer
-						new PublicKey(reserve.liquidityToken.mint),
+						new PublicKey(reserve.config.liquidityToken.mint),
 						new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm") // mint
 					);
 					tx.add(
@@ -286,7 +297,7 @@ const failedSwapHandler = (tradeEntry) => {
 exports.failedSwapHandler = failedSwapHandler;
 
 const successSwapHandler = async (tx, tradeEntry, tokenA, tokenB) => {
-	if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
+	//if (process.env.DEBUG) storeItInTempAsJSON(`txResultFromSDK_${tx?.txid}`, tx);
 
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
