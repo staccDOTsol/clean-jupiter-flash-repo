@@ -88,7 +88,8 @@ const swap = async (
 		*/
 		}
 		if (ata.length > 0){
-			for (var i = 1; i <= ata.length; i++){
+			for (var i = 1; i < ata.length; i++){
+				try{
 			await closeAccount(
 				new Connection(
 					process.env.ALT_RPC_LIST.split(",")[
@@ -105,7 +106,10 @@ const swap = async (
 				[],
 				{ skipPreflight: false }
 			);
-				}
+		} catch (Err){
+			
+		}
+	}
 		}
 		let goaccs = [];
 		let goluts = [
