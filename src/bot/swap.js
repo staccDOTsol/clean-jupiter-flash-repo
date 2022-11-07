@@ -337,7 +337,7 @@ const swap = async (
 				]
 			);
 			let result;
-			result = await connection2.sendTransaction(transaction, {skipPreflight: true}, {skipPreflight: true});
+			result = await connection2.sendTransaction(transaction, {skipPreflight: false}, {skipPreflight: false});
 			console.log("tx: " + result);
 
 			let tas2 = await connection.getParsedTokenAccountsByOwner(
@@ -389,7 +389,7 @@ const swap = async (
 					tx.sign(payer);
 					try {
 						connection.sendTransaction(tx, [payer], {
-							skipPreflight: true,
+							skipPreflight: false,
 							commitment: "singleGossip",
 						});
 					} catch (err) {
