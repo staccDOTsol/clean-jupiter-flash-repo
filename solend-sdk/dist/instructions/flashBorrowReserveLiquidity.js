@@ -34,7 +34,7 @@ const BufferLayout = __importStar(require("buffer-layout"));
 const bn_js_1 = __importDefault(require("bn.js"));
 const Layout = __importStar(require("../utils/layout"));
 const instruction_1 = require("./instruction");
-const flashBorrowReserveLiquidityInstruction = (liquidityAmount, sourceLiquidity, destinationLiquidity, reserve, lendingMarket, lendingProgramId, who) => {
+const flashBorrowReserveLiquidityInstruction = (liquidityAmount, sourceLiquidity, destinationLiquidity, reserve, lendingMarket, lendingProgramId) => {
     const dataLayout = BufferLayout.struct([
         BufferLayout.u8("instruction"),
         Layout.uint64("liquidityAmount"),
@@ -53,7 +53,6 @@ const flashBorrowReserveLiquidityInstruction = (liquidityAmount, sourceLiquidity
         { pubkey: lendingMarketAuthority, isSigner: false, isWritable: false },
         { pubkey: web3_js_1.SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false },
         { pubkey: spl_token_1.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-        { pubkey: who, isSigner: true, isWritable: true },
     ];
     return new web3_js_1.TransactionInstruction({
         keys,

@@ -6,7 +6,7 @@ const { clearInterval } = require("timers");
 const { PublicKey } = require("@solana/web3.js");
 const JSBI = require("jsbi");
 const WAD = new BN("1".concat(Array(18 + 1).join("0")));
-const bs58 = require('bs58')
+const bs58 = require("bs58");
 const {
 	calculateProfit,
 	toDecimal,
@@ -15,11 +15,11 @@ const {
 	checkRoutesResponse,
 } = require("../utils");
 const cache = require("./cache");
-const { setup, getInitialamountOutWithSlippage } = require("./setup");
+const { setup, getInitialamountWithFeesWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 100 : 1000;
+let mod = process.env.tradingStrategy == "arbitrage" ? 100: 1000;
 const pingpongStrategy = async (
 	jupiter,
 	tokenA,
@@ -33,7 +33,6 @@ const pingpongStrategy = async (
 	const i = cache.iteration;
 	cache.queue[i] = -1;
 	try {
-
 		cache.config = loadConfigFile({ showSpinner: false });
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
@@ -43,7 +42,9 @@ const pingpongStrategy = async (
 			(mod / reserve.stats.assetPriceUSD) *
 				10 ** reserve.config.liquidityToken.decimals
 		);
-		console.log('amountToTrade: ' + (amountToTrade /  10 ** tokenA.decimals).toString())
+		//console.log(
+		///	"amountToTrade: " + (amountToTrade / 10 ** tokenA.decimals).toString()
+		//);
 		/*
 			cache.config.tradeSize.strategy === "cumulative"
 				? cache.currentBalance[cache.sideBuy ? "tokenA" : "tokenB"]
@@ -58,27 +59,22 @@ const pingpongStrategy = async (
 		// set input / output token
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
 		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
-		console.log(inputToken.symbol);
+		//console.log(inputToken.symbol);
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
-	
-		
 
-	await jupiter.loadRoutes(
-		tokenA.address,
-		tokenB.address
-	)
-			const routes = jupiter.getRoutes(amountToTrade /  10 ** tokenA.decimals)
+		await jupiter.loadRoutes(tokenA.address, tokenB.address);
+		const routes = jupiter.getRoutes(amountToTrade / 10 ** tokenA.decimals);
 
 		// choose first route
-		const route = routes[Math.floor(Math.random() * 1)];
-		if (!route) return
+		const route = routes[Math.floor(Math.random() * 2)];
+		if (!route) return;
 		let ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
 		} catch (err) {}
 		let goodluts = [];
-	
+
 		try {
 			if (!goodies.includes(reserve.config.liquidityToken.mint)) {
 				goodies.push(reserve.config.liquidityToken.mint);
@@ -89,72 +85,64 @@ const pingpongStrategy = async (
 						market.reserves.length.toString()
 				);
 			}
-		} catch (err){
-
-		}
+		} catch (err) {}
+		try {
+			let ammIds = [];
+			let ammIdspks = [];
 			try {
-				let ammIds = [ ]
-				let ammIdspks = []
-	try {
-				ammIds =  JSON.parse(fs.readFileSync('./ammIds.json').toString())
-				
-				ammIdspks = JSON.parse(fs.readFileSync('./ammIdspks.json').toString())
-	} catch (err){
-	}
-			for (var file of [...routes]){//},...routes2]){//{//}),...routes2]){
+				ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
+
+				ammIdspks = JSON.parse(fs.readFileSync("./ammIdspks.json").toString());
+			} catch (err) {}
+			
+			for (var file of [...routes]) {
+				//},...routes2]){//{//}),...routes2]){
 				try {
-	
-					for (var rd of Object.values(file.routeData)){
+					for (var rd of Object.values(file.routeData)) {
 						try {
-							// @ts-ignore
-							for(var rd2 of Object.values(rd.routeData)){
-								try {
-							for(var rd3 of Object.values(rd2)){
-try {
-if (rd3.length > 20) {
-	let test= (new PublicKey(rd3)).toBase58()
-if (!ammIds.includes(test)) ammIds.push(test)
-}
-}
- catch (err){
-
- }
+							for (var rd3 of Object.keys(rd)) {
+								if (rd3.indexOf("amm") != -1) {
+									try {
+										if (rd2[rd].length > 20) {
+											let test = new PublicKey(rd2[rd]).toBase58();
+											if (!ammIds.includes(test)) ammIds.push(test);
+										}
+									} catch (err) {}
+								}
 							}
-		} catch (err)
-		{
-
-		}
-	}
-} catch (err){
-
-}
+							// @ts-ignore
+							for (var rd2 of Object.values(rd.routeData)) {
+								try {
+									for (var rd3 of Object.keys(rd2)) {
+										if (rd3.indexOf("amm") != -1) {
+											try {
+												if (rd2[rd3].length > 20) {
+													let test = new PublicKey(rd2[rd3]).toBase58();
+													if (!ammIds.includes(test)) ammIds.push(test);
+												}
+											} catch (err) {}
+										}
+									}
+								} catch (err) {}
+							}
+						} catch (err) {}
 					}
-				} catch (Err){}
-					
-				let hmms = []
-				let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-
-for (var tok of tokens){
-	hmms.push(tok.address)
-}
-ammIds.filter((id) => !hmms.includes(id))
-		fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
-				}	} catch (Err)
-			{
-console.log(Err)
+				} catch (Err) {}
 			}
+				fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
+		
+		} catch (Err) {
+			console.log(Err);
+		}
 
-			await jupiter.loadRoutes(
-				tokenB.address,
-				tokenA.address
-			)
-				/*	const routes2 = jupiter.getRoutes(route.amountOut * 1.0002)
+		await jupiter.loadRoutes(tokenB.address, tokenA.address);
+		/*	const routes2 = jupiter.getRoutes(route.amountWithFees * 1.0002)
 		
 				// choose first route
 				const route2 = routes2[Math.floor(Math.random() * 1)];
 				if (!route2) return */
 		// count available routes
-		
+
 		// choose another route
 		//const route = await routes2.routesInfos[Math.floor(Math.random() * 2)];
 
@@ -169,11 +157,8 @@ console.log(Err)
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
-let route2 = route
-		let simulatedProfit = calculateProfit(
-			(route.amountIn),
-			(route2.amountOut)
-		);
+		let route2 = route;
+		let simulatedProfit = calculateProfit(route.amountIn, route2.amountWithFees);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
 		// store max profit spotted
@@ -209,14 +194,8 @@ let route2 = route
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					amountIn: toDecimal(
-						(route.amountIn),
-						inputToken.decimals
-					),
-					expectedamountOut: toDecimal(
-						(route2.amountOut),
-						outputToken.decimals
-					),
+					amountIn: toDecimal(route.amountIn, inputToken.decimals),
+					expectedamountWithFees: toDecimal(route2.amountWithFees, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -250,7 +229,7 @@ let route2 = route
 
 					tradeEntry = {
 						...tradeEntry,
-						amountOut: tx.outputAmount || 0,
+						amountWithFees: tx.outputAmount || 0,
 						profit,
 						performanceOfTx,
 						error: tx.error?.message || null,
@@ -281,12 +260,12 @@ let route2 = route
 			if (simulatedProfit > 0) {
 				mod = mod * 1.01;
 			} else {
-				mod = mod / 1.02;
+				mod = mod / 1.09;
 			}
 		} else {
-			mod = process.env.tradingStrategy == "arbitrage" ? 100 : 1000;
+			mod = process.env.tradingStrategy == "arbitrage" ? 100: 1000;
 		}
-		console.log('mod: ' + mod.toString())
+		console.log("mod: " + mod.toString());
 	} catch (error) {
 		cache.queue[i] = 1;
 		console.log(error);
@@ -320,7 +299,6 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 		// check current routes
 		const performanceOfRouteCompStart = performance.now();
-		
 
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
@@ -342,7 +320,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 		// calculate profitability
 
-		let simulatedProfit = calculateProfit(baseAmount, await route.amountOut);
+		let simulatedProfit = calculateProfit(baseAmount, await route.amountWithFees);
 
 		// store max profit spotted
 		if (simulatedProfit > cache.maxProfitSpotted["buy"]) {
@@ -375,11 +353,8 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 					buy: cache.sideBuy,
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
-					amountIn: toDecimal(
-						(route.amountIn),
-						inputToken.decimals
-					),
-					expectedamountOut: toDecimal(route.amountOut, outputToken.decimals),
+					amountIn: toDecimal(route.amountIn, inputToken.decimals),
+					expectedamountWithFees: toDecimal(route.amountWithFees, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -401,7 +376,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 
 				tradeEntry = {
 					...tradeEntry,
-					amountOut: tx.outputAmount || 0,
+					amountWithFees: tx.outputAmount || 0,
 					profit,
 					performanceOfTx,
 					error: tx.error?.message || null,
@@ -441,23 +416,26 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 
 		let prices = {};
 		done = false;
-		market.refreshAll()
+		market.refreshAll();
 		for (var res of market.reserves) {
 			res = market.reserves[Math.floor(Math.random() * market.reserves.length)];
 			reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
-			let symbol 			= process.env.tradingStrategy == "arbitrage" ?	reserve.config.asset : reserve.config.liquidityToken.symbol
+			let symbol =
+				process.env.tradingStrategy == "arbitrage"
+					? reserve.config.asset
+					: reserve.config.liquidityToken.symbol;
 
 			tokenA = {
 				address: reserve.config.liquidityToken.mint,
 				decimals: reserve.config.liquidityToken.decimals,
-				symbol: symbol
+				symbol: symbol,
 			};
-let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+			let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
-			tokenB = tokens[Math.floor(Math.random() * tokens.length)]
-			tokenB = tokenA
+			tokenB = tokens[Math.floor(Math.random() * tokens.length)];
+			tokenB = tokenA;
 		}
-		done = false 
+		done = false;
 		if (process.env.tradingStrategy === "pingpong") {
 			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
 		}

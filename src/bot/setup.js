@@ -8,7 +8,7 @@ const { Prism } = require("@prism-hq/prism-ag");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
-var { SolendMarket } = require("@solendprotocol/solend-sdk");
+var { SolendMarket } = require("../../solend-sdk");
 if (process.env.tradingStrategy == "arbitrage") {
 	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
 }
@@ -69,14 +69,15 @@ const setup = async () => {
 			user: wallet,
 			connection: connection,
 			tokenList: JSON.parse(fs.readFileSync("./solana.tokenlist.json")),
-			slippage:1,
-			host: {                                          // optional
+			slippage: 8000,
+			host: {
+				// optional
 				// host platform fee account publickey base58
 				publicKey: "EDfPVAZmGLq1XhKgjpTby1byXMS2HcRqRf5j7zuQYcUg",
 				// fee bps e.g 5 => 0.05%
 				fee: 138,
-			  },
-		})
+			},
+		});
 		cache.isSetupDone = true;
 
 		// find tokens full Object
@@ -94,13 +95,17 @@ const setup = async () => {
 		);
 		//		configs = configs.filter((c) => ((!c.isHidden && c.isPermissionless ) || c.isPrimary))
 
-		configs = configs.filter((c) => (!c.isHidden && !c.isPermissionless && c.reserves.length > 4));
-		
+		configs = configs.filter(
+			(c) => !c.isHidden && !c.isPermissionless && c.reserves.length > 4
+		);
+
 		let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
 			connection,
 			"production", // optional environment argument
-			process.env.tradingStrategy == 'pingpong' ? process.env.marketKey : new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			process.env.tradingStrategy == "pingpong"
+				? process.env.marketKey
+				: new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { jupiter, tokenA, tokenA, market };
 	} catch (error) {

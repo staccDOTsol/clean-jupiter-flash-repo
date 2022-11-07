@@ -11,7 +11,9 @@ let {
 const {
 	createTransferCheckedInstruction,
 	ASSOCIATED_TOKEN_PROGRAM_ID,
-	TOKEN_PROGRAM_ID,createAssociatedTokenAccount,closeAccount
+	TOKEN_PROGRAM_ID,
+	createAssociatedTokenAccount,
+	closeAccount,
 } = require("../spl-token");
 const BN = require("bn.js");
 
@@ -46,7 +48,10 @@ let {
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { Token, createTransferInstruction } = require("../spl-token");
 
-const { ComputeBudgetProgram, Transaction } = require("@solana/web3.js/lib/index.cjs");
+const {
+	ComputeBudgetProgram,
+	Transaction,
+} = require("@solana/web3.js/lib/index.cjs");
 
 const swap = async (
 	jupiter,
@@ -73,30 +78,29 @@ const swap = async (
 			configs = JSON.parse(fs.readFileSync("./configs2.json").toString());
 		}
 
-		const swapTransaction = await jupiter.generateSwapTransactions(route); 
-			
-		//const swapTransaction2 = await jupiter.generateSwapTransactions(route2); 
-				let tx1= new Transaction()
-	
-						  await Promise.all(
-							[swapTransaction.preTransaction]//, swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
-					//	  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
-							  .filter(Boolean)
-							  .map(async (serializedTransaction) => {
-								try {
-								tx1.push(...serializedTransaction.instructions)
-								} catch (err){
-	
-								}
-							  }))
-							  if (tx1.instructions.length>0){
-								tx1.recentBlockhash = await (
-								  await connection.getLatestBlockhash()
-								).blockhash;
-								tx1.sign(payer)
-								var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer])
-								console.log(hm2) 
-								}
+		const swapTransaction = await jupiter.generateSwapTransactions(route);
+
+		//const swapTransaction2 = await jupiter.generateSwapTransactions(route2);
+		let tx1 = new Transaction();
+
+		await Promise.all(
+			[swapTransaction.preTransaction] //, swapTransaction2.preTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+				//	  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+				.filter(Boolean)
+				.map(async (serializedTransaction) => {
+					try {
+						tx1.push(...serializedTransaction.instructions);
+					} catch (err) {}
+				})
+		);
+		if (tx1.instructions.length > 0) {
+			tx1.recentBlockhash = await (
+				await connection.getLatestBlockhash()
+			).blockhash;
+			tx1.sign(payer);
+			var hm2 = await sendAndConfirmTransaction(connection, tx1, [payer], {skipPreflight:true});
+			console.log(hm2);
+		}
 		if (true) {
 			////if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 
@@ -107,8 +111,9 @@ const swap = async (
 			let connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				]
-			, {commitment: 'singleGossip'});
+				],
+				{ commitment: "singleGossip" }
+			);
 			let goluts = [
 				"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
 				"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
@@ -126,53 +131,55 @@ const swap = async (
 				}
 			}
 			//			console.log(Object.keys(luts).length)
-			let ammIds = [ ]
-			let ammIdspks = []
+			let ammIds = [];
+			let ammIdspks = [];
 
-for (var file of [route]){//},...routes2]){//{//}),...routes2]){
-	try {
-
-		for (var rd of Object.values(file.routeData)){
-			try {
-				// @ts-ignore
-				for(var rd2 of Object.values(rd.routeData)){
-					try {
-				for(var rd3 of Object.values(rd2)){
-try {
-if (rd3.length > 20) {
-let test= (new PublicKey(rd3)).toBase58()
-if (!ammIds.includes(test)) ammIds.push(test)
-}
-}
-catch (err){
-
-}
-				}
-} catch (err)
-{
-
-}
-}
-} catch (err){
-
-}
-		}
-	} catch (Err){}
-}
-let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-let hmms = []
-for (var tok of tokens){
-	hmms.push(tok.address)
-}
-ammIds.filter((id) => !hmms.includes(id))
+			for (var file of [route]) {
+				//},...routes2]){//{//}),...routes2]){
+				try {
+					for (var rd of Object.values(file.routeData)) {
+						try {
+							for (var rd3 of Object.keys(rd)) {
+								if (rd3.indexOf("amm") != -1) {
+									try {
+										if (rd2[rd].length > 20) {
+											let test = new PublicKey(rd2[rd]).toBase58();
+											if (!ammIds.includes(test)) ammIds.push(test);
+										}
+									} catch (err) {}
+								}
+							}
+							// @ts-ignore
+							for (var rd2 of Object.values(rd.routeData)) {
+								try {
+									for (var rd3 of Object.keys(rd2)) {
+										if (rd3.indexOf("amm") != -1) {
+											try {
+												if (rd2[rd3].length > 20) {
+													let test = (rd2[rd3]);
+													if (!ammIds.includes(test)) ammIds.push(test);
+												}
+											} catch (err) {}
+										}
+									}
+								} catch (err) {}
+							}
+						} catch (err) {}
+					}
+				} catch (Err) {}
+			}
+			console.log(ammIds);
 			for (var mi of ammIds) {
-				
 				//}, ...route2.marketInfos]) {
 				try {
 					let maybeluts = luts[mi];
-					if (maybeluts.length < 10){
-					goluts.push(...maybeluts);
-					console.log('maybeluts: ' + luts[mi].length.toString())
+					if (maybeluts.length < 4) {
+						if (goluts.length < 25) {
+							goluts.push(...maybeluts);
+						} else {
+							break;
+						}
+						console.log("maybeluts: " + luts[mi].length.toString());
 					}
 				} catch (err) {
 					//console.log(err);
@@ -196,7 +203,7 @@ ammIds.filter((id) => !hmms.includes(id))
 
 			let jaregm;
 			let signers = [];
-			let units = 366642;
+			let units = 266642;
 			const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 				//234907
 				units: units,
@@ -218,14 +225,15 @@ ammIds.filter((id) => !hmms.includes(id))
 			try {
 				tokenAccount = ata.pubkey;
 			} catch (err) {
-				let ata = await createAssociatedTokenAccount(
+				console.log(err);
+				/*	let ata = await createAssociatedTokenAccount(
 					connection, // connection
 					payer, // fee payer
 					new PublicKey(reserve.config.liquidityToken.mint)
 					,							payer.publicKey // mint
 					);
 				  
-				  tokenAccount = ata
+				  tokenAccount = ata */
 			}
 
 			try {
@@ -236,14 +244,21 @@ ammIds.filter((id) => !hmms.includes(id))
 					)
 				).value[0].pubkey;
 			} catch (err) {
-console.log(err)
+				console.log(err); 
+				let ata = await createAssociatedTokenAccount(
+					connection, // connection
+					payer, // fee payer
+					new PublicKey(reserve.config.liquidityToken.mint)
+					,							new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx")// mint
+					);
+				  
+				  tokenAccount = ata 
 			}
 			console.log(tinsts.length);
 			let instructions = [
-				
 				...tinsts,
 				flashBorrowReserveLiquidityInstruction(
-					Math.ceil(amountToTrade * 1.2),
+					amountToTrade,
 					new PublicKey(reserve.config.liquidityAddress),
 					tokenAccount,
 					new PublicKey(reserve.config.address),
@@ -251,14 +266,15 @@ console.log(err)
 					SOLEND_PRODUCTION_PROGRAM_ID
 				),
 			];
-							await Promise.all(
-								[swapTransaction.mainTransaction]//, swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
-							//  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
-								  .filter(Boolean)
-								  .map(async (serializedTransaction) => {
-									instructions.push(...serializedTransaction.instructions)
-								  }))
-								 
+			await Promise.all(
+				[swapTransaction.mainTransaction] //, swapTransaction2.mainTransaction]/*, swapTransaction.mainTransaction, swapTransaction.postTransaction,
+					//  swapTransaction2.preTransaction/*, swapTransaction2.mainTransaction, swapTransaction2.postTransaction]*/
+					.filter(Boolean)
+					.map(async (serializedTransaction) => {
+						instructions.push(...serializedTransaction.instructions);
+					})
+			);
+
 			//console.log(instructions.length);
 			/*
 			for (var instruction of execute2.transactions.swapTransaction.instructions){
@@ -270,7 +286,7 @@ console.log(err)
 				console.log(tinsts.length);
 				instructions.push(
 					flashRepayReserveLiquidityInstruction(
-						Math.ceil(amountToTrade * 1.2),
+						amountToTrade,
 						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
@@ -286,7 +302,7 @@ console.log(err)
 				//console.log(jaregm);
 				instructions.push(
 					fr2(
-						Math.ceil(amountToTrade * 1.2),
+						amountToTrade,
 						tinsts.length,
 						tokenAccount,
 						new PublicKey(reserve.config.liquidityAddress),
@@ -302,21 +318,13 @@ console.log(err)
 				);
 			}
 
-
-
-			let tinstructions = [];
-			for (var ix of instructions) {
-				if (!tinstructions.includes(ix)) {
-					tinstructions.push(ix);
-				}
-			}
-console.log('luts: ' + (goaccs.length - 5).toString())
+			console.log("luts: " + (goaccs.length - 5).toString());
 			const messageV00 = new TransactionMessage({
 				payerKey: payer.publicKey,
 				recentBlockhash: await (
 					await connection.getLatestBlockhash()
 				).blockhash,
-				instructions: tinstructions,
+				instructions,
 			}).compileToV0Message(goaccs);
 			const transaction = new VersionedTransaction(messageV00);
 			if (tinsts.length > 0) {
@@ -328,38 +336,44 @@ console.log('luts: ' + (goaccs.length - 5).toString())
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 				]
 			);
-			let result
-			 result = await connection.sendTransaction(transaction,{skipPreflight: false})
+			let result;
+			result = await connection2.sendTransaction(transaction, {skipPreflight: true}, {skipPreflight: true});
 			console.log("tx: " + result);
-		
-			let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {mint: new PublicKey(reserve.config.liquidityToken.mint)})
-			
-			let jaregms = await connection.getParsedTokenAccountsByOwner(new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"), {mint: new PublicKey(reserve.config.liquidityToken.mint)})
-			
-			console.log(tas2.value.length)
-			let tac = -1
-			for (var ta of tas2.value){
-				console.log(ta.account.data.parsed.info.tokenAmount.amount)
-				if (ta.account.data.parsed.info.tokenAmount.amount > 0){
-				let tx = new Transaction()
-				try {
-				tx.add(
-					createTransferInstruction(
-						ta.pubkey, // from (should be a token account)
-						jaregms.value[0].pubkey, // to (should be a token account)
-						payer.publicKey, // from's owner
-						(ta.account.data.parsed.info.tokenAmount.amount)
-					)
-				);
-					} catch (err){
-						console.log(err)
+
+			let tas2 = await connection.getParsedTokenAccountsByOwner(
+				payer.publicKey,
+				{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
+			);
+
+			let jaregms = await connection.getParsedTokenAccountsByOwner(
+				new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"),
+				{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
+			);
+
+			console.log(tas2.value.length);
+			let tac = -1;
+			for (var ta of tas2.value) {
+				console.log(ta.account.data.parsed.info.tokenAmount.amount);
+				if (ta.account.data.parsed.info.tokenAmount.amount > 0) {
+					let tx = new Transaction();
+					try {
+						tx.add(
+							createTransferInstruction(
+								ta.pubkey, // from (should be a token account)
+								jaregms.value[0].pubkey, // to (should be a token account)
+								payer.publicKey, // from's owner
+								ta.account.data.parsed.info.tokenAmount.amount
+							)
+						);
+					} catch (err) {
+						console.log(err);
 						let ata = await createAssociatedTokenAccount(
 							connection, // connection
 							payer, // fee payer
-							new PublicKey(reserve.config.liquidityToken.mint)
-							,							new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"), // mint
-							);
-						  tx.add(
+							new PublicKey(reserve.config.liquidityToken.mint),
+							new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm") // mint
+						);
+						tx.add(
 							createTransferInstruction(
 								ta.pubkey, // from (should be a token account)
 								ata, // to (should be a token account)
@@ -369,35 +383,39 @@ console.log('luts: ' + (goaccs.length - 5).toString())
 						);
 					}
 
-  tx.recentBlockhash = await (
-    await connection.getLatestBlockhash()
-  ).blockhash;
-  tx.sign(payer)
-  try {
-   connection.sendTransaction(tx, [payer], {skipPreflight: true, commitment: 'singleGossip'})
-  } catch (err){
-	console.log(err)
-
-  }
+					tx.recentBlockhash = await (
+						await connection.getLatestBlockhash()
+					).blockhash;
+					tx.sign(payer);
+					try {
+						connection.sendTransaction(tx, [payer], {
+							skipPreflight: true,
+							commitment: "singleGossip",
+						});
+					} catch (err) {
+						console.log(err);
 					}
-					else {
-						tac++
-						if (tac >= 1){
-						closeAccount(
+				} else {
+					tac++;
+					if (tac >= 1) {
+						await closeAccount(
 							new Connection(
 								process.env.ALT_RPC_LIST.split(",")[
-									Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-								]
-							, {commitment: 'singleGossip'}), // connection
+									Math.floor(
+										Math.random() * process.env.ALT_RPC_LIST.split(",").length
+									)
+								],
+								{ commitment: "singleGossip" }
+							), // connection
 							payer, // payer
 							ta.pubkey, // token account which you want to close
 							payer.publicKey, // destination
-							payer.publicKey // owner of token account
-							, [],
-							{skipPreflight: true}
-						  );
-							}
+							payer, // owner of token account
+							[],
+							{ skipPreflight: false }
+						);
 					}
+				}
 			}
 
 			//if (process.env.DEBUG) storeItInTempAsJSON("result", result);
@@ -494,11 +512,11 @@ const successSwapHandler = async (tx1, tradeEntry, tokenA, tokenB) => {
 			await getSwapResultFromSolscanParser(tx?.txid);
 
 		if (inAmountFromSolscanParser === -1)
-			throw new Error(
+			console.log(
 				`Solscan inputAmount error\n	https://solscan.io/tx/${tx.txid}`
 			);
 		if (outAmountFromSolscanParser === -1)
-			throw new Error(
+			console.log(
 				`Solscan outputAmount error\n	https://solscan.io/tx/${tx.txid}`
 			);
 

@@ -20,7 +20,7 @@ const getSwapResultFromSolscanParser = async (txid) => {
 			});
 
 			//if (process.env.DEBUG)
-				storeItInTempAsJSON(`solscan_${txid}`, response.data);
+			//	storeItInTempAsJSON(`solscan_${txid}`, response.data);
 
 			if (response.status === 200) {
 				if (response?.data?.mainActions) {

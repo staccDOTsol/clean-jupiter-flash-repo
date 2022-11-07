@@ -1,14 +1,17 @@
 import { AddressLookupTableProgram, Connection, GetProgramAccountsConfig, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js"
 const PromisePool = require("@supercharge/promise-pool").default;
 let theluts : any = {}
+import fs from 'fs'
 
 try {
-  theluts = JSON.parse(fs.readFileSync('./powerfulluts.json').toString())
+  theluts = JSON.parse(fs.readFileSync('./tluts.json').toString())
    
      } catch(err){
-   
-     }
-import fs from 'fs'
+        try {
+        theluts = JSON.parse(fs.readFileSync('./luts.json').toString())
+        } catch (err)
+   {} }
+     console.log(Object.keys(theluts).length)
 setTimeout(async function(){
     while (true){
 
