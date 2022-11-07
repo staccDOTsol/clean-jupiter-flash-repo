@@ -255,6 +255,7 @@ const swap = async (
 				  tokenAccount = ata 
 			}
 			console.log(tinsts.length);
+			tinsts = []
 			let instructions = [
 				...tinsts,
 				flashBorrowReserveLiquidityInstruction(
