@@ -247,7 +247,7 @@
               configMapKeyRef:
                 key: minPercProfit
                 name: nginx-latest-config-k8vn
-          image: staccregistry.azurecr.io/clean-prism-flash-repo:mad138
+          image: clean-prism-flash-repo:baa7d3d16656499f4ec2dc62acd24c431d1925fb
           imagePullPolicy: IfNotPresent
           name: clean-prism-flash-repo-j3
           resources:
