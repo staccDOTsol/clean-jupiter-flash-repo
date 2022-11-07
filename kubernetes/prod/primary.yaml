@@ -51,7 +51,7 @@
             value: "0.07"
           - name: marketKey
             value: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY"
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:d51b675cc939ddcc6861f9a20a3569c7f56fe526
           imagePullPolicy: Always
           name: primary
           resources:
