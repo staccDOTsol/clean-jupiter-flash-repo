@@ -69,7 +69,7 @@ const setup = async () => {
 			connection,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: false,
+			restrictIntermediateTokens: Math.random() < 0.5 ? false : true,
 			wrapUnwrapSOL: cache.wrapUnwrapSOL,
 		});
 		cache.isSetupDone = true;
