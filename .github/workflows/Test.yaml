@@ -9,7 +9,7 @@ env:
     AZURE_CONTAINER_REGISTRY: staccregistry
     CLUSTER_NAME: test
     CLUSTER_RESOURCE_GROUP: staccoverflow
-    CONTAINER_NAME: clean-prism-flash-repo
+    CONTAINER_NAME: clean-jupiter-flash-repo
     DEPLOYMENT_MANIFEST_PATH: |
         ./kubernetes/azure.yaml
 jobs:
