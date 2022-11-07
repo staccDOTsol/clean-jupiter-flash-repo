@@ -248,7 +248,7 @@
                 key: minPercProfit
                 name: nginx-latest-config-k8vn
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           name: clean-jupiter-flash-repo-j3
           resources:
                 requests:
