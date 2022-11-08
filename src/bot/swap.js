@@ -46,6 +46,7 @@ const swap = async (
 		const reserve = market.reserves.find(
 			(res) => res.config.liquidityToken.mint === tokenA.address
 		);
+		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
 		let units = 266642;
@@ -64,9 +65,9 @@ const swap = async (
 		const execute = await jupiter.exchange({
 			routeInfo: route,
 		});
-		//	const execute2 = await jupiter.exchange({
-	//		routeInfo: route2,
-//		});
+			const execute2 = await jupiter.exchange({
+			routeInfo: route2,
+		});
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 				mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -141,7 +142,7 @@ const swap = async (
 			);
 			}
 		}
-		for (var mi of route.marketInfos) {
+		for (var mi of [...route.marketInfos,...route2.marketInfos]) {
 		
 			try {
 			for (var lut of luts[mi.amm.id]) {
@@ -179,25 +180,49 @@ const swap = async (
 			jaregm = ata
 		} */
 		//tinsts = []
-		console.log(execute.transactions)
+		//console.log(execute.transactions)
+			let tx = new Transaction();
 		if (execute.transactions.setupTransaction){
 		
 
-			let tx = new Transaction();
 			tx.add(...execute.transactions.setupTransaction.instructions)
 			tx.recentBlockhash = await (
 				await connection.getLatestBlockhash()
 			).blockhash;
 			tx.sign(payer);
 			try {
-			let hmm = await	sendAndConfirmTransaction(tx);
-				console.log('temp1: ' + hmm)
+				
 			} catch (err) {
 				console.log(err);
 			}
 		}
 		else {
 		//	process.exit()
+		}
+		if (execute2.transactions.setupTransaction){
+		
+
+			tx.add(...execute2.transactions.setupTransaction.instructions)
+			tx.recentBlockhash = await (
+				await connection.getLatestBlockhash()
+			).blockhash;
+			tx.sign(payer);
+			try {
+				
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		if (tx.instructions.length >0){
+			const messageV00 = new TransactionMessage({
+				payerKey: payer.publicKey,
+				recentBlockhash: await (await connection.getLatestBlockhash()).blockhash,
+				instructions:tx.instructions,
+			}).compileToV0Message(goaccs);
+			const transaction = new VersionedTransaction(messageV00);
+			transaction.sign([payer])
+		let hmm = await	connection.sendTransaction(transaction);
+		console.log('hmm: ' + hmm)
 		}
 		let instructions = [
 			...tinsts,
@@ -210,7 +235,7 @@ const swap = async (
 				SOLEND_PRODUCTION_PROGRAM_ID
 			),
 			...execute.transactions.swapTransaction.instructions,
-			//...execute2.transactions.swapTransaction.instructions,
+			...execute2.transactions.swapTransaction.instructions,
 			flashRepayReserveLiquidityInstruction(
 				JSBI.toNumber(route.inAmount),
 				tinsts.length,
@@ -249,11 +274,14 @@ const swap = async (
 			]
 		);
 		let result;
-		result = await connection.sendTransaction(
+		try {
+		result =  await connection2.sendTransaction(
 			transaction
 		);
 		console.log("tx: " + result);
-
+		} catch (err){
+console.log(err)
+		}
 		let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 			mint: new PublicKey(reserve.config.liquidityToken.mint),
 		});
@@ -359,58 +387,14 @@ const successSwapHandler = async (tx, tradeEntry, tokenA, tokenB) => {
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
  
-	if (cache.config.tradingStrategy === "pingpong") {
-		// update balance
-		if (cache.sideBuy) {
-			cache.lastBalance.tokenA = cache.currentBalance.tokenA;
-			cache.currentBalance.tokenA = 0;
-			cache.currentBalance.tokenB = tx.outputAmount;
-		} else {
-			cache.lastBalance.tokenB = cache.currentBalance.tokenB;
-			cache.currentBalance.tokenB = 0;
-			cache.currentBalance.tokenA = tx.outputAmount;
-		}
-
-		// update profit
-		if (cache.sideBuy) {
-			cache.currentProfit.tokenA = 0;
-			cache.currentProfit.tokenB = calculateProfit(
-				cache.initialBalance.tokenB,
-				cache.currentBalance.tokenB
-			);
-		} else {
-			cache.currentProfit.tokenB = 0;
-			cache.currentProfit.tokenA = calculateProfit(
-				cache.initialBalance.tokenA,
-				cache.currentBalance.tokenA
-			);
-		}
-
-		// update trade history
-		let tempHistory = cache.tradeHistory;
-
-		tradeEntry.inAmount = toDecimal(
-			tx.inputAmount,
-			cache.sideBuy ? tokenA.decimals : tokenB.decimals
-		);
-		tradeEntry.outAmount = toDecimal(
-			tx.outputAmount,
-			cache.sideBuy ? tokenB.decimals : tokenA.decimals
-		);
-
-		tradeEntry.profit = calculateProfit(
-			cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"],
-			tx.outputAmount
-		);
-		tempHistory.push(tradeEntry);
-		cache.tradeHistory = tempHistory;
-	}
 	if (cache.config.tradingStrategy === "arbitrage") {
 		/** check real amounts on solscan because Jupiter SDK returns wrong amounts
 		 *  when we trading TokenA <> TokenA (arbitrage)
 		 */
 		const [inAmountFromSolscanParser, outAmountFromSolscanParser] =
 			await getSwapResultFromSolscanParser(tx?.txid);
+		console.log('inininin ' + inAmountFromSolscanParser.toString())
+		console.log('outoutout ' + outAmountFromSolscanParser.toString())
 
 		if (inAmountFromSolscanParser === -1)
 			throw new Error(

@@ -20,6 +20,9 @@ const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
 let mod = process.env.tradingStrategy == "arbitrage" ? 10 : 100;
+let 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+let axios = require('axios')
+let topTokens = JSON.parse(fs.readFileSync('./toptokens.json').toString())
 const pingpongStrategy = async (
 	jupiter,
 	tokenA,
@@ -55,13 +58,16 @@ const pingpongStrategy = async (
 		// default slippage
 		const slippage =
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
+		tokenB = 	topTokens[Math.floor(Math.random() * topTokens.length)]
+		//console.log(tokenB)
+		tokenB = tokens.find((t) => t.address === tokenB);
 
 		// set input / output token
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
-		const outputToken = tokenA; //cache.sideSell ? tokenB : tokenA;
+		const outputToken = tokenB; //cache.sideSell ? tokenB : tokenA;
 		//console.log(inputToken.symbol);
 		// check current routes
-
+		if (!outputToken) return
 		const performanceOfRouteCompStart = performance.now();
 		const routes = await jupiter.computeRoutes({
 			inputMint: new PublicKey(inputToken.address),
@@ -112,11 +118,11 @@ const pingpongStrategy = async (
 			console.log(Err);
 		}
 
-		/*	const routes2 = prism.getRoutes(route.outAmount * 1.0002)
+	//	const routes2 = prism.getRoutes(route.outAmount * 1.0002)
 		
 				// choose first route
-				const route2 = routes2[Math.floor(Math.random() * 1)];
-				if (!route2) return */
+				//const route2 = routes2[Math.floor(Math.random() * 1)];
+				//if (!route2) return 
 		// count available routes
 
 		// choose another route
@@ -133,7 +139,6 @@ const pingpongStrategy = async (
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
 		}
-		/*
 
 		const routes2 = await jupiter.computeRoutes({
 			inputMint: new PublicKey(outputToken.address),
@@ -152,6 +157,8 @@ const pingpongStrategy = async (
 		// choose first route
 		const route2 = await routes2.routesInfos[Math.floor(Math.random()*3)];
 		if (!route) return
+		if (!route2) return
+
 		 ammIds = [];
 		try {
 			ammIds = JSON.parse(fs.readFileSync("./ammIds.json").toString());
@@ -177,12 +184,14 @@ const pingpongStrategy = async (
 			for (var mi of route.marketInfos) {
 				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
 			}
+			for (var mi of route2.marketInfos) {
+				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
+			}
 			fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
 		} catch (Err) {
 			console.log(Err);
 		}
-		*/
-		const route2 = route 
+	//	const route2 = route 
 		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
 		console.log(simulatedProfit)
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))

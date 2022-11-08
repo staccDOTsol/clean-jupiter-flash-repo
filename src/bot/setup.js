@@ -69,15 +69,16 @@ const setup = async () => {
 			connection,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: Math.random() < 0.5 ? false : true,
+			restrictIntermediateTokens: true,
 			wrapUnwrapSOL: false
 		});
 		cache.isSetupDone = true;
 
 		// find tokens full Object
-		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
-		tokenB = tokenB; //tokens.find((t) => t.address === cache.config.tokenB.address);
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+
+		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
+		tokenB = tokens.find((t) => t.address === cache.config.tokenB.address);
 		configs = JSON.parse(
 			fs
 				.readFileSync(
