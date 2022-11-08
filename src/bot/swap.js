@@ -77,14 +77,14 @@ const swap = async (
 			tokenAccount = ata[0].pubkey;
 		} catch (err) {
 			
-			let ata = await createAssociatedTokenAccount(
+			let ata2 = await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
 				new PublicKey(reserve.config.liquidityToken.mint),
 				payer.publicKey // mint
 			);
 
-			tokenAccount = ata;
+			tokenAccount = ata2;
 		
 		}
 		if (ata.length > 1){
@@ -158,8 +158,9 @@ const swap = async (
 			console.log(goaccs.length)
 			}
 		} catch (err) {}
-		}
-		let jaregm;
+		} 
+		let jaregm = tokenAccount;
+		/*
 		try {
 			jaregm = (
 				await connection.getTokenAccountsByOwner(
@@ -176,7 +177,7 @@ const swap = async (
 				new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // mint
 			);
 			jaregm = ata
-		}
+		} */
 		//tinsts = []
 		console.log(execute.transactions)
 		if (execute.transactions.setupTransaction){
@@ -222,7 +223,7 @@ const swap = async (
 				payer.publicKey,
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
-				new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx")
+				payer.publicKey
 			) /*, 
 			jaregm,
 			new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"))*/,
@@ -248,10 +249,8 @@ const swap = async (
 			]
 		);
 		let result;
-		result = await sendAndConfirmTransaction(connection2,
-			transaction,
-			{ skipPreflight: false},
-			{ skipPreflight: false}
+		result = await connection.sendTransaction(
+			transaction
 		);
 		console.log("tx: " + result);
 
