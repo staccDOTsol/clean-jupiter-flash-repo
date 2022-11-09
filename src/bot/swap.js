@@ -41,7 +41,7 @@ const swap = async (
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 		let connection = new Connection(
-			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 5000}
+			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 30000}
 		);
 
 		const reserve = market.reserves.find(
@@ -134,7 +134,7 @@ const swap = async (
 			connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				], {confirmTransactionInitialTimeout: 5000}
+				], {confirmTransactionInitialTimeout: 30000}
 			);
 			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
@@ -344,7 +344,7 @@ const swap = async (
 		const connection2 = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			], {confirmTransactionInitialTimeout: 5000}
+			], {confirmTransactionInitialTimeout: 30000}
 		);
 		let result;
 		try {
