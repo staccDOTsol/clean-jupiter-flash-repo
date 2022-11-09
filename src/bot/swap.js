@@ -50,7 +50,7 @@ const swap = async (
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 796642;
+		let units = 2796642;
 		let tinsts = [];
 		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
