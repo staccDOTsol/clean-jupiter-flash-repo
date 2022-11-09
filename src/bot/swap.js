@@ -41,7 +41,7 @@ const swap = async (
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 		let connection = new Connection(
-			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 1000}
+			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 5000}
 		);
 
 		const reserve = market.reserves.find(
@@ -134,7 +134,7 @@ const swap = async (
 			connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				], {confirmTransactionInitialTimeout: 1000}
+				], {confirmTransactionInitialTimeout: 5000}
 			);
 			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
@@ -292,10 +292,9 @@ const swap = async (
 				instructions:tx.instructions,
 			}).compileToV0Message(goaccs);
 			const transaction = new VersionedTransaction(messageV00);
-			transaction.sign([payer])
-		let hmm = await sendAndConfirmTransaction(connection,
-			transaction, {skipPreflight: true}, {skipPreflight: true}
-		);
+		let hmm =  await connection.sendTransaction(
+			tx, [payer]
+			);
 		console.log('hmm: ' + hmm)
 		}
 		let instructions = [
@@ -345,7 +344,7 @@ const swap = async (
 		const connection2 = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			], {confirmTransactionInitialTimeout: 1000}
+			], {confirmTransactionInitialTimeout: 5000}
 		);
 		let result;
 		try {
@@ -401,9 +400,8 @@ console.log(err)
 				tx.recentBlockhash = await (
 					await connection.getLatestBlockhash()
 				).blockhash;
-				tx.sign(payer);
-				try {await sendAndConfirmTransaction(connection,
-					tx, {skipPreflight: true}, {skipPreflight: true}
+				try {await connection.sendTransaction(
+					tx, [payer]
 				);
 				} catch (err) {
 					console.log(err);

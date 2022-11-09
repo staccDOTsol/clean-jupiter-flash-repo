@@ -4,7 +4,7 @@ const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
 const { Jupiter } = require("@jup-ag/core");
 const { Prism } = require("@prism-hq/prism-ag");
-
+const fetch = require('node-fetch')
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
@@ -82,6 +82,7 @@ const setup = async () => {
 		// find tokens full Object
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
+		  console.log(tokens.length)
 		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
 		tokenB = tokens.find((t) => t.address === cache.config.tokenB.address);
 		configs = JSON.parse(

@@ -3,6 +3,7 @@ const { loadConfigFile } = require("../utils");
 const fs = require("fs");
 const BN = require("bn.js");
 const { clearInterval } = require("timers");
+const fetch = require('node-fetch')
 const { PublicKey } = require("@solana/web3.js");
 const JSBI = require("jsbi");
 const WAD = new BN("1".concat(Array(18 + 1).join("0")));
@@ -30,7 +31,8 @@ const pingpongStrategy = async (
 	tokenB,
 	market,
 	reserve,
-	prices
+	prices,
+	tokens
 ) => {
 	cache.iteration++;
 	const date = new Date();
@@ -59,9 +61,9 @@ const pingpongStrategy = async (
 		// default slippage
 		const slippage =
 			typeof cache.config.slippage === "number" ? cache.config.slippage : 1;
-		tokenB = 	topTokens[Math.floor(Math.random() * topTokens.length)]
+		tokenB = 	tokens[Math.floor(Math.random() * tokens.length)]
 		//console.log(tokenB)
-		tokenB = tokens.find((t) => t.address === tokenB);
+		//tokenB = tokens.find((t) => t.address === tokenB);
 
 		// set input / output token
 		const inputToken = tokenA; //cache.sideBuy ? tokenA : tokenB;
@@ -505,7 +507,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 	}
 };
 
-const watcher = async (jupiter, prism, tokenA, tokenB, market) => {
+const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens) => {
 	if (
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
@@ -528,17 +530,15 @@ const watcher = async (jupiter, prism, tokenA, tokenB, market) => {
 				decimals: reserve.config.liquidityToken.decimals,
 				symbol: symbol,
 			};
-			let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-
 			tokenB = tokens[Math.floor(Math.random() * tokens.length)];
 			//tokenB = tokenA;
 		}
 		done = false;
 		if (process.env.tradingStrategy === "pingpong") {
-			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices);
+			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices, tokens);
 		}
 		if (process.env.tradingStrategy === "arbitrage") {
-			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices);
+			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices, tokens);
 			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
 	}
@@ -580,10 +580,19 @@ const run = async () => {
 			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
 		if (market.reserves.length == 0) return;
-
+		const topTokens = (await (
+			await fetch("https://cache.jup.ag/top-tokens")//TOKEN_LIST_URL['mainnet-beta'])
+		  ).json());
+		
+		  console.log(topTokens.length)
+		
+		  const shortlistedTokens =  (topTokens.slice(0, topTokens.length / 15));
+		  console.log(shortlistedTokens)
+		  let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+		  tokens = tokens.filter((t) => shortlistedTokens.includes(t.address))
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
-			watcher(jupiter, prism, tokenA, tokenA, market);
+			watcher(jupiter, prism, tokenA, tokenA, market, tokens);
 		}, cache.config.minInterval);
 	} catch (error) {
 		console.log(error);
