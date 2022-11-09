@@ -35,8 +35,24 @@ let myluts: any = {}
     let luts = await connection.getProgramAccounts(AddressLookupTableProgram.programId)
     console.log(Object.keys(luts).length)
 
-    await PromisePool.withConcurrency(3)
-    .for(luts)
+    let ammIdspks  : any = []
+      
+    try {
+      ammIdspks = JSON.parse(fs.readFileSync('./ammIds.json').toString())
+    } 
+    catch (err){
+      
+    }
+    let ammIds: any = []
+    for (var ammId of ammIdspks){
+      try {
+      let ammIdpk = new PublicKey(ammId)
+      if (!ammIds.includes(ammIdpk))
+      ammIds.push(ammIdpk)
+      } catch (err){}
+    }
+    await PromisePool.withConcurrency(5)
+    .for(luts.reverse())
     // @ts-ignore
     .handleError(async (err, asset) => {
       console.error(`\nError uploading or whatever`, err.message);
@@ -49,52 +65,46 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.f
       // @ts-ignore
       var connection= new Connection(ALT_RPC_LIST?.split(',')[ran])
 
-      let ammIdspks  = []
-      
-      try {
-        ammIdspks = JSON.parse(fs.readFileSync('./ammIds.json').toString())
-      } 
-      catch (err){
-        
-      }
-      let ammIds: any = []
-      for (var ammId of ammIdspks){
-        try {
-        let ammIdpk = new PublicKey(ammId)
-        if (!ammIds.includes(ammIdpk))
-        ammIds.push(ammIdpk)
-        } catch (err){}
-      }
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
-if(maybemine.value?.state.addresses.length as number > 100){
-    // @ts-ignore
-    for (var addy of maybemine.value?.state.addresses){
-let addypk = addy.toBase58()
-for (var pk of ammIdspks){
+if(maybemine.value?.state.addresses.length as number > 20){
+  let templuts : any = []
+if (true){
+// @ts-ignore
+for (var addy of maybemine.value?.state.addresses){
+  let addypk = addy.toBase58()
+  let gogos = 0
 
+  for (var pk of ammIdspks){
     try {
     if ( pk === addypk && !Object.keys(theluts).includes(pk)){
+      //templuts.push(lut.pubkey.toBase58())
         theluts[pk] = [lut.pubkey.toBase58()]
         console.log(Object.keys(theluts).length)
-
+      gogos++
     } else if ( pk === addypk){
-        if (!theluts[pk].includes(lut.pubkey.toBase58())){
-    theluts[pk].push (lut.pubkey.toBase58())
-        
-}
+    //  templuts.push(lut.pubkey.toBase58())
 
-    fs.writeFileSync('./tluts.json', JSON.stringify(theluts))
+        if (!theluts[pk].includes(lut.pubkey.toBase58())){
+  theluts[pk].push (lut.pubkey.toBase58())
+      gogos++  
+        }
+}
+    
+    
+ //   fs.writeFileSync('./tluts.json', JSON.stringify(theluts))
         //console.log(theluts[pk] .length)
 
        
-}}catch (err){
+}catch (err){
             
 }
+  }
 
-}
+  gogos > 1 ? console.log(gogos) : null
     
+}
 
     }
 }

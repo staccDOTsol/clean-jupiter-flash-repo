@@ -177,7 +177,7 @@
     namespace: default
   spec:
     progressDeadlineSeconds: 1600
-    replicas: 15
+    replicas: 5
     revisionHistoryLimit: 10
     selector:
       matchLabels:
@@ -247,7 +247,7 @@
               configMapKeyRef:
                 key: minPercProfit
                 name: nginx-latest-config-k8vn
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:9a459283a45318205ee89be15350fb0941fb6d6c50fb1573145cad96bd64f600
           imagePullPolicy: Always
           name: clean-jupiter-flash-repo-j3
           resources:

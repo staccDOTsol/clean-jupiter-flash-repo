@@ -1,6 +1,10 @@
 const { calculateProfit, toDecimal, storeItInTempAsJSON } = require("../utils");
 const cache = require("./cache");
-const { closeAccount, createTransferInstruction, createAssociatedTokenAccount } = require ('../../src/spl-token')
+const {
+	closeAccount,
+	createTransferInstruction,
+	createAssociatedTokenAccount,
+} = require("../../src/spl-token");
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 const {
 	flashRepayReserveLiquidityInstruction,
@@ -28,6 +32,13 @@ let market = JSON.parse(fs.readFileSync("./configs.json").toString())[0];
 let payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
+
+process.on("uncaughtException", (err) => {
+	console.log(err);
+});
+process.on("unhandledRejection", (reason, promise) => {
+	console.log(reason);
+});
 const swap = async (
 	jupiter,
 	prism,
@@ -36,12 +47,14 @@ const swap = async (
 	tokenA,
 	market,
 	reserve,
-	amountToTrade) => {
+	amountToTrade
+) => {
 	try {
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 		let connection = new Connection(
-			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 30000}
+			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)],
+			{ confirmTransactionInitialTimeout: 33333 }
 		);
 
 		const reserve = market.reserves.find(
@@ -66,9 +79,9 @@ const swap = async (
 		const execute = await jupiter.exchange({
 			routeInfo: route,
 		});
-		
-		const swapTransaction = await prism.generateSwapTransactions(route2); 
-		
+
+		const swapTransaction = await prism.generateSwapTransactions(route2);
+
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 				mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -78,7 +91,6 @@ const swap = async (
 		try {
 			tokenAccount = ata[0].pubkey;
 		} catch (err) {
-			
 			let ata2 = await createAssociatedTokenAccount(
 				connection, // connection
 				payer, // fee payer
@@ -87,30 +99,27 @@ const swap = async (
 			);
 
 			tokenAccount = ata2;
-		
 		}
-		if (ata.length > 1){
-			for (var i = 2; i <= ata.length; i++){
-				try{
-			await closeAccount(
-				new Connection(
-					process.env.ALT_RPC_LIST.split(",")[
-						Math.floor(
-							Math.random() * process.env.ALT_RPC_LIST.split(",").length
-						)
-					],
-					{ commitment: "singleGossip" }
-				), // connection
-				payer, // payer
-				ata[i].pubkey, // token account which you want to close
-				payer.publicKey, // destination
-				payer, // owner of token account
-				[],
-			);
-		} catch (Err){
-			
-		}
-	}
+		if (ata.length > 1) {
+			for (var i = 2; i <= ata.length; i++) {
+				try {
+					await closeAccount(
+						new Connection(
+							process.env.ALT_RPC_LIST.split(",")[
+								Math.floor(
+									Math.random() * process.env.ALT_RPC_LIST.split(",").length
+								)
+							],
+							{ commitment: "singleGossip" }
+						), // connection
+						payer, // payer
+						ata[i].pubkey, // token account which you want to close
+						payer.publicKey, // destination
+						payer, // owner of token account
+						[]
+					);
+				} catch (Err) {}
+			}
 		}
 		let goaccs = [];
 		let goluts = [
@@ -120,7 +129,7 @@ const swap = async (
 			"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
 			"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
 		];
-		
+
 		let luts = {};
 		try {
 			luts = JSON.parse(fs.readFileSync("./tluts.json").toString());
@@ -134,104 +143,127 @@ const swap = async (
 			connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				], {confirmTransactionInitialTimeout: 30000}
+				],
+				{ confirmTransactionInitialTimeout: 33333 }
 			);
-			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
-			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
-			goaccs.push(
-				test
-			);
+			let test = (await connection.getAddressLookupTable(new PublicKey(golut)))
+				.value;
+			if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+				goaccs.push(test);
 			}
 		}
+		let templuts = [];
+
 		for (var mi of [...route.marketInfos]) {
-		
 			try {
 			for (var lut of luts[mi.amm.id]) {
-				if (goaccs.length < 15){
-				try {
-					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
-					if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
-					goaccs.push(
-						test
-					);
-					}
-				} catch (err) {}
+				templuts.push(lut);
 			}
-			console.log(goaccs.length)
-			}
-		} catch (err) {}
-		} 
-		let ammIds = [] 
-		let ammIdspks = []
-		for (var file of [route2]){//},...routes2]){//{//}),...routes2]){
-			try {
+		}
+			catch (err){
 
-				for (var rd of Object.values(file.routeData)){
-					try {
-						// @ts-ignore
-						for(var rd2 of Object.values(rd.routeData)){
-							try {
-								try {
-												// @ts-ignore 
-				
-												
-								if ((rd2.orcaPool) != undefined){
-									let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
-									if (!ammIdspks.includes(dothedamnthing.toBase58())){
-										// @ts-ignore 
-	
-						ammIdspks.push(dothedamnthing.toBase58())
-						ammIds.push(dothedamnthing)
-					}
+			}
+		}
+		let counts = {};
+
+		for (var lut of templuts) {
+			for (var mi of [...route.marketInfos]) {
+				if (!Object.keys(counts).includes(lut)) {
+					counts[lut] = 0;
 				}
-								} catch (err){}
-								if ((rd2.ammId) != undefined){
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.ammId)
-								// @ts-ignore 
-								if (!ammIdspks.includes(dothedamnthing.toBase58())){
-													// @ts-ignore 
-				
-									ammIdspks.push(dothedamnthing.toBase58())
-									ammIds.push(dothedamnthing)
-								}
-								}
-								if ((rd2.swapAccount) != undefined){
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.swapAccount)
-								// @ts-ignore 
-								if (!ammIdspks.includes(dothedamnthing.toBase58())){
-													// @ts-ignore 
-				
-									ammIdspks.push(dothedamnthing.toBase58())
-									ammIds.push(dothedamnthing)
-								}
-								}
-							} catch (err){
-				
-							}
-						}
-					}
-					catch (err){
-				
-					}
+				try {
+				if (luts[mi.amm.id].includes(lut)) {
+					counts[lut]++;
 				}
 			} catch (err){
+				
 			}
 			}
-				for (var lut of ammIds) {
-					if (goaccs.length < 35){
+		}
+		let fluts = []
+		for (var alut of Object.keys(counts)){
+			if (counts[alut] > 1){
+				fluts.push(alut)
+			}
+		}
+		try {
+			for (var lut of fluts) {
 					try {
-						let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
-						if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
-						goaccs.push(
-							test
-						);
+						let test = (
+							await connection.getAddressLookupTable(new PublicKey(lut))
+						).value;
+						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+							goaccs.push(test);
+						}
+					} catch (err) {}
+				console.log(goaccs.length);
+			}
+		} catch (err) {}
+
+		let ammIds = [];
+		let ammIdspks = [];
+		for (var file of [route2]) {
+			//},...routes2]){//{//}),...routes2]){
+			try {
+				for (var rd of Object.values(file.routeData)) {
+					try {
+						// @ts-ignore
+						for (var rd2 of Object.values(rd.routeData)) {
+							try {
+								try {
+									// @ts-ignore
+
+									if (rd2.orcaPool != undefined) {
+										let dothedamnthing = rd2.oracaPool.orcaTokenSwapId;
+										if (!ammIdspks.includes(dothedamnthing.toBase58())) {
+											// @ts-ignore
+
+											ammIdspks.push(dothedamnthing.toBase58());
+											ammIds.push(dothedamnthing);
+										}
+									}
+								} catch (err) {}
+								if (rd2.ammId != undefined) {
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.ammId);
+									// @ts-ignore
+									if (!ammIdspks.includes(dothedamnthing.toBase58())) {
+										// @ts-ignore
+
+										ammIdspks.push(dothedamnthing.toBase58());
+										ammIds.push(dothedamnthing);
+									}
+								}
+								if (rd2.swapAccount != undefined) {
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.swapAccount);
+									// @ts-ignore
+									if (!ammIdspks.includes(dothedamnthing.toBase58())) {
+										// @ts-ignore
+
+										ammIdspks.push(dothedamnthing.toBase58());
+										ammIds.push(dothedamnthing);
+									}
+								}
+							} catch (err) {}
 						}
 					} catch (err) {}
 				}
-				console.log(goaccs.length)
-				}
+			} catch (err) {}
+		}
+		for (var lut of ammIds) {
+			if (goaccs.length < 35) {
+				try {
+					let test = (
+						await connection.getAddressLookupTable(new PublicKey(lut))
+					).value;
+					if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+						goaccs.push(test);
+					}
+				} catch (err) {}
+			}
+			console.log(goaccs.length);
+		}
 		let jaregm = tokenAccount;
 		/*
 		try {
@@ -253,6 +285,7 @@ const swap = async (
 		} */
 		//tinsts = []
 		//console.log(execute.transactions)
+		/*
 			let tx = new Transaction();
 		if (execute.transactions.setupTransaction){
 		
@@ -293,10 +326,10 @@ const swap = async (
 			}).compileToV0Message(goaccs);
 			const transaction = new VersionedTransaction(messageV00);
 		let hmm =  await connection.sendTransaction(
-			tx, [payer]
+			transaction, [payer]
 			);
 		console.log('hmm: ' + hmm)
-		}
+		} */
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
@@ -344,16 +377,20 @@ const swap = async (
 		const connection2 = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			], {confirmTransactionInitialTimeout: 30000}
+			],
+			{ confirmTransactionInitialTimeout: 33333 }
 		);
 		let result;
 		try {
-		result =  await sendAndConfirmTransaction(connection2,
-			transaction, {skipPreflight: false}, {skipPreflight: false}
-		);
-		console.log("tx: " + result);
-		} catch (err){
-console.log(err)
+			result = await sendAndConfirmTransaction(
+				connection2,
+				transaction,
+				{ skipPreflight: true },
+				{ skipPreflight: true }
+			);
+			console.log("tx: " + result);
+		} catch (err) {
+			console.log(err);
 		}
 		let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 			mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -400,31 +437,30 @@ console.log(err)
 				tx.recentBlockhash = await (
 					await connection.getLatestBlockhash()
 				).blockhash;
-				try {await connection.sendTransaction(
-					tx, [payer]
-				);
+				try {
+					await connection.sendTransaction(tx, [payer]);
 				} catch (err) {
 					console.log(err);
 				}
 			}
-				tac++;
-				if (tac >= 2) {
-					await closeAccount(
-						new Connection(
-							process.env.ALT_RPC_LIST.split(",")[
-								Math.floor(
-									Math.random() * process.env.ALT_RPC_LIST.split(",").length
-								)
-							],
-							{ commitment: "singleGossip" }
-						), // connection
-						payer, // payer
-						ta.pubkey, // token account which you want to close
-						payer.publicKey, // destination
-						payer, // owner of token account
-						[],
-					);
-				}
+			tac++;
+			if (tac >= 2) {
+				await closeAccount(
+					new Connection(
+						process.env.ALT_RPC_LIST.split(",")[
+							Math.floor(
+								Math.random() * process.env.ALT_RPC_LIST.split(",").length
+							)
+						],
+						{ commitment: "singleGossip" }
+					), // connection
+					payer, // payer
+					ta.pubkey, // token account which you want to close
+					payer.publicKey, // destination
+					payer, // owner of token account
+					[]
+				);
+			}
 		}
 
 		const performanceOfTx = performance.now() - performanceOfTxStart;
@@ -432,8 +468,8 @@ console.log(err)
 		return [result, performanceOfTx];
 	} catch (error) {
 		console.log("Swap error: ", error);
-		cache.swappingRightNow = false
-		return [0, 0]
+		cache.swappingRightNow = false;
+		return [0, 0];
 	}
 };
 exports.swap = swap;
@@ -457,15 +493,15 @@ const successSwapHandler = async (tx, tradeEntry, tokenA, tokenB) => {
 
 	// update counter
 	cache.tradeCounter[cache.sideBuy ? "buy" : "sell"].success++;
- 
+
 	if (cache.config.tradingStrategy === "arbitrage") {
 		/** check real amounts on solscan because Jupiter SDK returns wrong amounts
 		 *  when we trading TokenA <> TokenA (arbitrage)
 		 */
 		const [inAmountFromSolscanParser, outAmountFromSolscanParser] =
 			await getSwapResultFromSolscanParser(tx?.txid);
-		console.log('inininin ' + inAmountFromSolscanParser.toString())
-		console.log('outoutout ' + outAmountFromSolscanParser.toString())
+		console.log("inininin " + inAmountFromSolscanParser.toString());
+		console.log("outoutout " + outAmountFromSolscanParser.toString());
 
 		if (inAmountFromSolscanParser === -1)
 			throw new Error(

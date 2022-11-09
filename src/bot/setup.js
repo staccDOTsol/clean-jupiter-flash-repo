@@ -4,7 +4,7 @@ const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
 const { Jupiter } = require("@jup-ag/core");
 const { Prism } = require("@prism-hq/prism-ag");
-const fetch = require('node-fetch')
+const fetch = require("node-fetch");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
@@ -68,21 +68,21 @@ const setup = async () => {
 		const prism = await Prism.init({
 			user: wallet,
 			connection: connection,
-			slippage:99,
-		})
+			slippage: 99,
+		});
 		const jupiter = await Jupiter.load({
 			connection,
 			cluster: cache.config.network,
 			user: wallet,
 			restrictIntermediateTokens: true,
-			wrapUnwrapSOL: true
+			wrapUnwrapSOL: true,
 		});
 		cache.isSetupDone = true;
 
 		// find tokens full Object
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
-		  console.log(tokens.length)
+		console.log(tokens.length);
 		tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
 		tokenB = tokens.find((t) => t.address === cache.config.tokenB.address);
 		configs = JSON.parse(
@@ -106,7 +106,7 @@ const setup = async () => {
 			"production", // optional environment argument
 			/*process.env.tradingStrategy == "pingpong"
 				? process.env.marketKey
-				: */new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+				: */ new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { jupiter, prism, tokenA, tokenA, market };
 	} catch (error) {
