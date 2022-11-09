@@ -25,6 +25,7 @@ let axios = require('axios')
 let topTokens = JSON.parse(fs.readFileSync('./toptokens.json').toString())
 const pingpongStrategy = async (
 	jupiter,
+	prism,
 	tokenA,
 	tokenB,
 	market,
@@ -86,7 +87,7 @@ const pingpongStrategy = async (
 		cache.queue[i] = 0;
 
 		// choose first route
-		const route = await routes.routesInfos[Math.floor(Math.random()*4)];
+		const route = await routes.routesInfos[Math.floor(Math.random()*2)];
 		if (!route) return
 		let ammIds = [];
 		try {
@@ -138,16 +139,19 @@ const pingpongStrategy = async (
 		if (cache.config.slippage === "profitOrKill") {
 			route.otherAmountThresholdWithSlippage =
 				cache.lastBalance[cache.sideBuy ? "tokenB" : "tokenA"];
-		}
-
-		const routes2 = await jupiter.computeRoutes({
-			inputMint: new PublicKey(outputToken.address),
-			outputMint: new PublicKey(inputToken.address),
-			amount: (route.outAmount),
-			slippageBps: 500,
-			forceFetch: true,
-		});
+		}let routes2
 		if (!checkRoutesResponse(routes)) return
+
+		try {
+		await prism.loadRoutes(
+			tokenB.address,
+			tokenA.address
+		)
+		 routes2 = prism.getRoutes(JSBI.toNumber(route.outAmount) / 10 ** tokenB.decimals)
+		
+		} catch (err){
+			return
+		}
 		// count available routes
 		cache.availableRoutes[cache.sideBuy ? "buy" : "sell"] =
 			routes.routesInfos.length;
@@ -155,7 +159,10 @@ const pingpongStrategy = async (
 		// update status as OK
 		cache.queue[i] = 0;
 		// choose first route
-		const route2 = await routes2.routesInfos[Math.floor(Math.random()*3)];
+
+		// choose first route
+		const route2 = routes2[Math.floor(Math.random()*2)]//await routes.find((r) => r.providers.length  <= 15)
+		
 		if (!route) return
 		if (!route2) return
 
@@ -184,15 +191,70 @@ const pingpongStrategy = async (
 			for (var mi of route.marketInfos) {
 				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
 			}
-			for (var mi of route2.marketInfos) {
-				if (!ammIds.includes(mi.amm.id)) ammIds.push(mi.amm.id);
-			}
+			for (var file of [...routes2]){//},...routes2]){//{//}),...routes2]){
+				try {
+	
+					for (var rd of Object.values(file.routeData)){
+						try {
+							// @ts-ignore
+							for(var rd2 of Object.values(rd.routeData)){
+								try {
+									try {
+													// @ts-ignore 
+					
+													
+									if ((rd2.orcaPool) != undefined){
+										let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
+										if (!ammIdspks.includes(dothedamnthing.toBase58())){
+											// @ts-ignore 
+		
+							ammIdspks.push(dothedamnthing.toBase58())
+							ammIds.push(dothedamnthing)
+						}
+					}
+									} catch (err){}
+									if ((rd2.ammId) != undefined){
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.ammId)
+									// @ts-ignore 
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+														// @ts-ignore 
+					
+										ammIdspks.push(dothedamnthing.toBase58())
+										ammIds.push(dothedamnthing)
+									}
+									}
+									if ((rd2.swapAccount) != undefined){
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.swapAccount)
+									// @ts-ignore 
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+														// @ts-ignore 
+					
+										ammIdspks.push(dothedamnthing.toBase58())
+										ammIds.push(dothedamnthing)
+									}
+									}
+								} catch (err){
+					
+								}
+							}
+						}
+						catch (err){
+					
+						}
+					}
+				} catch (err)
+				{
+					
+				}
+				}
 			fs.writeFileSync("./ammIds.json", JSON.stringify(ammIds));
 		} catch (Err) {
 			console.log(Err);
 		}
 	//	const route2 = route 
-		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), JSBI.toNumber(route2.outAmount));
+		let simulatedProfit = calculateProfit(JSBI.toNumber(route.inAmount), route2.amountOut * 10 ** tokenA.decimals);
 		console.log(simulatedProfit)
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
@@ -230,7 +292,7 @@ const pingpongStrategy = async (
 					inputToken: inputToken.symbol,
 					outputToken: outputToken.symbol,
 					amountIn: toDecimal(JSBI.toNumber(route.inAmount), inputToken.decimals),
-					expectedamountWithFees: toDecimal(JSBI.toNumber(route2.outAmount), outputToken.decimals),
+					expectedamountWithFees: toDecimal(route2.amountOut * 10 ** tokenA.decimals, outputToken.decimals),
 					expectedProfit: simulatedProfit,
 				};
 
@@ -242,6 +304,7 @@ const pingpongStrategy = async (
 
 				[tx, performanceOfTx] = await swap(
 					jupiter,
+					prism,
 					route,
 					route2,
 					tokenA,
@@ -442,7 +505,7 @@ const arbitrageStrategy = async (jupiter, tokenA) => {
 	}
 };
 
-const watcher = async (jupiter, tokenA, tokenB, market) => {
+const watcher = async (jupiter, prism, tokenA, tokenB, market) => {
 	if (
 		!cache.swappingRightNow &&
 		Object.keys(cache.queue).length < cache.queueThrottle
@@ -472,10 +535,10 @@ const watcher = async (jupiter, tokenA, tokenB, market) => {
 		}
 		done = false;
 		if (process.env.tradingStrategy === "pingpong") {
-			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
+			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices);
 		}
 		if (process.env.tradingStrategy === "arbitrage") {
-			await pingpongStrategy(jupiter, tokenA, tokenB, market, reserve, prices);
+			await pingpongStrategy(jupiter, prism, tokenA, tokenB, market, reserve, prices);
 			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
 	}
@@ -485,7 +548,7 @@ let goodies = [];
 const run = async () => {
 	try {
 		// set everything up
-		let { jupiter, tokenA, tokenB, market } = await setup();
+		let { jupiter, prism, tokenA, tokenB, market } = await setup();
 
 		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
@@ -520,7 +583,7 @@ const run = async () => {
 
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
-			watcher(jupiter, tokenA, tokenA, market);
+			watcher(jupiter, prism, tokenA, tokenA, market);
 		}, cache.config.minInterval);
 	} catch (error) {
 		console.log(error);

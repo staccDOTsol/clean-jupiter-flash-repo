@@ -30,6 +30,7 @@ let payer = Keypair.fromSecretKey(
 );
 const swap = async (
 	jupiter,
+	prism,
 	route,
 	route2,
 	tokenA,
@@ -40,7 +41,7 @@ const swap = async (
 		const performanceOfTxStart = performance.now();
 		cache.performanceOfTxStart = performanceOfTxStart;
 		let connection = new Connection(
-			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)]
+			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)], {confirmTransactionInitialTimeout: 1000}
 		);
 
 		const reserve = market.reserves.find(
@@ -49,7 +50,7 @@ const swap = async (
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 396642;
+		let units = 796642;
 		let tinsts = [];
 		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
@@ -65,9 +66,9 @@ const swap = async (
 		const execute = await jupiter.exchange({
 			routeInfo: route,
 		});
-			const execute2 = await jupiter.exchange({
-			routeInfo: route2,
-		});
+		
+		const swapTransaction = await prism.generateSwapTransactions(route2); 
+		
 		let ata = (
 			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 				mint: new PublicKey(reserve.config.liquidityToken.mint),
@@ -133,7 +134,7 @@ const swap = async (
 			connection = new Connection(
 				process.env.ALT_RPC_LIST.split(",")[
 					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				]
+				], {confirmTransactionInitialTimeout: 1000}
 			);
 			let test= (await connection.getAddressLookupTable(new PublicKey(golut))).value
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
@@ -142,11 +143,11 @@ const swap = async (
 			);
 			}
 		}
-		for (var mi of [...route.marketInfos,...route2.marketInfos]) {
+		for (var mi of [...route.marketInfos]) {
 		
 			try {
 			for (var lut of luts[mi.amm.id]) {
-				if (goaccs.length < 35){
+				if (goaccs.length < 15){
 				try {
 					let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
 					if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
@@ -160,6 +161,77 @@ const swap = async (
 			}
 		} catch (err) {}
 		} 
+		let ammIds = [] 
+		let ammIdspks = []
+		for (var file of [route2]){//},...routes2]){//{//}),...routes2]){
+			try {
+
+				for (var rd of Object.values(file.routeData)){
+					try {
+						// @ts-ignore
+						for(var rd2 of Object.values(rd.routeData)){
+							try {
+								try {
+												// @ts-ignore 
+				
+												
+								if ((rd2.orcaPool) != undefined){
+									let dothedamnthing = rd2.oracaPool.orcaTokenSwapId
+									if (!ammIdspks.includes(dothedamnthing.toBase58())){
+										// @ts-ignore 
+	
+						ammIdspks.push(dothedamnthing.toBase58())
+						ammIds.push(dothedamnthing)
+					}
+				}
+								} catch (err){}
+								if ((rd2.ammId) != undefined){
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.ammId)
+								// @ts-ignore 
+								if (!ammIdspks.includes(dothedamnthing.toBase58())){
+													// @ts-ignore 
+				
+									ammIdspks.push(dothedamnthing.toBase58())
+									ammIds.push(dothedamnthing)
+								}
+								}
+								if ((rd2.swapAccount) != undefined){
+									// @ts-ignore
+									let dothedamnthing = new PublicKey(rd2.swapAccount)
+								// @ts-ignore 
+								if (!ammIdspks.includes(dothedamnthing.toBase58())){
+													// @ts-ignore 
+				
+									ammIdspks.push(dothedamnthing.toBase58())
+									ammIds.push(dothedamnthing)
+								}
+								}
+							} catch (err){
+				
+							}
+						}
+					}
+					catch (err){
+				
+					}
+				}
+			} catch (err){
+			}
+			}
+				for (var lut of ammIds) {
+					if (goaccs.length < 35){
+					try {
+						let test= (await connection.getAddressLookupTable(new PublicKey(lut))).value
+						if (test.state.deactivationSlot > BigInt(159408000 * 2)						){
+						goaccs.push(
+							test
+						);
+						}
+					} catch (err) {}
+				}
+				console.log(goaccs.length)
+				}
 		let jaregm = tokenAccount;
 		/*
 		try {
@@ -199,15 +271,15 @@ const swap = async (
 		else {
 		//	process.exit()
 		}
-		if (execute2.transactions.setupTransaction){
+		if (swapTransaction.preTransaction.instructions.length > 0){
 		
 
-			tx.add(...execute2.transactions.setupTransaction.instructions)
+			try {
+			tx.add(...swapTransaction.preTransaction.instructions)
 			tx.recentBlockhash = await (
 				await connection.getLatestBlockhash()
 			).blockhash;
 			tx.sign(payer);
-			try {
 				
 			} catch (err) {
 				console.log(err);
@@ -221,7 +293,9 @@ const swap = async (
 			}).compileToV0Message(goaccs);
 			const transaction = new VersionedTransaction(messageV00);
 			transaction.sign([payer])
-		let hmm = await	connection.sendTransaction(transaction);
+		let hmm = await sendAndConfirmTransaction(connection,
+			transaction, {skipPreflight: true}, {skipPreflight: true}
+		);
 		console.log('hmm: ' + hmm)
 		}
 		let instructions = [
@@ -235,7 +309,7 @@ const swap = async (
 				SOLEND_PRODUCTION_PROGRAM_ID
 			),
 			...execute.transactions.swapTransaction.instructions,
-			...execute2.transactions.swapTransaction.instructions,
+			...swapTransaction.mainTransaction.instructions,
 			flashRepayReserveLiquidityInstruction(
 				JSBI.toNumber(route.inAmount),
 				tinsts.length,
@@ -271,12 +345,12 @@ const swap = async (
 		const connection2 = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			]
+			], {confirmTransactionInitialTimeout: 1000}
 		);
 		let result;
 		try {
-		result =  await connection2.sendTransaction(
-			transaction
+		result =  await sendAndConfirmTransaction(connection2,
+			transaction, {skipPreflight: true}, {skipPreflight: true}
 		);
 		console.log("tx: " + result);
 		} catch (err){
@@ -287,7 +361,7 @@ console.log(err)
 		});
 
 		let jaregms = await connection.getParsedTokenAccountsByOwner(
-			new PublicKey("GoUPK9AX5yuxSMdovRZetzrzLVAuep7P9axWc9jyb7LC"),
+			new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
 			{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
 		);
 
@@ -312,7 +386,7 @@ console.log(err)
 						connection, // connection
 						payer, // fee payer
 						new PublicKey(reserve.config.liquidityToken.mint),
-						new PublicKey("GoUPK9AX5yuxSMdovRZetzrzLVAuep7P9axWc9jyb7LC") // mint
+						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // mint
 					);
 					tx.add(
 						createTransferInstruction(
@@ -328,10 +402,9 @@ console.log(err)
 					await connection.getLatestBlockhash()
 				).blockhash;
 				tx.sign(payer);
-				try {
-					connection.sendTransaction(tx, [payer], {
-						commitment: "singleGossip",
-					});
+				try {await sendAndConfirmTransaction(connection,
+					tx, {skipPreflight: true}, {skipPreflight: true}
+				);
 				} catch (err) {
 					console.log(err);
 				}
