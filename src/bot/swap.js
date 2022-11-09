@@ -349,7 +349,7 @@ const swap = async (
 		let result;
 		try {
 		result =  await sendAndConfirmTransaction(connection2,
-			transaction, {skipPreflight: true}, {skipPreflight: true}
+			transaction, {skipPreflight: false}, {skipPreflight: false}
 		);
 		console.log("tx: " + result);
 		} catch (err){
