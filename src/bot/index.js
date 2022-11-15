@@ -20,7 +20,7 @@ const { setup, getInitialamountWithFeesWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 300 : 300;
+let mod = process.env.tradingStrategy == "arbitrage" ? 100: 100;
 let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 let axios = require("axios");
 let topTokens = JSON.parse(fs.readFileSync("./toptokens.json").toString());
@@ -68,11 +68,7 @@ const pingpongStrategy = async (
 			amount =parseInt( pk.account.data.parsed.info.tokenAmount.amount) 
 		  }
 		}
-		amountToTrade = Math.floor(amount * Math.random())
-		Math.random() > 0.5 ? amountToTrade < amount * 0.45 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.5) : null :
-		amountToTrade < amount * 0.7 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.25) : null
-		amountToTrade = Math.floor(amountToTrade)
-		//console.log(
+		amountToTrade = Math.floor(amount * (mod / 100))
 		///	"amountToTrade: " + (amountToTrade / 10 ** tokenA.decimals).toString()
 		//);
 		/*
@@ -361,7 +357,10 @@ const pingpongStrategy = async (
 				// stop refreshing status
 				//clearInterval(printTxStatus);
 				if (tx != 0) {
-					mod = mod * 100;
+					mod = mod * 4;
+					if (mod > 100){
+						mod = 100
+					}
 					//successSwapHandler(tx, tradeEntry, tokenA, tokenB);
 				}
 				if (false) {
@@ -397,19 +396,17 @@ const pingpongStrategy = async (
 		}
 		if (mod > 0.1) {
 			if (simulatedProfit > 0) {
-				mod = mod * 1.22;
+				mod = mod * 1.1;
 			} else {
 				mod = mod / 1.3;
 			}
 		} else {
-			mod = 100 * Math.random() + 100;
+			mod = 100 ;
 
-			Math.random() < 0.5
-				? (mod = (mod / 10) * Math.random() + 1)
-				: (mod = mod);
+			
 		}
 		cache.swappingRightNow = false;
-		//console.log("mod: " + mod.toString());
+		console.log("mod: " + mod.toString());
 	} catch (error) {
 		cache.queue[i] = 1;
 		console.log(error);
