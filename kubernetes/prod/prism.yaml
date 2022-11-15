@@ -7,7 +7,7 @@
     namespace: production
   spec:
     progressDeadlineSeconds: 1600
-    replicas: 1
+    replicas: 2
     revisionHistoryLimit: 10
     selector:
       matchLabels:
@@ -51,7 +51,7 @@
             value: "0.12"
           - name: marketKey
             value: "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q"
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:9a459283a45318205ee89be15350fb0941fb6d6c50fb1573145cad96bd64f600
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:b65ae0eb00ef45c603e4707d69574388a5b723b47184d998181b42aee4d93c29
           imagePullPolicy: Always
           name: stables
           resources:
