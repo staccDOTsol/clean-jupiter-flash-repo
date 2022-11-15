@@ -326,7 +326,7 @@ const pingpongStrategy = async (
 			return;
 		}
 
-		//console.log(simulatedProfit);
+		console.log(simulatedProfit);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
 			console.log(simulatedProfit);
 		// store max profit spotted
@@ -343,7 +343,7 @@ const pingpongStrategy = async (
 
 			if (cache.tradingEnabled || cache.hotkeys.r) {
 				// store trade to the history
-				console.log(123)[(tx, performanceOfTx)] = await swap(
+				const [tx, performanceOfTx] = await swap(
 					jupiter,
 					prism,
 					route,
@@ -394,7 +394,7 @@ const pingpongStrategy = async (
 		if (tx == 0) {
 			cache.swappingRightNow = false;
 		}
-		if (mod > 0.1) {
+		if (mod > 0.000001) {
 			if (simulatedProfit > 0) {
 				mod = mod * 1.1;
 			} else {
@@ -514,8 +514,8 @@ const run = async () => {
 		tokens = tokens.filter((t) => shortlistedTokens.includes(t.address));
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
-			watcher(jupiter, prism, tokenA, tokenA, market, tokens);
-		}, cache.config.minInterval);
+			await watcher(jupiter, prism, tokenA, tokenA, market, tokens);
+		}, 500);
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;

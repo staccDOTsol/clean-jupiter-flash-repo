@@ -31,6 +31,7 @@ const JSBI = require("jsbi");
 const bs58 = require("bs58");
 const fs = require("fs");
 const { env } = require("process");
+const { exec } = require("child_process");
 let market = JSON.parse(fs.readFileSync("./configs.json").toString())[0];
 let payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
@@ -60,7 +61,7 @@ const swap = async (
 			{ confirmTransactionInitialTimeout: 33333 }
 		);
 
-		const reserve = market.reserves.find(
+		 reserve = market.reserves.find(
 			(res) => res.config.liquidityToken.mint === tokenA.address
 		);
 		//console.log(reserve)
@@ -83,54 +84,18 @@ const swap = async (
 
 		if (process.env.tradingStrategy == "arbitrage")
 			execute = await jupiter.exchange({ routeInfo: route });
-
 		var swapTransaction;
-
 		if (process.env.tradingStrategy != "arbitrage")
 			swapTransaction = await prism.generateSwapTransactions(route);
 
-		let ata = (
-			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-				mint: new PublicKey(reserve.config.liquidityToken.mint),
-			})
-		).value;
-		let tokenAccount;
-		try {
-			tokenAccount = ata[0].pubkey;
-		} catch (err) {
-			let ata2 = await getOrCreateAssociatedTokenAccount(
-				connection, // connection
-				payer, // fee payer
-				new PublicKey(reserve.config.liquidityToken.mint),
-				payer.publicKey,
-				true // mint
-			);
 
-			tokenAccount = ata2.address;
-		}
-		if (ata.length > 1) {
-			for (var i = 2; i <= ata.length; i++) {
-				try {
-					await closeAccount(
-						new Connection(
-							process.env.ALT_RPC_LIST.split(",")[
-								Math.floor(
-									Math.random() * process.env.ALT_RPC_LIST.split(",").length
-								)
-							],
-							{ commitment: "singleGossip" }
-						), // connection
-						payer, // payer
-						ata[i].pubkey, // token account which you want to close
-						payer.publicKey, // destination
-						payer, // owner of token account
-						[]
-					);
-				} catch (Err) {
-					console.log(Err);
-				}
-			}
-		}
+		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
+			connection, // connection
+			payer, // fee payer
+			new PublicKey(reserve.config.liquidityToken.mint),
+			payer.publicKey,
+			true // mint
+		)).address
 		let goaccs = [];
 		let goluts = [
 			"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
@@ -139,26 +104,26 @@ const swap = async (
 			"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
 			"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
 		];
-
 		let luts = {};
 		try {
 			luts = JSON.parse(fs.readFileSync("./luts.json").toString());
 		} catch (err) {
 			console.log(err);
 		}
+		console.log(0)
 		for (var golut of goluts) {
-			connection = new Connection(
-				process.env.ALT_RPC_LIST.split(",")[
-					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				],
-				{ confirmTransactionInitialTimeout: 33333 }
-			);
+			try {
+			
 			let test = (await connection.getAddressLookupTable(new PublicKey(golut)))
 				.value;
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 				goaccs.push(test);
 			}
+		} catch (err){
+console.log(err)
 		}
+		}
+		console.log(1)
 		let templuts = [];
 		try {
 			for (var mi of [...route.marketInfos]) {
@@ -185,11 +150,15 @@ const swap = async (
 			}
 		} catch (err) {}
 		let fluts = [];
+		try {
 		for (var alut of Object.keys(counts)) {
 			if (counts[alut] >= 1) {
 				fluts.push(alut);
 			}
 		}
+	} catch (err){
+		
+	}
 		try {
 			for (var lut of fluts) {
 				try {
@@ -205,7 +174,7 @@ const swap = async (
 				} catch (err) {}
 			}
 		} catch (err) {}
-
+		console.log(goaccs.length)
 		let ammIds = [];
 		let ammIdspks = [];
 		try {
@@ -349,6 +318,7 @@ const swap = async (
 		console.log('hmm: ' + hmm)
 		} */
 		let inAmount;
+		console.log(inAmount)
 		if (process.env.tradingStrategy != "arbitrage") {
 			inAmount = route.amountIn * 10 ** tokenA.decimals;
 		} else {
@@ -395,7 +365,11 @@ const swap = async (
 				tokenAccount, // from (should be a token account)
 				tokenAccount, // to (should be a token account)
 				payer.publicKey, // from's owner
-				ata[0].account.data.parsed.info.tokenAmount.amount
+				(
+					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
+						mint: new PublicKey(reserve.config.liquidityToken.mint),
+					})
+				).value[0].account.data.parsed.info.tokenAmount.amount
 			) /*, 
 			jaregm,
 			new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"))*/,
