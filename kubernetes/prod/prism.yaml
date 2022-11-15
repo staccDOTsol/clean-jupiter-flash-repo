@@ -1,0 +1,71 @@
+
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    generation: 0
+    name: stables-prod
+    namespace: production
+  spec:
+    progressDeadlineSeconds: 1600
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: risk-lol
+    strategy:
+      rollingUpdate:
+        maxSurge: 25%
+        maxUnavailable: 0
+      type: RollingUpdate
+    template:
+      metadata:
+      
+        labels:
+          app: risk-lol
+      spec:
+        imagePullSecrets:
+          - name: azure
+        nodeSelector:
+          kubernetes.io/os: linux
+        containers:
+        - env:
+          - name: DEBUG
+            value: "false"
+          - name: SKIP_INTRO
+            value: "true"
+          - name: UI_COLOR
+            value: "cyan"
+          - name: TRADING_ENABLED
+            value: "true"
+          - name: WRAP_UNWRAP_SOL
+            value: "true"
+          - name: SOLANA_WALLET_PRIVATE_KEY
+            value: "2JyAinbDqBKZJ4RLg8G5xPXiahju5aKQ7KtA6doT6mCPeNJtmekQUWGLmbysyKJtx57m39Rbi5KhhwAJqdapKkQY"
+          - name: DEFAULT_RPC
+            value: "https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn,https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-,https://solana-mainnet.g.alchemy.com/v2/ETWO1_-exD_tuIyq9YTW9d37nAvNT7XQ,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/dVWUMrayL_U3UbmCbg0mouE9q4mUZfuc,https://solana-mainnet.g.alchemy.com/v2/WM_Gl7ktiws7icLQVxLP5iVHNQTv8RNk,https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn"
+          - name: ALT_RPC_LIST
+            value: "http://191.101.160.247:8899"
+          - name: tradingStrategy
+            value: "prismarbitrage"
+          - name: minPercProfit
+            value: "0.12"
+          - name: marketKey
+            value: "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q"
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:9a459283a45318205ee89be15350fb0941fb6d6c50fb1573145cad96bd64f600
+          imagePullPolicy: Always
+          name: stables
+          resources:
+                requests:
+                  cpu: '0.1'
+                  memory: 0.1G
+                limits:
+                  cpu: '8'
+                  memory: 12G
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        hostNetwork: true
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
