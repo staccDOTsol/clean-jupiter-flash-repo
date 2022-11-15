@@ -51,11 +51,26 @@ const pingpongStrategy = async (
 		updateIterationsPerMin(cache);
 		//tokenB = tokenA
 		// Calculate amount that will be used for trade
-		const amountToTrade = Math.floor(
+		var amountToTrade = Math.floor(
 			(mod / reserve.stats.assetPriceUSD) *
 				10 ** reserve.config.liquidityToken.decimals
 		);
-
+		const connection = new Connection(
+			process.env.ALT_RPC_LIST.split(",")[
+				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+			]
+		);
+				const pubkey =  ( await connection.getParsedTokenAccountsByOwner(new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), 
+		{mint: new PublicKey((tokenA.address))})).value
+		let amount = 0 
+		for (var pk of pubkey){
+		  if (parseFloat(pk.account.data.parsed.info.tokenAmount.uiAmount ) > amount){
+			amount =parseInt( pk.account.data.parsed.info.tokenAmount.amount) 
+		  }
+		}
+		amountToTrade = Math.floor(amount * Math.random())
+		Math.random() > 0.5 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.5) : amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.25)
+		
 		//console.log(
 		///	"amountToTrade: " + (amountToTrade / 10 ** tokenA.decimals).toString()
 		//);
