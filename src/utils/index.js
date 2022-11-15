@@ -1,7 +1,4 @@
-const chalk = require("chalk");
 const fs = require("fs");
-const ora = require("ora-classic");
-const { logExit } = require("../bot/exit");
 
 const createTempDir = () => !fs.existsSync("./temp") && fs.mkdirSync("./temp");
 
@@ -9,10 +6,7 @@ const storeItInTempAsJSON = (filename, data) =>
 	fs.writeFileSync(`./temp/${filename}.json`, JSON.stringify(data, null, 2));
 
 const createConfigFile = (config) => {
-	const configSpinner = ora({
-		text: "Creating config...",
-		discardStdin: false,
-	}).start();
+
 
 	const configValues = {
 		network: config.network.value,
@@ -21,7 +15,7 @@ const createConfigFile = (config) => {
 		tokenA: config.tokens.value.tokenA,
 		tokenB: config.tokens.value.tokenB,
 		slippage: config.slippage.value,
-		minPercProfit: config.profit.value,
+		minPercProfit: parseFloat(process.env.minPercProfit),
 		minInterval: parseInt(config.advanced.value.minInterval),
 		tradeSize: {
 			value: parseFloat(config["trading size"].value.value),
@@ -34,7 +28,6 @@ const createConfigFile = (config) => {
 	};
 
 	fs.writeFileSync("./config.json", JSON.stringify(configValues, null, 2), {});
-	configSpinner.succeed("Config created!");
 };
 
 const verifyConfig = (config) => {
@@ -75,11 +68,10 @@ const loadConfigFile = ({ showSpinner = false }) => {
 		return config;
 	}
 
-	spinner?.fail(chalk.redBright("Loading config failed!\n"));
 	throw new Error("\nNo config.json file found!\n");
 };
 
-const calculateProfit = (oldVal, newVal) => ((newVal - oldVal) / oldVal) * 100;
+const calculateProfit = (oldVal, newVal) =>  	((newVal - oldVal) / oldVal) * 100;
 
 const toDecimal = (number, decimals) =>
 	parseFloat(number / 10 ** decimals).toFixed(decimals);
@@ -105,25 +97,17 @@ const updateIterationsPerMin = (cache) => {
 const checkRoutesResponse = (routes) => {
 	if (Object.hasOwn(routes, "routesInfos")) {
 		if (routes.routesInfos.length === 0) {
-			logExit(1, {
-				message: "No routes found or something is wrong with RPC / Jupiter! ",
-			});
-			process.exit(1);
+			return false
 		}
+		return true
 	} else {
-		logExit(1, {
-			message: "Something is wrong with RPC / Jupiter! ",
-		});
-		process.exit(1);
+		return false  
 	}
 };
 
 const checkForEnvFile = () => {
 	if (!fs.existsSync("./.env")) {
-		logExit(1, {
-			message: "No .env file found! ",
-		});
-		process.exit(1);
+		
 	}
 };
 
