@@ -69,8 +69,9 @@ const pingpongStrategy = async (
 		  }
 		}
 		amountToTrade = Math.floor(amount * Math.random())
-		Math.random() > 0.5 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.5) : amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.25)
-		
+		Math.random() > 0.5 ? amountToTrade < amount * 0.45 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.5) : null :
+		amountToTrade < amount * 0.7 ? amountToTrade = amountToTrade + Math.floor(amount * Math.random() * 0.25) : null
+		amountToTrade = Math.floor(amountToTrade)
 		//console.log(
 		///	"amountToTrade: " + (amountToTrade / 10 ** tokenA.decimals).toString()
 		//);
