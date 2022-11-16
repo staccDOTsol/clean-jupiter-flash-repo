@@ -3,7 +3,7 @@
   kind: Deployment
   metadata:
     generation: 0
-    name: prism-prod-prod
+    name: stables-prod
     namespace: production
   spec:
     progressDeadlineSeconds: 1600
@@ -53,7 +53,7 @@
             value: "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:latest
           imagePullPolicy: Always
-          name: prism-prod
+          name: stables
           resources:
                 requests:
                   cpu: '0.1'
