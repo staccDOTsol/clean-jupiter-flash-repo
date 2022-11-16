@@ -3,7 +3,7 @@
   kind: Deployment
   metadata:
     generation: 0
-    name: jupiter-prod
+    name: jupiter
     namespace: production
   spec:
     progressDeadlineSeconds: 1600
