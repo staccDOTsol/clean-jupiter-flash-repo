@@ -51,7 +51,7 @@
             value: "0.04"
           - name: marketKey
             value: "GktVYgkstojYd8nVXGXKJHi7SstvgZ6pkQqQhUPD7y7Q"
-          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:b65ae0eb00ef45c603e4707d69574388a5b723b47184d998181b42aee4d93c29
+          image: staccregistry.azurecr.io/clean-jupiter-flash-repo:latest
           imagePullPolicy: Always
           name: prism-prod
           resources:
