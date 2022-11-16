@@ -3,11 +3,11 @@
   kind: Deployment
   metadata:
     generation: 0
-    name: lending-prod-prod
+    name: jupiter-prod
     namespace: production
   spec:
     progressDeadlineSeconds: 1600
-    replicas: 1
+    replicas: 0
     revisionHistoryLimit: 10
     selector:
       matchLabels:
@@ -53,7 +53,7 @@
             value: "HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:latest
           imagePullPolicy: Always
-          name: lending-prod
+          name: jupiter
           resources:
                 requests:
                   cpu: '0.1'
