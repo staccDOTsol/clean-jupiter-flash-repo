@@ -47,7 +47,7 @@ const pingpongStrategy = async (
 	cache.queue[i] = -1;
 	try {
 		cache.config = loadConfigFile({ showSpinner: false });
-		let minprofit = (reserve.stats?.cTokenExchangeRate - 1) * 100
+		let minprofit = (reserve.stats?.cTokenExchangeRate - 1) * 100 * 3
 
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
