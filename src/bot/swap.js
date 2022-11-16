@@ -361,17 +361,17 @@ console.log(err)
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
 				new PublicKey(reserve.config.liquidityToken.mint)
-			)/*
+			),
 			createTransferInstruction(
 				tokenAccount, // from (should be a token account)
-				tokenAccount, // to (should be a token account)
+				jaregm, // to (should be a token account)
 				payer.publicKey, // from's owner
 				(
 					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 						mint: new PublicKey(reserve.config.liquidityToken.mint),
 					})
 				).value[0].account.data.parsed.info.tokenAmount.amount
-			) *//*, 
+			) /*, 
 			jaregm,
 			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
 		];

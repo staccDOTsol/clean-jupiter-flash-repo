@@ -323,10 +323,7 @@ const pingpongStrategy = async (
 				}
 			}
 		}
-		if (simulatedProfit > 2500) {
 			console.log(tokenA.symbol);
-			return;
-		}
 
 		console.log(simulatedProfit);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
