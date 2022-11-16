@@ -249,7 +249,7 @@ console.log(err)
 					connection, // connection
 					payer, // fee payer
 					new PublicKey(reserve.config.liquidityToken.mint),
-					new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"),
+					new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
 					true
 				)
 			).address;
@@ -260,7 +260,7 @@ console.log(err)
 						connection, // connection
 						payer, // fee payer
 						new PublicKey(reserve.config.liquidityToken.mint),
-						new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"),
+						new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
 						true // mint
 					)
 				).address;
@@ -336,6 +336,7 @@ console.log(err)
 		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 1
 			? (thepaydirt = [thepaydirt[1]])
 			: null;
+			tinsts = []
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
@@ -360,7 +361,7 @@ console.log(err)
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
 				new PublicKey(reserve.config.liquidityToken.mint)
-			),
+			)/*
 			createTransferInstruction(
 				tokenAccount, // from (should be a token account)
 				tokenAccount, // to (should be a token account)
@@ -370,9 +371,9 @@ console.log(err)
 						mint: new PublicKey(reserve.config.liquidityToken.mint),
 					})
 				).value[0].account.data.parsed.info.tokenAmount.amount
-			) /*, 
+			) *//*, 
 			jaregm,
-			new PublicKey("JARehRjGUkkEShpjzfuV4ERJS25j8XhamL776FAktNGm"))*/,
+			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
 		];
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 

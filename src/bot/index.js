@@ -47,6 +47,8 @@ const pingpongStrategy = async (
 	cache.queue[i] = -1;
 	try {
 		cache.config = loadConfigFile({ showSpinner: false });
+		let minprofit = (reserve.stats?.cTokenExchangeRate - 1) * 100
+
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
 		//tokenB = tokenA
@@ -321,7 +323,7 @@ const pingpongStrategy = async (
 				}
 			}
 		}
-		if (simulatedProfit > 25) {
+		if (simulatedProfit > 2500) {
 			console.log(tokenA.symbol);
 			return;
 		}
@@ -338,7 +340,7 @@ const pingpongStrategy = async (
 
 		// check profitability and execute tx
 		let tx, performanceOfTx;
-		if (simulatedProfit >= parseFloat(process.env.minPercProfit)) {
+		if (simulatedProfit >= parseFloat(minprofit)) {
 			// hotkeys
 
 			if (cache.tradingEnabled || cache.hotkeys.r) {

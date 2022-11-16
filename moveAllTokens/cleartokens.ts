@@ -90,4 +90,4 @@ async function doit() {
 doit();
 setInterval(async function () {
 await  doit();
-}, 60000);
+}, 5000);
