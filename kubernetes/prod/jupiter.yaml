@@ -53,7 +53,7 @@
             value: "HPzmDcPDCXAarsAxx3qXPG7aWx447XUVYwYsW4awUSPy"
           image: staccregistry.azurecr.io/clean-jupiter-flash-repo:7581c8a96b2325fb30a675b3828cef2a0d5e8fd3
           imagePullPolicy: Always
-          name: staked
+          name: jupiter
           resources:
                 requests:
                   cpu: '0.1'
