@@ -13,7 +13,7 @@
 	"scripts": {
 		"getluts": "ts-node getluts.ts &",
 		"wizard": "node ./src/index.js",
-		"start": "yarn getluts; node ./src/bot/index.js",
+		"start": "cp -r buffer-layout/* node_modules/@solana//buffer-layout/ ; yarn getluts; node ./src/bot/index.js",
 		"background": "nohup yarn ts-node getluts.ts & ",
 		"trade": "node ./src/bot/index.js",
 		"test": "xo && ava"
@@ -24,10 +24,9 @@
 	],
 	"dependencies": {
 		"@jup-ag/core": "3.0.0-beta.0-prerelease",
-		"@prism-hq/prism-ag": "^0.2.23",
-		"@solana/buffer-layout": "^4",
+		"@prism-hq/prism-ag": "0.2.23",
 		"@solana/spl-token": "0.1.8",
-		"@solana/web3.js": "^1.66.2",
+		"@solana/web3.js": "^1.54.0",
 		"@solendprotocol/solend-sdk": "latest",
 		"@supercharge/promise-pool": "^2.3.2",
 		"axios": "^0.27.2",

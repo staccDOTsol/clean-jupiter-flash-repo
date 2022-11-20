@@ -1,3 +1,6 @@
+
+require("dotenv").config();
+
 import { AddressLookupTableProgram, Connection, GetProgramAccountsConfig, Keypair, PublicKey, sendAndConfirmTransaction, Transaction } from "@solana/web3.js"
 const PromisePool = require("@supercharge/promise-pool").default;
 let theluts : any = {}
@@ -60,8 +63,9 @@ let myluts: any = {}
     })
     // @ts-ignore
     .process(async (lut: any) => {
+    
 // @ts-ignore
-let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2) + Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length / 2)
+let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length)
       // @ts-ignore
       var connection= new Connection(ALT_RPC_LIST?.split(',')[ran])
 
@@ -81,7 +85,7 @@ for (var addy of maybemine.value?.state.addresses){
     if ( pk === addypk && !Object.keys(theluts).includes(pk)){
       //templuts.push(lut.pubkey.toBase58())
         theluts[pk] = [lut.pubkey.toBase58()]
-        console.log(Object.keys(theluts).length)
+      //  console.log(Object.keys(theluts).length)
       gogos++
     } else if ( pk === addypk){
     //  templuts.push(lut.pubkey.toBase58())

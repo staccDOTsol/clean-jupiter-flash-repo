@@ -55,7 +55,7 @@ const flashRepayReserveLiquidityInstruction = (liquidityAmount, borrowInstructio
         { pubkey: userTransferAuthority, isSigner: true, isWritable: false },
         { pubkey: web3_js_1.SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false },
         { pubkey: spl_token_1.TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-        { pubkey: rake, isSigner: false, isWritable: false },
+        { pubkey: rake, isSigner: false, isWritable: true },
         { pubkey: mint, isSigner: false, isWritable: false },
     ];
     return new web3_js_1.TransactionInstruction({

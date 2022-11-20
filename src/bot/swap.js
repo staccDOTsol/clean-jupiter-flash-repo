@@ -1,9 +1,11 @@
 const { calculateProfit, toDecimal, storeItInTempAsJSON } = require("../utils");
 const cache = require("./cache");
+const BN = require("bn.js");
 const {
 	closeAccount,
 	createTransferInstruction,
 	createAssociatedTokenAccount,
+	getOrCreateAssociatedTokenAccount,
 } = require("../../src/spl-token");
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 const {
@@ -28,6 +30,8 @@ var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 const JSBI = require("jsbi");
 const bs58 = require("bs58");
 const fs = require("fs");
+const { env } = require("process");
+const { exec } = require("child_process");
 let market = JSON.parse(fs.readFileSync("./configs.json").toString())[0];
 let payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
@@ -57,7 +61,7 @@ const swap = async (
 			{ confirmTransactionInitialTimeout: 33333 }
 		);
 
-		const reserve = market.reserves.find(
+		 reserve = market.reserves.find(
 			(res) => res.config.liquidityToken.mint === tokenA.address
 		);
 		//console.log(reserve)
@@ -76,51 +80,22 @@ const swap = async (
 
 		tinsts.push(modifyComputeUnits);
 		tinsts.push(addPriorityFee);
-		const execute = await jupiter.exchange({
-			routeInfo: route,
-		});
+		var execute;
 
-		const swapTransaction = await prism.generateSwapTransactions(route2);
+		if (process.env.tradingStrategy == "arbitrage")
+			execute = await jupiter.exchange({ routeInfo: route });
+		var swapTransaction;
+		if (process.env.tradingStrategy != "arbitrage")
+			swapTransaction = await prism.generateSwapTransactions(route);
 
-		let ata = (
-			await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-				mint: new PublicKey(reserve.config.liquidityToken.mint),
-			})
-		).value;
-		let tokenAccount;
-		try {
-			tokenAccount = ata[0].pubkey;
-		} catch (err) {
-			let ata2 = await createAssociatedTokenAccount(
-				connection, // connection
-				payer, // fee payer
-				new PublicKey(reserve.config.liquidityToken.mint),
-				payer.publicKey // mint
-			);
 
-			tokenAccount = ata2;
-		}
-		if (ata.length > 1) {
-			for (var i = 2; i <= ata.length; i++) {
-				try {
-					await closeAccount(
-						new Connection(
-							process.env.ALT_RPC_LIST.split(",")[
-								Math.floor(
-									Math.random() * process.env.ALT_RPC_LIST.split(",").length
-								)
-							],
-							{ commitment: "singleGossip" }
-						), // connection
-						payer, // payer
-						ata[i].pubkey, // token account which you want to close
-						payer.publicKey, // destination
-						payer, // owner of token account
-						[]
-					);
-				} catch (Err) {}
-			}
-		}
+		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
+			connection, // connection
+			payer, // fee payer
+			new PublicKey(reserve.config.liquidityToken.mint),
+			payer.publicKey,
+			true // mint
+		)).address
 		let goaccs = [];
 		let goluts = [
 			"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
@@ -129,92 +104,116 @@ const swap = async (
 			"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
 			"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
 		];
-
 		let luts = {};
 		try {
-			luts = JSON.parse(fs.readFileSync("./tluts.json").toString());
+			luts = JSON.parse(fs.readFileSync("./luts.json").toString());
 		} catch (err) {
-			try {
-			} catch (err) {
-				luts = JSON.parse(fs.readFileSync("./luts.json").toString());
-			}
+			console.log(err);
 		}
+		console.log(0)
 		for (var golut of goluts) {
-			connection = new Connection(
-				process.env.ALT_RPC_LIST.split(",")[
-					Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-				],
-				{ confirmTransactionInitialTimeout: 33333 }
-			);
+			try {
+			
 			let test = (await connection.getAddressLookupTable(new PublicKey(golut)))
 				.value;
 			if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 				goaccs.push(test);
 			}
+		} catch (err){
+console.log(err)
 		}
+		}
+		console.log(1)
 		let templuts = [];
-
-		for (var mi of [...route.marketInfos]) {
-			try {
-			for (var lut of luts[mi.amm.id]) {
-				templuts.push(lut);
-			}
-		}
-			catch (err){
-
-			}
-		}
-		let counts = {};
-
-		for (var lut of templuts) {
-			for (var mi of [...route.marketInfos]) {
-				if (!Object.keys(counts).includes(lut)) {
-					counts[lut] = 0;
-				}
-				try {
-				if (luts[mi.amm.id].includes(lut)) {
-					counts[lut]++;
-				}
-			} catch (err){
-				
-			}
-			}
-		}
-		let fluts = []
-		for (var alut of Object.keys(counts)){
-			if (counts[alut] > 1){
-				fluts.push(alut)
-			}
-		}
 		try {
-			for (var lut of fluts) {
-					try {
-						let test = (
-							await connection.getAddressLookupTable(new PublicKey(lut))
-						).value;
-						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-							goaccs.push(test);
-						}
-					} catch (err) {}
-				console.log(goaccs.length);
+			for (var mi of [...route.marketInfos]) {
+				try {
+					for (var lut of luts[mi.amm.id]) {
+						templuts.push(lut);
+					}
+				} catch (err) {}
 			}
 		} catch (err) {}
-
+		let counts = {};
+		try {
+			for (var lut of templuts) {
+				for (var mi of [...route.marketInfos]) {
+					if (!Object.keys(counts).includes(lut)) {
+						counts[lut] = 0;
+					}
+					try {
+						if (luts[mi.amm.id].includes(lut)) {
+							counts[lut]++;
+						}
+					} catch (err) {}
+				}
+			}
+		} catch (err) {}
+		let fluts = [];
+		try {
+		for (var alut of Object.keys(counts)) {
+			if (counts[alut] >= 1) {
+				fluts.push(alut);
+			}
+		}
+	} catch (err){
+		
+	}
+		try {
+			for (var lut of fluts) {
+				try {
+					let test = (
+						await connection.getAddressLookupTable(new PublicKey(lut))
+					).value;
+					if (
+						test.state.deactivationSlot > BigInt(159408000 * 2) &&
+						goaccs.length < 15
+					) {
+						goaccs.push(test);
+					}
+				} catch (err) {}
+			}
+		} catch (err) {}
+		console.log(goaccs.length)
 		let ammIds = [];
 		let ammIdspks = [];
-		for (var file of [route2]) {
-			//},...routes2]){//{//}),...routes2]){
-			try {
-				for (var rd of Object.values(file.routeData)) {
-					try {
-						// @ts-ignore
-						for (var rd2 of Object.values(rd.routeData)) {
-							try {
+		try {
+			for (var file of [route]) {
+				//},...routes2]){//{//}),...routes2]){
+				try {
+					for (var rd of Object.values(file.routeData)) {
+						try {
+							// @ts-ignore
+							for (var rd2 of Object.values(rd.routeData)) {
 								try {
-									// @ts-ignore
+									try {
+										// @ts-ignore
 
-									if (rd2.orcaPool != undefined) {
-										let dothedamnthing = rd2.oracaPool.orcaTokenSwapId;
+										if (rd2.orcaPool != undefined) {
+											let dothedamnthing = rd2.oracaPool.orcaTokenSwapId;
+											if (!ammIdspks.includes(dothedamnthing.toBase58())) {
+												// @ts-ignore
+
+												ammIdspks.push(dothedamnthing.toBase58());
+												ammIds.push(dothedamnthing);
+											}
+										}
+									} catch (err) {}
+									if (rd2.ammId != undefined) {
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.ammId);
+										// @ts-ignore
+										if (!ammIdspks.includes(dothedamnthing.toBase58())) {
+											// @ts-ignore
+
+											ammIdspks.push(dothedamnthing.toBase58());
+											ammIds.push(dothedamnthing);
+										}
+									}
+									if (rd2.swapAccount != undefined) {
+										// @ts-ignore
+										let dothedamnthing = new PublicKey(rd2.swapAccount);
+										// @ts-ignore
 										if (!ammIdspks.includes(dothedamnthing.toBase58())) {
 											// @ts-ignore
 
@@ -223,36 +222,15 @@ const swap = async (
 										}
 									}
 								} catch (err) {}
-								if (rd2.ammId != undefined) {
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.ammId);
-									// @ts-ignore
-									if (!ammIdspks.includes(dothedamnthing.toBase58())) {
-										// @ts-ignore
+							}
+						} catch (err) {}
+					}
+				} catch (err) {}
+			}
+		} catch (err) {}
 
-										ammIdspks.push(dothedamnthing.toBase58());
-										ammIds.push(dothedamnthing);
-									}
-								}
-								if (rd2.swapAccount != undefined) {
-									// @ts-ignore
-									let dothedamnthing = new PublicKey(rd2.swapAccount);
-									// @ts-ignore
-									if (!ammIdspks.includes(dothedamnthing.toBase58())) {
-										// @ts-ignore
-
-										ammIdspks.push(dothedamnthing.toBase58());
-										ammIds.push(dothedamnthing);
-									}
-								}
-							} catch (err) {}
-						}
-					} catch (err) {}
-				}
-			} catch (err) {}
-		}
 		for (var lut of ammIds) {
-			if (goaccs.length < 35) {
+			if (goaccs.length < 20) {
 				try {
 					let test = (
 						await connection.getAddressLookupTable(new PublicKey(lut))
@@ -262,27 +240,36 @@ const swap = async (
 					}
 				} catch (err) {}
 			}
-			console.log(goaccs.length);
 		}
-		let jaregm = tokenAccount;
-		/*
+		let jaregm;
+
 		try {
 			jaregm = (
-				await connection.getTokenAccountsByOwner(
-					new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-					{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
+				await getOrCreateAssociatedTokenAccount(
+					connection, // connection
+					payer, // fee payer
+					new PublicKey(reserve.config.liquidityToken.mint),
+					new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
+					true
 				)
-			).value[0].pubkey;
+			).address;
 		} catch (err) {
-			
-			let ata = await createAssociatedTokenAccount(
-				connection, // connection
-				payer, // fee payer
-				new PublicKey(reserve.config.liquidityToken.mint),
-				new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // mint
-			);
-			jaregm = ata
-		} */
+			try {
+				let ata = (
+					await getOrCreateAssociatedTokenAccount(
+						connection, // connection
+						payer, // fee payer
+						new PublicKey(reserve.config.liquidityToken.mint),
+						new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
+						true // mint
+					)
+				).address;
+				jaregm = ata;
+			} catch (err) {
+				console.log(err);
+			}
+		}
+		console.log(jaregm.toBase58());
 		//tinsts = []
 		//console.log(execute.transactions)
 		/*
@@ -330,20 +317,39 @@ const swap = async (
 			);
 		console.log('hmm: ' + hmm)
 		} */
+		let inAmount;
+		console.log(inAmount)
+		if (process.env.tradingStrategy != "arbitrage") {
+			inAmount = route.amountIn * 10 ** tokenA.decimals;
+		} else {
+			try {
+				inAmount = JSBI.toNumber(route.inAmount);
+			} catch (err) {
+				inAmount = route.inAmount;
+			}
+		}
+		console.log(inAmount);
+		let thepaydirt =
+			process.env.tradingStrategy == "arbitrage"
+				? execute.transactions.swapTransaction.instructions
+				: swapTransaction.mainTransaction.instructions;
+		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 1
+			? (thepaydirt = [thepaydirt[1]])
+			: null;
+			tinsts = []
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
-				JSBI.toNumber(route.inAmount),
+				inAmount,
 				new PublicKey(reserve.config.liquidityAddress),
 				tokenAccount,
 				new PublicKey(reserve.config.address),
 				new PublicKey(market.config.address),
 				SOLEND_PRODUCTION_PROGRAM_ID
 			),
-			...execute.transactions.swapTransaction.instructions,
-			...swapTransaction.mainTransaction.instructions,
+			...thepaydirt,
 			flashRepayReserveLiquidityInstruction(
-				JSBI.toNumber(route.inAmount),
+				inAmount,
 				tinsts.length,
 				tokenAccount,
 				new PublicKey(reserve.config.liquidityAddress),
@@ -354,16 +360,28 @@ const swap = async (
 				payer.publicKey,
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
-				payer.publicKey
+				new PublicKey(reserve.config.liquidityToken.mint)
+			),
+			createTransferInstruction(
+				tokenAccount, // from (should be a token account)
+				jaregm, // to (should be a token account)
+				payer.publicKey, // from's owner
+				(
+					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
+						mint: new PublicKey(reserve.config.liquidityToken.mint),
+					})
+				).value[0].account.data.parsed.info.tokenAmount.amount
 			) /*, 
 			jaregm,
-			new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"))*/,
+			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
 		];
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 
 		//	execute.transactions.swapTransaction.instructions = instructions
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 		console.log("luts: " + (goaccs.length - 5).toString());
+		console.log(reserve.config.liquidityToken.mint);
+		//console.log(...instructions)
 		const messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
 			recentBlockhash: await (await connection.getLatestBlockhash()).blockhash,
@@ -385,84 +403,13 @@ const swap = async (
 			result = await sendAndConfirmTransaction(
 				connection2,
 				transaction,
-				{ skipPreflight: true },
-				{ skipPreflight: true }
+				{ skipPreflight: false },
+				{ skipPreflight: false }
 			);
 			console.log("tx: " + result);
 		} catch (err) {
 			console.log(err);
 		}
-		let tas2 = await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-			mint: new PublicKey(reserve.config.liquidityToken.mint),
-		});
-
-		let jaregms = await connection.getParsedTokenAccountsByOwner(
-			new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx"),
-			{ mint: new PublicKey(reserve.config.liquidityToken.mint) }
-		);
-
-		console.log(tas2.value.length);
-		let tac = -1;
-		for (var ta of tas2.value) {
-			console.log(ta.account.data.parsed.info.tokenAmount.amount);
-			if (ta.account.data.parsed.info.tokenAmount.amount > 0) {
-				let tx = new Transaction();
-				try {
-					tx.add(
-						createTransferInstruction(
-							ta.pubkey, // from (should be a token account)
-							jaregms.value[0].pubkey, // to (should be a token account)
-							payer.publicKey, // from's owner
-							ta.account.data.parsed.info.tokenAmount.amount
-						)
-					);
-				} catch (err) {
-					console.log(err);
-					let ata = await createAssociatedTokenAccount(
-						connection, // connection
-						payer, // fee payer
-						new PublicKey(reserve.config.liquidityToken.mint),
-						new PublicKey("5kqGoFPBGoYpFcxpa6BFRp3zfNormf52KCo5vQ8Qn5bx") // mint
-					);
-					tx.add(
-						createTransferInstruction(
-							ta.pubkey, // from (should be a token account)
-							ata, // to (should be a token account)
-							payer.publicKey, // from's owner
-							parseInt(ta.account.data.parsed.info.tokenAmount.amount)
-						)
-					);
-				}
-
-				tx.recentBlockhash = await (
-					await connection.getLatestBlockhash()
-				).blockhash;
-				try {
-					await connection.sendTransaction(tx, [payer]);
-				} catch (err) {
-					console.log(err);
-				}
-			}
-			tac++;
-			if (tac >= 2) {
-				await closeAccount(
-					new Connection(
-						process.env.ALT_RPC_LIST.split(",")[
-							Math.floor(
-								Math.random() * process.env.ALT_RPC_LIST.split(",").length
-							)
-						],
-						{ commitment: "singleGossip" }
-					), // connection
-					payer, // payer
-					ta.pubkey, // token account which you want to close
-					payer.publicKey, // destination
-					payer, // owner of token account
-					[]
-				);
-			}
-		}
-
 		const performanceOfTx = performance.now() - performanceOfTxStart;
 
 		return [result, performanceOfTx];

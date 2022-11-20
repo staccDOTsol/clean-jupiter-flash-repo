@@ -2,14 +2,14 @@ const fs = require("fs");
 const bs58 = require("bs58");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
 const BN = require("bn.js");
-const { Jupiter } = require("@jup-ag/core");
+const { Jupiter, getPlatformFeeAccounts } = require("@jup-ag/core");
 const { Prism } = require("@prism-hq/prism-ag");
 const fetch = require("node-fetch");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
 var { SolendMarket } = require("@solendprotocol/solend-sdk");
-if (process.env.tradingStrategy == "arbitrage") {
+if (true) {
 	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
 }
 const setup = async () => {
@@ -64,18 +64,26 @@ const setup = async () => {
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 			]
 		);
-
 		const prism = await Prism.init({
 			user: wallet,
-			connection: connection,
 			slippage: 99,
+			connection: connection,
 		});
+
+		const platformFeeAndAccounts = {
+			feeBps: 50,
+			feeAccounts: await getPlatformFeeAccounts(
+				connection,
+				wallet.publicKey // The platform fee account owner
+			), // map of mint to token account pubkey
+		};
 		const jupiter = await Jupiter.load({
 			connection,
+			platformFeeAndAccounts,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: true,
-			wrapUnwrapSOL: true,
+			restrictIntermediateTokens: Math.random() < 0.5 ? true : false,
+			wrapUnwrapSOL: false,
 		});
 		cache.isSetupDone = true;
 

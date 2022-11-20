@@ -49,7 +49,7 @@ console.log(rake)
     { pubkey: userTransferAuthority, isSigner: true, isWritable: false },
     { pubkey: SYSVAR_INSTRUCTIONS_PUBKEY, isSigner: false, isWritable: false },
     { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-    { pubkey: rake, isSigner: false, isWritable: false },
+    { pubkey: rake, isSigner: false, isWritable: true },
     { pubkey: mint, isSigner: false, isWritable: false },
   ];
 
