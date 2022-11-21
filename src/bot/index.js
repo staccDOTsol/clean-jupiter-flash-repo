@@ -464,16 +464,15 @@ const run = async () => {
 			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
 		);
 		if (market.reserves.length == 0) return;
-		const topTokens = await (
+		let topTokens = await (
 			await fetch("https://cache.jup.ag/top-tokens")
 		) //TOKEN_LIST_URL['mainnet-beta'])
 			.json();
-
+		
 		console.log(topTokens.length);
 		let ranstart = Math.floor(Math.random() * 10);
 		let ranend = ranstart + Math.floor(Math.random() * 20) + 10;
 		const shortlistedTokens = topTokens.slice(ranstart, ranend);
-		console.log(shortlistedTokens);
 		//let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 		let tokens = await (
 			await fetch(TOKEN_LIST_URL['mainnet-beta'])
@@ -481,7 +480,15 @@ const run = async () => {
 			.json();
 
 		tokens = tokens.filter((t) => shortlistedTokens.includes(t.address));
-		console.log(tokens)
+		
+		if (process.env.tradingStrategy != 'arbitrage'){
+		let tt = [] 
+		for (var t of prism.tokenList.tokens){
+			tt.push(t.address)
+		}
+			tokens = tokens.filter((t) => tt.includes(t.address))
+		}
+		console.log(tokens.length)
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
 			await watcher(jupiter, prism, tokenA, tokenB, market, tokens);

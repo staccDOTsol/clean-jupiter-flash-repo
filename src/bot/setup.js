@@ -66,9 +66,10 @@ const setup = async () => {
 		);
 		const prism = await Prism.init({
 			user: wallet,
-			slippage: 99,
+			slippage: 1,
 			connection: connection,
 		});
+		
 
 		const platformFeeAndAccounts = {
 			feeBps: 50,
