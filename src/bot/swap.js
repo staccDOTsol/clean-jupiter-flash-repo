@@ -361,7 +361,7 @@ console.log(err)
 			? (thepaydirt = [thepaydirt[1],thepaydirt[4]])
 			: null;
 		let instructions = [
-			...tinsts,
+			//...tinsts,
 			flashBorrowReserveLiquidityInstruction(
 				inAmount,
 				new PublicKey(reserve.config.liquidityAddress),
@@ -385,7 +385,7 @@ console.log(err)
 				jaregm,
 				new PublicKey(reserve.config.liquidityToken.mint)
 			),
-			createTransferInstruction(
+			 /* createTransferInstruction(
 				tokenAccount, // from (should be a token account)
 				jaregm, // to (should be a token account)
 				payer.publicKey, // from's owner
@@ -394,7 +394,7 @@ console.log(err)
 						mint: new PublicKey(reserve.config.liquidityToken.mint),
 					})
 				).value[0].account.data.parsed.info.tokenAmount.amount
-			) /*, 
+			)*/ /*, 
 			jaregm,
 			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
 		];
