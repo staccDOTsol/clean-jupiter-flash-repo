@@ -80,13 +80,17 @@ const swap = async (
 
 		tinsts.push(modifyComputeUnits);
 		tinsts.push(addPriorityFee);
-		var execute;
+		var execute, execute2, swapTransaction2;
 
 		if (process.env.tradingStrategy == "arbitrage")
 			execute = await jupiter.exchange({ routeInfo: route });
+			if (process.env.tradingStrategy == "arbitrage")
+				execute2 = await jupiter.exchange({ routeInfo: route2 });
 		var swapTransaction;
 		if (process.env.tradingStrategy != "arbitrage")
 			swapTransaction = await prism.generateSwapTransactions(route);
+			if (process.env.tradingStrategy != "arbitrage")
+			swapTransaction2 = await prism.generateSwapTransactions(route2);
 
 
 		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
@@ -329,14 +333,33 @@ console.log(err)
 			}
 		}
 		console.log(inAmount);
+		let goldmine = [ 
+
+		]
+		if ( execute ){
+		if (execute.transactions.swapTransaction.instructions.length > 1){
+			goldmine.push(execute.transactions.swapTransaction.instructions[1])
+		}
+		else {
+			goldmine.push(execute.transactions.swapTransaction.instructions[0])
+		}
+		if (execute2.transactions.swapTransaction.instructions.length > 1){
+			goldmine.push(execute2.transactions.swapTransaction.instructions[1])
+		}
+		else {
+			goldmine.push(execute2.transactions.swapTransaction.instructions[0])
+
+		}
+	}
 		let thepaydirt =
 			process.env.tradingStrategy == "arbitrage"
-				? execute.transactions.swapTransaction.instructions
-				: swapTransaction.mainTransaction.instructions;
-		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 1
-			? (thepaydirt = [thepaydirt[1]])
+				? goldmine
+				: [...swapTransaction.mainTransaction.instructions,
+					...swapTransaction2.mainTransaction.instructions];
+		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 2
+		//0,1,2,   3,4
+			? (thepaydirt = [thepaydirt[1],thepaydirt[4]])
 			: null;
-			tinsts = []
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(

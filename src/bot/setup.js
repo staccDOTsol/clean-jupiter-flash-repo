@@ -82,7 +82,7 @@ const setup = async () => {
 			platformFeeAndAccounts,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: Math.random() < 0.5 ? true : false,
+			restrictIntermediateTokens: true,
 			wrapUnwrapSOL: false,
 		});
 		cache.isSetupDone = true;
@@ -111,10 +111,7 @@ const setup = async () => {
 		let config = configs[Math.floor(Math.random() * configs.length)];
 		let market = await SolendMarket.initialize(
 			connection,
-			"production", // optional environment argument
-			/*process.env.tradingStrategy == "pingpong"
-				? process.env.marketKey
-				: */ new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
+			"production",  new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
 		return { jupiter, prism, tokenA, tokenA, market };
 	} catch (error) {

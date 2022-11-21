@@ -24,11 +24,7 @@ const CONFIG_INITIAL_STATE = {
 			isSet: false,
 			state: {
 				items: [
-					{
-						label: process.env.DEFAULT_RPC,
-						value: process.env.DEFAULT_RPC,
-						isSelected: true,
-					},
+				
 					...String(process.env.ALT_RPC_LIST)
 						.split(",")
 						.map((item) => ({
