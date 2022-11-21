@@ -58,6 +58,7 @@ const setup = async () => {
 			throw error;
 		}
 
+
 		// connect to RPC
 		const connection = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[

@@ -102,6 +102,9 @@ const swap = async (
 		)).address
 		let goaccs = [];
 		let goluts = [
+			"BpqokW63562dgpxJfU7WXXtzcDLCQakDJXd3kPojq1X3",
+			"AV88Xrv5QCByJqxDktJyiHyWPWrepKtX4XBNsKmH2XcE",
+			"AWjv4e4sed5Q4rRE2kJCUbqrN2DoqhjkbLQSy4iz2atA",
 			"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
 			"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
 			"2V7kVs1TsZv7j38UTv4Dgbc6h258KS8eo5GZL9yhxCjv",
@@ -171,7 +174,7 @@ console.log(err)
 					).value;
 					if (
 						test.state.deactivationSlot > BigInt(159408000 * 2) &&
-						goaccs.length < 15
+						goaccs.length < 25
 					) {
 						goaccs.push(test);
 					}
@@ -336,7 +339,7 @@ console.log(err)
 		let goldmine = [ 
 
 		]
-		if ( execute ){
+		if ( process.env.tradingStrategy == "arbitrage" ){
 		if (execute.transactions.swapTransaction.instructions.length > 1){
 			goldmine.push(execute.transactions.swapTransaction.instructions[1])
 		}
@@ -353,15 +356,12 @@ console.log(err)
 	}
 		let thepaydirt =
 			process.env.tradingStrategy == "arbitrage"
-				? goldmine
+				? [...goldmine]
 				: [...swapTransaction.mainTransaction.instructions,
 					...swapTransaction2.mainTransaction.instructions];
-		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 2
-		//0,1,2,   3,4
-			? (thepaydirt = [thepaydirt[1],thepaydirt[4]])
-			: null;
+		tinsts = []
 		let instructions = [
-			//...tinsts,
+			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
 				inAmount,
 				new PublicKey(reserve.config.liquidityAddress),
@@ -384,8 +384,8 @@ console.log(err)
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
 				new PublicKey(reserve.config.liquidityToken.mint)
-			),
-			 /* createTransferInstruction(
+			)/*
+			 ,createTransferInstruction(
 				tokenAccount, // from (should be a token account)
 				jaregm, // to (should be a token account)
 				payer.publicKey, // from's owner
@@ -394,7 +394,7 @@ console.log(err)
 						mint: new PublicKey(reserve.config.liquidityToken.mint),
 					})
 				).value[0].account.data.parsed.info.tokenAmount.amount
-			)*/ /*, 
+			)/*, 
 			jaregm,
 			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
 		];

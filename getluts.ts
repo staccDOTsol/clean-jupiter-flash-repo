@@ -72,7 +72,7 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length)
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
-if(maybemine.value?.state.addresses.length as number > 20){
+if(maybemine.value?.state.addresses.length as number > 140){
   let templuts : any = []
 if (true){
 // @ts-ignore
