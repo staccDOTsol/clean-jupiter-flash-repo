@@ -118,3 +118,4 @@ dist
 # Qodana
 .idea
 qodana.yaml
+.env

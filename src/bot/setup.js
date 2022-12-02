@@ -67,7 +67,7 @@ const setup = async () => {
 		);
 		const prism = await Prism.init({
 			user: wallet,
-			slippage: 1,
+			slippage: 100,
 			connection: connection,
 		});
 		
@@ -84,7 +84,7 @@ const setup = async () => {
 			platformFeeAndAccounts,
 			cluster: cache.config.network,
 			user: wallet,
-			restrictIntermediateTokens: true,
+			restrictIntermediateTokens: false,
 			wrapUnwrapSOL: false,
 		});
 		cache.isSetupDone = true;

@@ -67,7 +67,7 @@ const swap = async (
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 2796642;
+		let units = 1096642;
 		let tinsts = [];
 		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
@@ -84,13 +84,13 @@ const swap = async (
 
 		if (process.env.tradingStrategy == "arbitrage")
 			execute = await jupiter.exchange({ routeInfo: route });
-			if (process.env.tradingStrategy == "arbitrage")
-				execute2 = await jupiter.exchange({ routeInfo: route2 });
+			////if (process.env.tradingStrategy == "arbitrage")
+			//	execute2 = await jupiter.exchange({ routeInfo: route2 });
 		var swapTransaction;
 		if (process.env.tradingStrategy != "arbitrage")
 			swapTransaction = await prism.generateSwapTransactions(route);
-			if (process.env.tradingStrategy != "arbitrage")
-			swapTransaction2 = await prism.generateSwapTransactions(route2);
+		//	if (process.env.tradingStrategy != "arbitrage")
+		//	swapTransaction2 = await prism.generateSwapTransactions(route2);
 
 
 		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
@@ -159,7 +159,7 @@ console.log(err)
 		let fluts = [];
 		try {
 		for (var alut of Object.keys(counts)) {
-			if (counts[alut] >= 1) {
+			if (counts[alut] >= 0) {
 				fluts.push(alut);
 			}
 		}
@@ -346,6 +346,7 @@ console.log(err)
 		else {
 			goldmine.push(execute.transactions.swapTransaction.instructions[0])
 		}
+		/*
 		if (execute2.transactions.swapTransaction.instructions.length > 1){
 			goldmine.push(execute2.transactions.swapTransaction.instructions[1])
 		}
@@ -353,17 +354,18 @@ console.log(err)
 			goldmine.push(execute2.transactions.swapTransaction.instructions[0])
 
 		}
+		*/
 	}
 		let thepaydirt =
 			process.env.tradingStrategy == "arbitrage"
 				? [...goldmine]
-				: [...swapTransaction.mainTransaction.instructions,
-					...swapTransaction2.mainTransaction.instructions];
-		tinsts = []
+				: [...swapTransaction.mainTransaction.instructions]//,
+				//	...swapTransaction2.mainTransaction.instructions];
+		//tinsts = []
 		let instructions = [
 			...tinsts,
 			flashBorrowReserveLiquidityInstruction(
-				inAmount,
+				Math.floor(inAmount * 1.1),
 				new PublicKey(reserve.config.liquidityAddress),
 				tokenAccount,
 				new PublicKey(reserve.config.address),
@@ -372,7 +374,7 @@ console.log(err)
 			),
 			...thepaydirt,
 			flashRepayReserveLiquidityInstruction(
-				inAmount,
+				Math.floor(inAmount * 1.1),
 				tinsts.length,
 				tokenAccount,
 				new PublicKey(reserve.config.liquidityAddress),

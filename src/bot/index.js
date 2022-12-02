@@ -94,7 +94,7 @@ const pingpongStrategy = async (
 				inputMint: new PublicKey(inputToken.address),
 				outputMint: new PublicKey(outputToken.address),
 				amount: amountToTrade,
-				slippageBps: 50,
+				slippageBps: 5000,
 				forceFetch: true,
 			});
 			route = await routes.routesInfos[Math.floor(Math.random() * 2)];
@@ -110,6 +110,7 @@ const pingpongStrategy = async (
 		}
 		let route2, routes2
 		if (!route) return
+		/*
 		if (process.env.tradingStrategy == "arbitrage") {
 			routes2 = await jupiter.computeRoutes({
 				outputMint: new PublicKey(inputToken.address),
@@ -127,6 +128,7 @@ const pingpongStrategy = async (
 			routes2 = prism.getRoutes(route.amountOut);
 			route2 = routes2[Math.floor(Math.random() * 1)];
 		}
+		*/
 		//if (!checkRoutesResponse(routes)) return;
 
 		// count available routes
@@ -207,7 +209,7 @@ const pingpongStrategy = async (
 		const route2 = routes2[Math.floor(Math.random() * 2)]; //await routes.find((r) => r.providers.length  <= 15)
 		*/
 		if (!route) return;
-		if (!route2) return;
+	//	if (!route2) return;
 
 		ammIds = [];
 		try {
@@ -283,7 +285,7 @@ const pingpongStrategy = async (
 		} catch (Err) {
 			//console.log(Err);
 		}
-		//	const route2 = route
+			 route2 = route
 		let simulatedProfit;
 		try {
 			simulatedProfit = calculateProfit(
@@ -434,7 +436,7 @@ const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens) => {
 			symbol: symbol,
 		};
 			tokenB = tokens[Math.floor(Math.random() * tokens.length)];
-		//tokenB = tokenA;
+		tokenB = tokenA;
 		done = false;
 		
 			await pingpongStrategy(
