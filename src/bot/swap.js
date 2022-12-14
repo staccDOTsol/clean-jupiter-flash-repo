@@ -9,12 +9,6 @@ const {
 } = require("../../src/spl-token");
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 const {
-	flashRepayReserveLiquidityInstruction,
-} = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
-const {
-	flashBorrowReserveLiquidityInstruction,
-} = require("@solendprotocol/solend-sdk");
-const {
 	ComputeBudgetProgram,
 	PublicKey,
 	Connection,
@@ -49,8 +43,6 @@ const swap = async (
 	route,
 	route2,
 	tokenA,
-	market,
-	reserve,
 	amountToTrade
 ) => {
 	try {
@@ -60,14 +52,10 @@ const swap = async (
 			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)],
 			{ confirmTransactionInitialTimeout: 33333 }
 		);
-
-		 reserve = market.reserves.find(
-			(res) => res.config.liquidityToken.mint === tokenA.address
-		);
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 1096642;
+		let units = 396642;
 		let tinsts = [];
 		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
@@ -96,7 +84,7 @@ const swap = async (
 		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
 			connection, // connection
 			payer, // fee payer
-			new PublicKey(reserve.config.liquidityToken.mint),
+			new PublicKey(process.env.trade),
 			payer.publicKey,
 			true // mint
 		)).address
@@ -255,7 +243,7 @@ console.log(err)
 				await getOrCreateAssociatedTokenAccount(
 					connection, // connection
 					payer, // fee payer
-					new PublicKey(reserve.config.liquidityToken.mint),
+					new PublicKey(process.env.trade),
 					new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
 					true
 				)
@@ -266,7 +254,7 @@ console.log(err)
 					await getOrCreateAssociatedTokenAccount(
 						connection, // connection
 						payer, // fee payer
-						new PublicKey(reserve.config.liquidityToken.mint),
+						new PublicKey(process.env.trade),
 						new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
 						true // mint
 					)
@@ -364,36 +352,15 @@ console.log(err)
 		//tinsts = []
 		let instructions = [
 			...tinsts,
-			flashBorrowReserveLiquidityInstruction(
-				Math.floor(inAmount * 1.1),
-				new PublicKey(reserve.config.liquidityAddress),
-				tokenAccount,
-				new PublicKey(reserve.config.address),
-				new PublicKey(market.config.address),
-				SOLEND_PRODUCTION_PROGRAM_ID
-			),
+
 			...thepaydirt,
-			flashRepayReserveLiquidityInstruction(
-				Math.floor(inAmount * 1.1),
-				tinsts.length,
-				tokenAccount,
-				new PublicKey(reserve.config.liquidityAddress),
-				new PublicKey(reserve.config.liquidityAddress),
-				tokenAccount,
-				new PublicKey(reserve.config.address),
-				new PublicKey(market.config.address),
-				payer.publicKey,
-				SOLEND_PRODUCTION_PROGRAM_ID,
-				jaregm,
-				new PublicKey(reserve.config.liquidityToken.mint)
-			)/*
 			 ,createTransferInstruction(
 				tokenAccount, // from (should be a token account)
 				jaregm, // to (should be a token account)
 				payer.publicKey, // from's owner
 				(
 					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-						mint: new PublicKey(reserve.config.liquidityToken.mint),
+						mint: new PublicKey(process.env.trade),
 					})
 				).value[0].account.data.parsed.info.tokenAmount.amount
 			)/*, 
@@ -405,7 +372,6 @@ console.log(err)
 		//	execute.transactions.swapTransaction.instructions = instructions
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 		console.log("luts: " + (goaccs.length - 5).toString());
-		console.log(reserve.config.liquidityToken.mint);
 		//console.log(...instructions)
 		const messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,

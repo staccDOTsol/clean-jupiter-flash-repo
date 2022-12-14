@@ -8,12 +8,9 @@ const fetch = require("node-fetch");
 const { loadConfigFile } = require("../utils");
 const cache = require("./cache");
 const JSBI = require("jsbi");
-var { SolendMarket } = require("@solendprotocol/solend-sdk");
-if (true) {
-	var { SolendMarket } = require("../../solend-sdk/save/classes/market");
-}
 const setup = async () => {
 	let spinner, tokens, tokenA, tokenB, wallet;
+	console.log(1)
 	try {
 		// listen for hotkeys
 		//listenHotkeys();
@@ -22,25 +19,7 @@ const setup = async () => {
 		cache.config = loadConfigFile({ showSpinner: false });
 
 		// read tokens.json file
-		try {
-			tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-			// find tokens full Object
-
-			tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
-			tokenB = tokens.find((t) => t.address === cache.config.tokenB.address);
-			configs = JSON.parse(
-				fs
-					.readFileSync(
-						process.env.tradingStrategy === "pingpong"
-							? "./configs.json"
-							: "./configs2.json"
-					)
-					.toString()
-			);
-		} catch (error) {
-			throw error;
-		}
-
+	
 		// check wallet private key
 		try {
 			if (
@@ -55,6 +34,7 @@ const setup = async () => {
 				);
 			}
 		} catch (error) {
+			console.log(error)
 			throw error;
 		}
 
@@ -65,12 +45,14 @@ const setup = async () => {
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 			]
 		);
+		console.log(2)
 		const prism = await Prism.init({
 			user: wallet,
 			slippage: 100,
 			connection: connection,
 		});
 		
+		console.log(3)
 
 		const platformFeeAndAccounts = {
 			feeBps: 50,
@@ -111,11 +93,8 @@ const setup = async () => {
 		);
 
 		let config = configs[Math.floor(Math.random() * configs.length)];
-		let market = await SolendMarket.initialize(
-			connection,
-			"production",  new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
-		);
-		return { jupiter, prism, tokenA, tokenA, market };
+		
+		return { jupiter, prism, tokenA, tokenA };
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;
