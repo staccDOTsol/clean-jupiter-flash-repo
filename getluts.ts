@@ -72,7 +72,7 @@ let ran = Math.floor(Math.random()*ALT_RPC_LIST?.split(',').length)
       // @ts-ignore
       let maybemine = await connection.getAddressLookupTable(lut.pubkey)
       
-if(maybemine.value?.state.addresses.length as number > 140){
+if(maybemine.value?.state.addresses.length as number > 10){
   let templuts : any = []
 if (true){
 // @ts-ignore
@@ -85,7 +85,9 @@ for (var addy of maybemine.value?.state.addresses){
     if ( pk === addypk && !Object.keys(theluts).includes(pk)){
       //templuts.push(lut.pubkey.toBase58())
         theluts[pk] = [lut.pubkey.toBase58()]
-      //  console.log(Object.keys(theluts).length)
+       console.log(Object.keys(theluts).length)
+       fs.writeFileSync('./luts.json', JSON.stringify(theluts))
+
       gogos++
     } else if ( pk === addypk){
     //  templuts.push(lut.pubkey.toBase58())

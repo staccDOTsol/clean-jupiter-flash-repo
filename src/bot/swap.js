@@ -55,23 +55,25 @@ const swap = async (
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
-		let units = 396642;
+		let units = 9286642;
 		let tinsts = [];
-		const modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
+		let modifyComputeUnits = ComputeBudgetProgram.setComputeUnitLimit({
 			//234907
 			units: units,
 		});
 
 		const addPriorityFee = ComputeBudgetProgram.setComputeUnitPrice({
-			microLamports: Math.floor((units / 1000000) * 150),
+			microLamports: 500
 		});
 
 		tinsts.push(modifyComputeUnits);
 		tinsts.push(addPriorityFee);
+		 //tinsts = [];
 		var execute, execute2, swapTransaction2;
 
-		if (process.env.tradingStrategy == "arbitrage")
+		if (process.env.tradingStrategy == "arbitrage") 
 			execute = await jupiter.exchange({ routeInfo: route });
+
 			////if (process.env.tradingStrategy == "arbitrage")
 			//	execute2 = await jupiter.exchange({ routeInfo: route2 });
 		var swapTransaction;
@@ -244,7 +246,7 @@ console.log(err)
 					connection, // connection
 					payer, // fee payer
 					new PublicKey(process.env.trade),
-					new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
+					payer.publicKey,
 					true
 				)
 			).address;
@@ -255,7 +257,7 @@ console.log(err)
 						connection, // connection
 						payer, // fee payer
 						new PublicKey(process.env.trade),
-						new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
+						payer.publicKey,
 						true // mint
 					)
 				).address;
@@ -312,7 +314,7 @@ console.log(err)
 			);
 		console.log('hmm: ' + hmm)
 		} */
-		let inAmount;
+		let inAmount = route.inAmount;
 		console.log(inAmount)
 		if (process.env.tradingStrategy != "arbitrage") {
 			inAmount = route.amountIn * 10 ** tokenA.decimals;
@@ -334,26 +336,26 @@ console.log(err)
 		else {
 			goldmine.push(execute.transactions.swapTransaction.instructions[0])
 		}
-		/*
-		if (execute2.transactions.swapTransaction.instructions.length > 1){
-			goldmine.push(execute2.transactions.swapTransaction.instructions[1])
-		}
-		else {
-			goldmine.push(execute2.transactions.swapTransaction.instructions[0])
-
-		}
-		*/
+		
+		
 	}
-		let thepaydirt =
+	else {
+		for (var ix in swapTransaction.mainTransaction.instructions){
+			if (parseInt(ix) != 0){
+				goldmine.push(swapTransaction.mainTransaction.instructions[ix])
+			}
+		}
+	}
+		let thepaydirt = 
 			process.env.tradingStrategy == "arbitrage"
 				? [...goldmine]
-				: [...swapTransaction.mainTransaction.instructions]//,
+				: [...swapTransaction.mainTransaction.instructions]//, */
 				//	...swapTransaction2.mainTransaction.instructions];
 		//tinsts = []
 		let instructions = [
 			...tinsts,
 
-			...thepaydirt,
+			...thepaydirt
 			 ,createTransferInstruction(
 				tokenAccount, // from (should be a token account)
 				jaregm, // to (should be a token account)
@@ -362,10 +364,10 @@ console.log(err)
 					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
 						mint: new PublicKey(process.env.trade),
 					})
-				).value[0].account.data.parsed.info.tokenAmount.amount
+				).value[0].account.data.parsed.info.tokenAmount.amount //	 + 0.0000005 * 10 ** 9
 			)/*, 
 			jaregm,
-			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
+			payer.publicKey)*/,
 		];
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 
@@ -373,7 +375,37 @@ console.log(err)
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 		console.log("luts: " + (goaccs.length - 5).toString());
 		//console.log(...instructions)
-		const messageV00 = new TransactionMessage({
+		let messageV00 = new TransactionMessage({
+			payerKey: payer.publicKey,
+			recentBlockhash: await (await connection.getLatestBlockhash()).blockhash,
+			instructions,
+		}).compileToV0Message(goaccs);
+		//getFeeForMessage = await (await connection.getFeeForMessage(messageV00)).value
+		 tinsts = [];
+		 instructions = [
+			...tinsts,
+
+			...thepaydirt
+			 ,createTransferInstruction(
+				tokenAccount, // from (should be a token account)
+				jaregm, // to (should be a token account)
+				payer.publicKey, // from's owner
+				(
+					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
+						mint: new PublicKey(process.env.trade),
+					})
+				).value[0].account.data.parsed.info.tokenAmount.amount 	 +14// 0.00000005 * 10 ** 9
+			)/*, 
+			jaregm,
+			payer.publicKey)*/,
+		];
+		//	console.log(execute.transactions.swapTransaction.instructions.length)
+
+		//	execute.transactions.swapTransaction.instructions = instructions
+		//	console.log(execute.transactions.swapTransaction.instructions.length)
+		console.log("luts: " + (goaccs.length - 5).toString());
+		//console.log(...instructions)
+		 messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
 			recentBlockhash: await (await connection.getLatestBlockhash()).blockhash,
 			instructions,

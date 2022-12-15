@@ -20,7 +20,7 @@ const { setup } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = 100;
+let mod = Math.random() * 100;
 let payer = Keypair.fromSecretKey(
 	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
@@ -92,10 +92,11 @@ const pingpongStrategy = async (
 				inputMint: new PublicKey(inputToken.address),
 				outputMint: new PublicKey(outputToken.address),
 				amount: amountToTrade,
-				slippageBps: 5000,
+				slippageBps: 200,
 				forceFetch: true,
 			});
-			route = await routes.routesInfos[Math.floor(Math.random() * 2)];
+			
+			route = await routes.routesInfos[Math.ceil(Math.random() * 1) + 1];
 		//	console.log(route.outAmount)
 		} else {
 			//	console.log(1)
@@ -103,7 +104,7 @@ const pingpongStrategy = async (
 
 			//	console.log(2)
 			routes = prism.getRoutes(amountToTrade / 10 ** tokenA.decimals);
-			route = routes[Math.floor(Math.random() * 1)];
+			route = routes[Math.ceil(Math.random() * 1) + 1];
 		//	console.log(route.amountOut)
 		}
 		let route2, routes2
@@ -386,11 +387,11 @@ const pingpongStrategy = async (
 		if (tx == 0) {
 			cache.swappingRightNow = false;
 		}
-		if (mod > 0.000001) {
+		if (mod > 0.1) {
 			if (simulatedProfit > 0) {
-				mod = mod * 1.1;
+				mod = mod / 1.2;
 			} else {
-				mod = mod / 1.3;
+				mod = mod / 2;
 			}
 		} else {
 			mod = 100 ;
@@ -448,7 +449,7 @@ const run = async () => {
 		
 		global.botInterval = setInterval(async function () {
 			await watcher(jupiter, prism, tokenA, tokenB);
-		}, 500);
+		}, Math.random() * 5000 + 750);
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;
