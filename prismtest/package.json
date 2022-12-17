@@ -1,0 +1,45 @@
+{
+	"name": "solana-prism-bot",
+	"version": "0.0.10-beta",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/ARBProtocol/solana-prism-bot.git"
+	},
+	"bin": "./src/index.js",
+	"engines": {
+		"node": ">=16"
+	},
+	"scripts": {
+		"getluts": "ts-node getluts.ts &",
+		"wizard": "node ./src/index.js",
+		"start": "cp -r buffer-layout/* node_modules/@solana//buffer-layout/ ; yarn getluts; node ./src/bot/index.js",
+		"background": "nohup yarn ts-node getluts.ts & ",
+		"trade": "node ./src/bot/index.js",
+		"test": "xo && ava"
+	},
+	"files": [
+		"./src/index.js",
+		"./src/generator.js"
+	],
+	"dependencies": {
+		"@jup-ag/core": "3.0.0-beta.0-prerelease",
+		"@prism-hq/prism-ag": "0.2.23",
+		"@solana/spl-token": "0.1.8",
+		"@solana/web3.js": "^1.54.0",
+		"@solendprotocol/solend-sdk": "latest",
+		"@supercharge/promise-pool": "^2.3.2",
+		"axios": "^0.27.2",
+		"bn.js": "^5.2.1",
+		"body-parser": "^1.20.1",
+		"bs58": "^5.0.0",
+		"cors": "^2.8.5",
+		"express": "^4.18.2",
+		"import-jsx": "^4.0.1",
+		"jsbi": "^4.3.0",
+		"moment": "^2.29.3",
+		"open": "^8.4.0",
+		"promise-retry": "^2.0.1"
+	},
+	"devDependencies": {}
+}
