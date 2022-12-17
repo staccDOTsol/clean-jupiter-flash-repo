@@ -15,7 +15,7 @@ import {
   sendAndConfirmTransaction,
   Transaction,
 } from "@solana/web3.js";
-let jaregm = new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB");
+let jaregm = payer;
 // @ts-ignore
 let ALT_RPC_LIST = process.env.ALT_RPC_LIST
 // @ts-ignore

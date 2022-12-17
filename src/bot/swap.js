@@ -6,13 +6,13 @@ const {
 	createTransferInstruction,
 	createAssociatedTokenAccount,
 	getOrCreateAssociatedTokenAccount,
-} = require("../../src/spl-token");
+} = require("@solana/spl-token");
 const { getSwapResultFromSolscanParser } = require("../services/solscan");
 const {
 	flashRepayReserveLiquidityInstruction,
 } = require("../../solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
-	flashBorrowReserveLiquidityInstruction,
+	flashBorrowReserveLiquidityInstruction, U64_MAX,
 } = require("@solendprotocol/solend-sdk");
 const {
 	ComputeBudgetProgram,
@@ -33,9 +33,6 @@ const fs = require("fs");
 const { env } = require("process");
 const { exec } = require("child_process");
 let market = JSON.parse(fs.readFileSync("./configs.json").toString())[0];
-let payer = Keypair.fromSecretKey(
-	bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
-);
 
 process.on("uncaughtException", (err) => {
 	console.log(err);
@@ -51,7 +48,9 @@ const swap = async (
 	tokenA,
 	market,
 	reserve,
-	amountToTrade
+	amountToTrade,
+	payer,
+	goaccs
 ) => {
 	try {
 		const performanceOfTxStart = performance.now();
@@ -61,9 +60,7 @@ const swap = async (
 			{ confirmTransactionInitialTimeout: 33333 }
 		);
 
-		 reserve = market.reserves.find(
-			(res) => res.config.liquidityToken.mint === tokenA.address
-		);
+		let ii1 = 0
 		//console.log(reserve)
 
 		//if (process.env.DEBUG) storeItInTempAsJSON("routeInfoBeforeSwap", route);
@@ -88,15 +85,15 @@ const swap = async (
 		if (process.env.tradingStrategy != "arbitrage")
 			swapTransaction = await prism.generateSwapTransactions(route);
 
+		let tokenAccount 
+		let jaregm = new PublicKey(process.env[tokenA.symbol])
+		
 
-		let tokenAccount =( await getOrCreateAssociatedTokenAccount(
-			connection, // connection
-			payer, // fee payer
-			new PublicKey(reserve.config.liquidityToken.mint),
-			payer.publicKey,
-			true // mint
-		)).address
-		let goaccs = [];
+try {
+		tokenAccount = new PublicKey("J5ckyDdr8wcZnyU37Q7JwcdgJv8XJ4K6bdSgr7VcuAU4")
+} catch (err){
+	console.log(payer.publicKey.toBase58() + ' needs ' + reserve.config.liquidityToken.mint)
+}
 		let goluts = [
 			"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
 			"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
@@ -110,20 +107,21 @@ const swap = async (
 		} catch (err) {
 			console.log(err);
 		}
-		console.log(0)
+		console.log(0);
+		
 		for (var golut of goluts) {
 			try {
-			
-			let test = (await connection.getAddressLookupTable(new PublicKey(golut)))
-				.value;
-			if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-				goaccs.push(test);
+				let test = (
+					await connection.getAddressLookupTable(new PublicKey(golut))
+				).value;
+				if (test.state.deactivationSlot == U64_MAX){
+					goaccs.push(test);
+				}
+			} catch (err) {
+				console.log(err);
 			}
-		} catch (err){
-console.log(err)
 		}
-		}
-		console.log(1)
+		console.log(1);
 		let templuts = [];
 		try {
 			for (var mi of [...route.marketInfos]) {
@@ -151,30 +149,28 @@ console.log(err)
 		} catch (err) {}
 		let fluts = [];
 		try {
-		for (var alut of Object.keys(counts)) {
-			if (counts[alut] >= 1) {
-				fluts.push(alut);
+			for (var alut of Object.keys(counts)) {
+				if (counts[alut] >= 1) {
+					fluts.push(alut);
+				}
 			}
-		}
-	} catch (err){
-		
-	}
+		} catch (err) {}
 		try {
 			for (var lut of fluts) {
 				try {
+					if (goaccs.length < 20) {
 					let test = (
 						await connection.getAddressLookupTable(new PublicKey(lut))
 					).value;
-					if (
-						test.state.deactivationSlot > BigInt(159408000 * 2) &&
-						goaccs.length < 15
-					) {
+			
+					if (test.state.deactivationSlot == U64_MAX){
 						goaccs.push(test);
 					}
-				} catch (err) {}
+				}
+								} catch (err) {}
 			}
 		} catch (err) {}
-		console.log(goaccs.length)
+		console.log(goaccs.length);
 		let ammIds = [];
 		let ammIdspks = [];
 		try {
@@ -230,46 +226,33 @@ console.log(err)
 		} catch (err) {}
 
 		for (var lut of ammIds) {
-			if (goaccs.length < 20) {
-				try {
+			try {
+				for (var l of luts[lut]){
+					if (goaccs.length < 20) {
+						try {
 					let test = (
-						await connection.getAddressLookupTable(new PublicKey(lut))
+						await connection.getAddressLookupTable(new PublicKey(l))
 					).value;
-					if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-						goaccs.push(test);
-					}
+					if (test.state){
+						if (test.state.deactivationSlot == U64_MAX){
+							goaccs.push(test);
+						}
+										}
 				} catch (err) {}
 			}
+	
 		}
-		let jaregm;
+	} catch (err){
 
-		try {
-			jaregm = (
-				await getOrCreateAssociatedTokenAccount(
-					connection, // connection
-					payer, // fee payer
-					new PublicKey(reserve.config.liquidityToken.mint),
-					new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
-					true
-				)
-			).address;
-		} catch (err) {
-			try {
-				let ata = (
-					await getOrCreateAssociatedTokenAccount(
-						connection, // connection
-						payer, // fee payer
-						new PublicKey(reserve.config.liquidityToken.mint),
-						new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"),
-						true // mint
-					)
-				).address;
-				jaregm = ata;
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		console.log(jaregm.toBase58());
+	}		
+}console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
+	console.log(goaccs.length)
 		//tinsts = []
 		//console.log(execute.transactions)
 		/*
@@ -318,7 +301,7 @@ console.log(err)
 		console.log('hmm: ' + hmm)
 		} */
 		let inAmount;
-		console.log(inAmount)
+		console.log(inAmount);
 		if (process.env.tradingStrategy != "arbitrage") {
 			inAmount = route.amountIn * 10 ** tokenA.decimals;
 		} else {
@@ -329,16 +312,35 @@ console.log(err)
 			}
 		}
 		console.log(inAmount);
-		let thepaydirt =
+		let thepaydirt
+		try {
+		 thepaydirt =
 			process.env.tradingStrategy == "arbitrage"
-				? execute.transactions.swapTransaction.instructions
-				: swapTransaction.mainTransaction.instructions;
-		process.env.tradingStrategy == "arbitrage" && thepaydirt.length > 1
-			? (thepaydirt = [thepaydirt[1]])
-			: null;
-			tinsts = []
+				? [
+						...execute.transactions.setupTransaction.instructions,
+						...execute.transactions.swapTransaction.instructions,
+				  ]
+				: [
+						...swapTransaction.preTransaction.instructions,
+						...swapTransaction.mainTransaction.instructions,
+				  ];
+				} catch (err)
+	{
+		thepaydirt =
+		process.env.tradingStrategy == "arbitrage"
+			? [
+					...execute.transactions.swapTransaction.instructions,
+			  ]
+			: [
+					...swapTransaction.mainTransaction.instructions,
+			  ];
+	}
+	let me = (await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
+		mint: new PublicKey(tokenA.address),
+	}))
+		tinsts = [];
 		let instructions = [
-			...tinsts,
+			//...tinsts,
 			flashBorrowReserveLiquidityInstruction(
 				inAmount,
 				new PublicKey(reserve.config.liquidityAddress),
@@ -361,19 +363,13 @@ console.log(err)
 				SOLEND_PRODUCTION_PROGRAM_ID,
 				jaregm,
 				new PublicKey(reserve.config.liquidityToken.mint)
-			),
-			createTransferInstruction(
-				tokenAccount, // from (should be a token account)
-				jaregm, // to (should be a token account)
-				payer.publicKey, // from's owner
-				(
-					await connection.getParsedTokenAccountsByOwner(payer.publicKey, {
-						mint: new PublicKey(reserve.config.liquidityToken.mint),
-					})
-				).value[0].account.data.parsed.info.tokenAmount.amount
-			) /*, 
+			),createTransferInstruction( tokenAccount, 
+				tokenAccount, 
+				payer.publicKey, 
+(				await connection.getTokenAccountBalance(tokenAccount)).value.amount + 0.000005 * 10 ** 9) 
+			 /*, 
 			jaregm,
-			new PublicKey("94NZ1rQsvqHyZu1B71KwVT9B6sWm4h2Q1f6d6aXoJ6vB"))*/,
+			payer)*/
 		];
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 
@@ -381,10 +377,16 @@ console.log(err)
 		//	console.log(execute.transactions.swapTransaction.instructions.length)
 		console.log("luts: " + (goaccs.length - 5).toString());
 		console.log(reserve.config.liquidityToken.mint);
+		const connection2 = new Connection(
+			process.env.ALT_RPC_LIST.split(",")[
+				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
+			],
+			{ confirmTransactionInitialTimeout: 33333 }
+		);
 		//console.log(...instructions)
 		const messageV00 = new TransactionMessage({
 			payerKey: payer.publicKey,
-			recentBlockhash: await (await connection.getLatestBlockhash()).blockhash,
+			recentBlockhash: await (await connection2.getLatestBlockhash()).blockhash,
 			instructions,
 		}).compileToV0Message(goaccs);
 		const transaction = new VersionedTransaction(messageV00);
@@ -392,12 +394,7 @@ console.log(err)
 			//	transaction.sign(signers)
 		}
 		transaction.sign([payer]);
-		const connection2 = new Connection(
-			process.env.ALT_RPC_LIST.split(",")[
-				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
-			],
-			{ confirmTransactionInitialTimeout: 33333 }
-		);
+		
 		let result;
 		try {
 			result = await sendAndConfirmTransaction(
@@ -407,6 +404,9 @@ console.log(err)
 				{ skipPreflight: false }
 			);
 			console.log("tx: " + result);
+			let txs = fs.readFileSync('tsxs.txt').toString() 
+			txs+='\n' + new Date() +', https://solscan.io/tx/' + result
+			fs.writeFileSync('tsxs.txt', txs)
 		} catch (err) {
 			console.log(err);
 		}

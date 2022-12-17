@@ -1,7 +1,10 @@
 const fs = require("fs");
+const BN = require("bn.js");
+
+const WAD = new BN("1".concat(Array(18 + 1).join("0")));
+
 const bs58 = require("bs58");
 const { Connection, Keypair, PublicKey } = require("@solana/web3.js");
-const BN = require("bn.js");
 const { Jupiter, getPlatformFeeAccounts } = require("@jup-ag/core");
 const { Prism } = require("@prism-hq/prism-ag");
 const fetch = require("node-fetch");
@@ -20,10 +23,10 @@ const setup = async () => {
 
 		// load config file and store it in cache
 		cache.config = loadConfigFile({ showSpinner: false });
-
+		let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 		// read tokens.json file
 		try {
-			tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+			
 			// find tokens full Object
 
 			tokenA = tokens.find((t) => t.address === cache.config.tokenA.address);
@@ -41,52 +44,12 @@ const setup = async () => {
 			throw error;
 		}
 
-		// check wallet private key
-		try {
-			if (
-				!process.env.SOLANA_WALLET_PRIVATE_KEY ||
-				(process.env.SOLANA_WALLET_PUBLIC_KEY &&
-					process.env.SOLANA_WALLET_PUBLIC_KEY?.length !== 88)
-			) {
-				throw new Error("Wallet check failed!");
-			} else {
-				wallet = Keypair.fromSecretKey(
-					bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
-				);
-			}
-		} catch (error) {
-			throw error;
-		}
-
 		// connect to RPC
 		const connection = new Connection(
 			process.env.ALT_RPC_LIST.split(",")[
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 			]
 		);
-		const prism = await Prism.init({
-			user: wallet,
-			slippage: 99,
-			connection: connection,
-		});
-
-		const platformFeeAndAccounts = {
-			feeBps: 50,
-			feeAccounts: await getPlatformFeeAccounts(
-				connection,
-				wallet.publicKey // The platform fee account owner
-			), // map of mint to token account pubkey
-		};
-		const jupiter = await Jupiter.load({
-			connection,
-			platformFeeAndAccounts,
-			cluster: cache.config.network,
-			user: wallet,
-			restrictIntermediateTokens: Math.random() < 0.5 ? true : false,
-			wrapUnwrapSOL: false,
-		});
-		cache.isSetupDone = true;
-
 		// find tokens full Object
 		tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 
@@ -116,7 +79,75 @@ const setup = async () => {
 				? process.env.marketKey
 				: */ new PublicKey(config.address) // optional m address (TURBO SOL). Defaults to 'Main' market
 		);
-		return { jupiter, prism, tokenA, tokenA, market };
+
+		// 2. Read on-chain accounts for reserve data and cache
+		await market.loadReserves();
+		market.refreshAll();
+
+			
+		let aran = 10//ß Math.floor(Math.random() * market.reserves.length);
+		if (aran == 0) return;
+		res = market.reserves[aran];
+		reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
+		let symbol = reserve.config.asset;
+
+		tokenA = {
+			address: reserve.config.liquidityToken.mint,
+			decimals: reserve.config.liquidityToken.decimals,
+			symbol: symbol,
+		};
+		//	tokenB = tokens[Math.floor(Math.random() * tokens.length)];
+		tokenB = tokenA;
+
+let keys = [process.env.one,
+	process.env.two,
+	process.env.three,
+	process.env.four,
+	process.env.five,
+	process.env.six,
+	process.env.seven,
+	process.env.eight,
+	process.env.nine,
+	process.env.ten,
+	process.env.eleven,
+	process.env.twelve,
+	process.env.thirteen	
+]
+		// check wallet private key
+		try { 
+				wallet = Keypair.fromSecretKey(
+					bs58.decode(keys[aran-1])
+				);
+		} catch (error) {
+			throw error;
+		}
+
+		const prism = await Prism.init({
+			user: wallet,
+			slippage: 99,
+			connection: connection,
+		});
+
+		console.log(1)
+		const platformFeeAndAccounts = {
+			feeBps: 50,
+			feeAccounts: await getPlatformFeeAccounts(
+				connection,
+				wallet.publicKey // The platform fee account owner
+			), // map of mint to token account pubkey
+		};
+		console.log(2)
+		const jupiter = await Jupiter.load({
+			connection,
+			platformFeeAndAccounts,
+			cluster: cache.config.network,
+			user: wallet,
+			restrictIntermediateTokens: false,
+			wrapUnwrapSOL: false,
+		});
+		console.log(3)
+		cache.isSetupDone = true;
+		return { jupiter, prism, tokenA, tokenA, market, wallet };
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;

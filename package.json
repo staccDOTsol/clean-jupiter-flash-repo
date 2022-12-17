@@ -23,10 +23,11 @@
 		"./src/generator.js"
 	],
 	"dependencies": {
-		"@jup-ag/core": "3.0.0-beta.0-prerelease",
-		"@prism-hq/prism-ag": "0.2.23",
-		"@solana/spl-token": "0.1.8",
-		"@solana/web3.js": "^1.54.0",
+		"@jup-ag/core": "^4.0.0-beta.0",
+		"@prism-hq/prism-ag": "^0.2.29",
+		"@project-serum/borsh": "^0.2.5",
+		"@solana/spl-token": "^0.3.6",
+		"@solana/web3.js": "^1.70.1",
 		"@solendprotocol/solend-sdk": "latest",
 		"@supercharge/promise-pool": "^2.3.2",
 		"axios": "^0.27.2",

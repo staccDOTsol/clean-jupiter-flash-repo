@@ -4,7 +4,7 @@ const fs = require("fs");
 const BN = require("bn.js");
 const { clearInterval } = require("timers");
 const fetch = require("node-fetch");
-const { PublicKey } = require("@solana/web3.js");
+const { PublicKey , Keypair} = require("@solana/web3.js");
 const JSBI = require("jsbi");
 const WAD = new BN("1".concat(Array(18 + 1).join("0")));
 const bs58 = require("bs58");
@@ -20,7 +20,7 @@ const { setup, getInitialamountWithFeesWithSlippage } = require("./setup");
 const { swap, failedSwapHandler, successSwapHandler } = require("./swap");
 const { Connection } = require("@solana/web3.js");
 const { config } = require("process");
-let mod = process.env.tradingStrategy == "arbitrage" ? 100: 100;
+let mod = process.env.tradingStrategy == "arbitrage" ? 100 : 100;
 let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
 let axios = require("axios");
 let topTokens = JSON.parse(fs.readFileSync("./toptokens.json").toString());
@@ -39,7 +39,9 @@ const pingpongStrategy = async (
 	market,
 	reserve,
 	prices,
-	tokens
+	tokens,
+	payer,
+	goaccs
 ) => {
 	cache.iteration++;
 	const date = new Date();
@@ -47,8 +49,9 @@ const pingpongStrategy = async (
 	cache.queue[i] = -1;
 	try {
 		cache.config = loadConfigFile({ showSpinner: false });
-		let minprofit = (reserve.stats?.cTokenExchangeRate - 1) * 100 * 3
-
+		let minprofit = 0//(reserve.stats?.cTokenExchangeRate - 1) * 100 * 10 + 1;
+		console.log('mp: ' + minprofit.toString())
+		minprofit = 0.00
 		// calculate & update iterations per minute
 		updateIterationsPerMin(cache);
 		//tokenB = tokenA
@@ -62,15 +65,21 @@ const pingpongStrategy = async (
 				Math.floor(Math.random() * process.env.ALT_RPC_LIST.split(",").length)
 			]
 		);
-				const pubkey =  ( await connection.getParsedTokenAccountsByOwner(new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), 
-		{mint: new PublicKey((tokenA.address))})).value
-		let amount = 0 
-		for (var pk of pubkey){
-		  if (parseFloat(pk.account.data.parsed.info.tokenAmount.uiAmount ) > amount){
-			amount =parseInt( pk.account.data.parsed.info.tokenAmount.amount) 
-		  }
+		const pubkey = (
+			await connection.getParsedTokenAccountsByOwner(
+				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
+				{ mint: new PublicKey(tokenA.address) }
+			)
+		).value;
+		let amount = 0;
+		for (var pk of pubkey) {
+			if (
+				parseFloat(pk.account.data.parsed.info.tokenAmount.uiAmount) > amount
+			) {
+				amount = parseInt(pk.account.data.parsed.info.tokenAmount.amount);
+			}
 		}
-		amountToTrade = Math.floor(amount * (mod / 100))
+		amountToTrade = Math.floor(amount * (mod / 100));
 		///	"amountToTrade: " + (amountToTrade / 10 ** tokenA.decimals).toString()
 		//);
 		/*
@@ -103,14 +112,14 @@ const pingpongStrategy = async (
 				slippageBps: 500,
 				forceFetch: true,
 			});
-			route = await routes.routesInfos[Math.floor(Math.random() * 2)];
+			route = await routes.routesInfos[Math.floor(Math.random() * 3) + 1];
 		} else {
 			//	console.log(1)
 			await prism.loadRoutes(tokenA.address, tokenA.address);
 
 			//	console.log(2)
 			routes = prism.getRoutes(amountToTrade / 10 ** tokenA.decimals);
-			route = routes[Math.floor(Math.random() * 1)];
+			route = routes[Math.floor(Math.random() * 4) + 3];
 		}
 		//if (!checkRoutesResponse(routes)) return;
 
@@ -323,7 +332,7 @@ const pingpongStrategy = async (
 				}
 			}
 		}
-			console.log(tokenA.symbol);
+		console.log(tokenA.symbol);
 
 		console.log(simulatedProfit);
 		if (simulatedProfit > parseFloat(process.env.minPercProfit))
@@ -350,15 +359,17 @@ const pingpongStrategy = async (
 					tokenA,
 					market,
 					reserve,
-					amountToTrade
+					amountToTrade,
+					payer,
+					goaccs
 				);
 
 				// stop refreshing status
 				//clearInterval(printTxStatus);
 				if (tx != 0) {
 					mod = mod * 4;
-					if (mod > 100){
-						mod = 100
+					if (mod > 100) {
+						mod = 100;
 					}
 					//successSwapHandler(tx, tradeEntry, tokenA, tokenB);
 				}
@@ -393,16 +404,14 @@ const pingpongStrategy = async (
 		if (tx == 0) {
 			cache.swappingRightNow = false;
 		}
-		if (mod > 0.000001) {
-			if (simulatedProfit > 0) {
-				mod = mod * 1.1;
+		if (mod > 0.0000001) {
+			if (simulatedProfit > minprofit) {
+				mod = mod / 1.05;
 			} else {
-				mod = mod / 1.3;
+				mod = mod / 1.666;
 			}
 		} else {
-			mod = 100 ;
-
-			
+			mod = 100;
 		}
 		cache.swappingRightNow = false;
 		console.log("mod: " + mod.toString());
@@ -414,26 +423,9 @@ const pingpongStrategy = async (
 	}
 };
 
-const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens) => {
+const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens, payer, goaccs) => {
 	if (true) {
-		let done = false;
-
-		let prices = {};
-		done = false;
-		market.refreshAll();
-		let aran = Math.floor(Math.random() * market.reserves.length);
-		if (aran == 0) return;
-		res = market.reserves[aran];
-		reserve = res; //market.reserves[Math.floor(Math.random()* market.reserves.length)]
-		let symbol = reserve.config.asset;
-
-		tokenA = {
-			address: reserve.config.liquidityToken.mint,
-			decimals: reserve.config.liquidityToken.decimals,
-			symbol: symbol,
-		};
-		//	tokenB = tokens[Math.floor(Math.random() * tokens.length)];
-		tokenB = tokenA;
+		
 		done = false;
 		if (process.env.tradingStrategy === "pingpong") {
 			await pingpongStrategy(
@@ -443,8 +435,10 @@ const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens) => {
 				tokenB,
 				market,
 				reserve,
-				prices,
-				tokens
+				{},
+				tokens,
+				payer,
+				goaccs
 			);
 		}
 		if (true) {
@@ -455,8 +449,10 @@ const watcher = async (jupiter, prism, tokenA, tokenB, market, tokens) => {
 				tokenB,
 				market,
 				reserve,
-				prices,
-				tokens
+				{},
+				tokens,
+				payer,
+				goaccs
 			);
 			//await arbitrageStrategy(jupiter, tokenA, tokenB);
 		}
@@ -467,7 +463,8 @@ let goodies = [];
 const run = async () => {
 	try {
 		// set everything up
-		let { jupiter, prism, tokenA, tokenB, market } = await setup();
+		let { jupiter, prism, tokenA, tokenB, market, wallet } = await setup();
+		let payer = wallet
 
 		if (false) {
 			//process.env.tradingStrategy === "pingpong") {
@@ -491,30 +488,52 @@ const run = async () => {
 			cache.currentBalance.tokenA = cache.initialBalance.tokenA;
 			cache.lastBalance.tokenA = cache.initialBalance.tokenA;
 		}
-
-		// 2. Read on-chain accounts for reserve data and cache
-		await market.loadReserves();
-		market.refreshAll();
-		market.reserves = market.reserves.filter(
-			(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
+		let goluts = [
+			"BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
+			"5taqdZKrVg4UM2wT6p2DGVY1uFnsV6fce3auQvcxMCya",
+			"2V7kVs1TsZv7j38UTv4Dgbc6h258KS8eo5GZL9yhxCjv",
+			"9kfsqRaTP2Zs6jXxtVa1ySiwVYviKxvrDXNavxDxsfNC",
+			"2gDBWtTf2Mc9AvqxZiActcDxASaVqBdirtM3BgCZduLi",
+		];
+		let goaccs = []
+		let connection = new Connection(
+			cache.config.rpc[Math.floor(Math.random() * cache.config.rpc.length)],
+			{ confirmTransactionInitialTimeout: 33333 }
 		);
-		if (market.reserves.length == 0) return;
-		const topTokens = await (
-			await fetch("https://cache.jup.ag/top-tokens")
-		) //TOKEN_LIST_URL['mainnet-beta'])
-			.json();
-
-		console.log(topTokens.length);
-		let ranstart = Math.floor(Math.random() * 10);
-		let ranend = ranstart + Math.floor(Math.random() * 10) + 10;
-		const shortlistedTokens = topTokens.slice(ranstart, ranend);
-		console.log(shortlistedTokens);
-		let tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
-		tokens = tokens.filter((t) => shortlistedTokens.includes(t.address));
+		for (var golut of goluts) {
+			try {
+				let test = (
+					await connection.getAddressLookupTable(new PublicKey(golut))
+				).value;
+					goaccs.push(test);
+			} catch (Err){}
+		
+		}
 		global.botInterval = setInterval(async function () {
 			market.refreshAll();
-			await watcher(jupiter, prism, tokenA, tokenA, market, tokens);
-		}, 500);
+			market.reserves = market.reserves.filter(
+				(reserve) => reserve.stats.totalLiquidityWads / WAD > 0
+			);
+			if (market.reserves.length == 0) return;
+			const topTokens = await (
+				await fetch("https://cache.jup.ag/top-tokens")
+			) //TOKEN_LIST_URL['mainnet-beta'])
+				.json();
+	
+			console.log(topTokens.length);
+			let ranstart = Math.floor(Math.random() * 10);
+			let ranend = ranstart + Math.floor(Math.random() * 10) + 10;
+			const shortlistedTokens = topTokens.slice(ranstart, ranend);
+			 tokens = JSON.parse(fs.readFileSync("./temp/tokens.json"));
+			tokens = tokens.filter((t) => shortlistedTokens.includes(t.address));
+			let done = false;
+	
+			done = false;
+			market.refreshAll();
+		
+		cache.isSetupDone = true;
+			await watcher(jupiter, prism, tokenA, tokenA, market, tokens, payer, goaccs);
+		}, Math.random() * 1000 + 200);
 	} catch (error) {
 		console.log(error);
 		process.exitCode = 1;
