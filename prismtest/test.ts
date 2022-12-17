@@ -14,6 +14,8 @@ import {
 } from "@solana/web3.js";
 import fs from "fs";
 import bs58 from "bs58";
+
+
 const jaregms: any = {
   mSOL: "98ujMj4PcFBN6Rd4VRdELdwFMHEGtfGuN6uiTUs3QVPV",
   stSOL: "BgPgvbe11wMVGazRrX1jNgQnKzpRpPt1AVFHFenEtbAH",
@@ -55,7 +57,7 @@ let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
       // @ts-ignore
       for (var l of (somejson)[addpair]) {
         // @ts-ignore
-        if (goaccs.length < 50) {
+        if (goaccs.length < 35) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
@@ -90,6 +92,13 @@ setTimeout(async function () {
   });
 
    market = await SolendMarket.initialize(connection, "production");
+   for (var res of market.reserves){
+    tokenbs.push({
+      address: res.config.liquidityToken.mint,
+      decimals: res.config.liquidityToken.decimals,
+      symbol: res.config.asset,
+    })
+  }
    goaccs = [];
    goluts = [
     "BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
@@ -115,210 +124,212 @@ doTheThing()
 })
 let tokens = JSON.parse(fs.readFileSync("./tokens.json").toString());
 let mod = 1;
+let tokenbs: any = []
+ async function dothehorriblething(i: number){
+  try {
+          i = 10
+    const reserve = market.reserves[i];
+    // @ts-ignore
+    let symbol = reserve.config.asset;
+    console.log(symbol + " ... ... ... mod: " + mod.toString());
+    const token = {
+      address: reserve.config.liquidityToken.mint,
+      decimals: reserve.config.liquidityToken.decimals,
+      symbol: symbol,
+    };
 
+    const pubkey = (
+      await connection.getParsedTokenAccountsByOwner(
+        new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
+        { mint: new PublicKey(token.address) }
+      )
+    ).value;
+    let amount = 0;
+    for (var pk of pubkey) {
+      if (
+        parseFloat(pk.account.data.parsed.info.tokenAmount.uiAmount) >
+        amount
+      ) {
+        amount = parseInt(pk.account.data.parsed.info.tokenAmount.amount);
+      }
+    }
+
+    await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+    let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
+    const amountToTrade = Math.floor(amount * (mod / 100));
+    let stuff = JSON.parse(fs.readFileSync('./luts.json').toString())
+    let tokenb 
+    let aran = Math.floor(Math.random() * (Object.keys(stuff).length))
+    if (Object.keys(stuff)[aran].indexOf(token.address)){
+    tokenb = tokens.find((t: any) => t.address === Object.keys(stuff)[aran].replace(token.address, ''));
+
+    
+    }
+    if (!tokenb) { 
+
+     tokenb = tokenbs[Math.floor(Math.random()* tokenbs.length)]
+    }
+
+
+    
+    await prism.loadRoutes(token.address, tokenb.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+    let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
+    let tokenAccount = (
+      await getOrCreateAssociatedTokenAccount(
+        connection, // connection
+        wallet, // fee payer
+        new PublicKey(reserve.config.liquidityToken.mint),
+        wallet.publicKey,
+        true // mint
+      )
+    ).address;
+    for (var abc of [1, 2]) {
+      if (routes[abc]) {
+      try {
+
+    await prism.loadRoutes(tokenb.address, token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+    let routes2 = prism.getRoutes(routes[abc].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
+
+    for (var bca of [1, 2]) {
+      try {
+        
+        
+        if (routes2[bca]) {
+          if (routes2[bca].amountOut > routes[abc].amountIn) {
+            console.log(
+              "trading " +
+                (amountToTrade / 10 ** token.decimals).toString() +
+                " " +
+                token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
+            );
+try {
+            let { preTransaction, mainTransaction } =
+              await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
+
+              let { preTransaction: pt, mainTransaction: mp } =
+              await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
+
+            let instructions = [
+              ...preTransaction.instructions,
+              ...pt.instructions,
+              flashBorrowReserveLiquidityInstruction(
+                amountToTrade,
+                new PublicKey(reserve.config.liquidityAddress),
+                tokenAccount,
+                new PublicKey(reserve.config.address),
+                new PublicKey(market.config.address),
+                SOLEND_PRODUCTION_PROGRAM_ID
+              ),
+              ...mainTransaction.instructions,
+              ...mp.instructions,
+              flashRepayReserveLiquidityInstruction(
+                amountToTrade,
+                preTransaction.instructions.length+pt.instructions.length,
+                tokenAccount,
+                new PublicKey(reserve.config.liquidityAddress),
+                new PublicKey(reserve.config.liquidityAddress),
+                tokenAccount,
+                new PublicKey(reserve.config.address),
+                new PublicKey(market.config.address),
+                wallet.publicKey,
+                SOLEND_PRODUCTION_PROGRAM_ID,
+                new PublicKey(jaregms[token.symbol]),
+                new PublicKey(reserve.config.liquidityToken.mint)
+              ),
+              createTransferInstruction(
+                tokenAccount, // from (should be a token account)
+                new PublicKey(jaregms[token.symbol]),
+                wallet.publicKey, // from's owner
+                (
+                  await connection.getParsedTokenAccountsByOwner(
+                    wallet.publicKey,
+                    {
+                      mint: new PublicKey(
+                        reserve.config.liquidityToken.mint
+                      ),
+                    }
+                  )
+                ).value[0].account.data.parsed.info.tokenAmount.amount + Math.ceil(solamis[0].amountOut / 2 * 10 ** token.decimals)
+              ),
+            ];
+            if (!Object.keys(tgoaccs).includes(token.symbol)){
+              tgoaccs[token.symbol] = []
+            }
+            if (tgoaccs[token.symbol].length == 0){
+              tgoaccs[token.symbol] = await findLuts(token.address);
+            }
+            if (!Object.keys(tgoaccs).includes(tokenb.symbol)){
+              tgoaccs[tokenb.symbol] = []
+            }
+            if (tgoaccs[tokenb.symbol].length == 0){
+              tgoaccs[tokenb.symbol] = await findLuts(tokenb.address);
+            }
+            const messageV00 = new TransactionMessage({
+              payerKey: wallet.publicKey,
+              recentBlockhash: await // @ts-ignore
+              (
+                await connection.getLatestBlockhash()
+              ).blockhash,
+              instructions,
+            }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol], ...tgoaccs[tokenb.symbol]]);
+            const transaction = new VersionedTransaction(messageV00);
+            let result;
+            try {
+              transaction.sign([wallet]);
+
+              result = await sendAndConfirmTransaction(
+                connection,
+                // @ts-ignore
+                transaction,
+                { skipPreflight: false },
+                { skipPreflight: false }
+              );
+              console.log("tx: https://solscan.io/tx/" + result);
+              var txs = fs.readFileSync('./txs.txt').toString()
+              txs+='\nhttps://solscan.io/tx/' + result 
+              fs.writeFileSync('txs.txt', txs)
+            } catch (err) {
+              console.log(err);
+            }
+            if (result != undefined) {
+              mod = mod * 10;
+            }
+            
+          } catch (err){
+            console.log(err)
+          }
+        }
+      }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+}
+  } catch (err) {
+    console.log(err);
+  }
+ }        
 async function doTheThing(){
     //    let start = new Date().getTime() / 1000;
 
       if (mod < 0.00000001) {
         mod = 100;
       }
-      for (var i = 2; i <= 13; i++) {
-        i = Math.floor(Math.random() * 11 + 2)
-        if (i != 1){
-        try {
-          const reserve = market.reserves[i];
-          // @ts-ignore
-          let symbol = reserve.config.asset;
-          console.log(symbol + " ... ... ... mod: " + mod.toString());
-          const token = {
-            address: reserve.config.liquidityToken.mint,
-            decimals: reserve.config.liquidityToken.decimals,
-            symbol: symbol,
-          };
+      var a = 2;
+      for (var i = 2; i<= 13; i++){
+                if (i != 1){
+        await  dothehorriblething(a)
+         a++
 
-          const pubkey = (
-            await connection.getParsedTokenAccountsByOwner(
-              new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
-              { mint: new PublicKey(token.address) }
-            )
-          ).value;
-          let amount = 0;
-          for (var pk of pubkey) {
-            if (
-              parseFloat(pk.account.data.parsed.info.tokenAmount.uiAmount) >
-              amount
-            ) {
-              amount = parseInt(pk.account.data.parsed.info.tokenAmount.amount);
-            }
-          }
-
-          await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-          let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
-          const amountToTrade = Math.floor(amount * (mod / 100));
-          let stuff = JSON.parse(fs.readFileSync('./luts.json').toString())
-          let tokenb 
-          let aran = Math.floor(Math.random() * (Object.keys(stuff).length))
-          if (Object.keys(stuff)[aran].indexOf(token.address)){
-          tokenb = tokens.find((t: any) => t.address === Object.keys(stuff)[aran].replace(token.address, ''));
-
-          
-          }
-          if (!tokenb) { 
-
-            setTimeout(async function(){
-              doTheThing()
-            })
-            mod = mod / 4;
-            return
-
-          }
-
-
-          
-          await prism.loadRoutes(token.address, tokenb.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-          let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
-          let tokenAccount = (
-            await getOrCreateAssociatedTokenAccount(
-              connection, // connection
-              wallet, // fee payer
-              new PublicKey(reserve.config.liquidityToken.mint),
-              wallet.publicKey,
-              true // mint
-            )
-          ).address;
-          for (var abc of [0, 1, 2]) {
-            if (routes[abc]) {
-            try {
-
-          await prism.loadRoutes(tokenb.address, token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-          let routes2 = prism.getRoutes(routes[abc].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
-
-          for (var bca of [0, 1, 2]) {
-            try {
-              
-              
-              if (routes2[bca]) {
-                if (routes2[bca].amountOut > routes[abc].amountIn) {
-                  console.log(
-                    "trading " +
-                      (amountToTrade / 10 ** token.decimals).toString() +
-                      " " +
-                      token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
-                  );
-try {
-                  let { preTransaction, mainTransaction } =
-                    await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
-
-                    let { preTransaction: pt, mainTransaction: mp } =
-                    await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
-
-                  let instructions = [
-                    ...preTransaction.instructions,
-                    ...pt.instructions,
-                    flashBorrowReserveLiquidityInstruction(
-                      amountToTrade,
-                      new PublicKey(reserve.config.liquidityAddress),
-                      tokenAccount,
-                      new PublicKey(reserve.config.address),
-                      new PublicKey(market.config.address),
-                      SOLEND_PRODUCTION_PROGRAM_ID
-                    ),
-                    ...mainTransaction.instructions,
-                    ...mp.instructions,
-                    flashRepayReserveLiquidityInstruction(
-                      amountToTrade,
-                      preTransaction.instructions.length,
-                      tokenAccount,
-                      new PublicKey(reserve.config.liquidityAddress),
-                      new PublicKey(reserve.config.liquidityAddress),
-                      tokenAccount,
-                      new PublicKey(reserve.config.address),
-                      new PublicKey(market.config.address),
-                      wallet.publicKey,
-                      SOLEND_PRODUCTION_PROGRAM_ID,
-                      new PublicKey(jaregms[token.symbol]),
-                      new PublicKey(reserve.config.liquidityToken.mint)
-                    ),
-                    createTransferInstruction(
-                      tokenAccount, // from (should be a token account)
-                      new PublicKey(jaregms[token.symbol]),
-                      wallet.publicKey, // from's owner
-                      (
-                        await connection.getParsedTokenAccountsByOwner(
-                          wallet.publicKey,
-                          {
-                            mint: new PublicKey(
-                              reserve.config.liquidityToken.mint
-                            ),
-                          }
-                        )
-                      ).value[0].account.data.parsed.info.tokenAmount.amount + Math.ceil(solamis[0].amountOut / 2 * 10 ** token.decimals)
-                    ),
-                  ];
-                  if (!Object.keys(tgoaccs).includes(token.symbol)){
-                    tgoaccs[token.symbol] = []
-                  }
-                  if (tgoaccs[token.symbol].length == 0){
-                    tgoaccs[token.symbol] = await findLuts(token.address);
-                  }
-                  if (!Object.keys(tgoaccs).includes(tokenb.symbol)){
-                    tgoaccs[tokenb.symbol] = []
-                  }
-                  if (tgoaccs[tokenb.symbol].length == 0){
-                    tgoaccs[tokenb.symbol] = await findLuts(tokenb.address);
-                  }
-                  const messageV00 = new TransactionMessage({
-                    payerKey: wallet.publicKey,
-                    recentBlockhash: await // @ts-ignore
-                    (
-                      await connection.getLatestBlockhash()
-                    ).blockhash,
-                    instructions,
-                  }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol], ...tgoaccs[tokenb.symbol]]);
-                  const transaction = new VersionedTransaction(messageV00);
-                  let result;
-                  try {
-                    transaction.sign([wallet]);
-
-                    result = await sendAndConfirmTransaction(
-                      connection,
-                      // @ts-ignore
-                      transaction,
-                      { skipPreflight: false },
-                      { skipPreflight: false }
-                    );
-                    console.log("tx: https://solscan.io/tx/" + result);
-                    var txs = fs.readFileSync('./txs.txt').toString()
-                    txs+='\nhttps://solscan.io/tx/' + result 
-                    fs.writeFileSync('txs.txt', txs)
-                  } catch (err) {
-                    console.log(err);
-                  }
-                  if (result != undefined) {
-                    mod = mod * 10;
-                  }
-                  
-                } catch (err){
-                  console.log(err)
-                }
-              }
-            }
-            } catch (err) {
-              console.log(err);
-            }
-          }
-        } catch (err) {
-          console.log(err);
-        }
       }
     }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-    }
-      mod = mod / 4;
-      setTimeout(async function(){
-        doTheThing()
-      })
+    setTimeout(async function(){
+     doTheThing()
+   }, 1000)
+      mod = mod / 10;
+     
     }

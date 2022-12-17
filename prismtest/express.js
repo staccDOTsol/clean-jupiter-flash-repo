@@ -6,7 +6,7 @@ var app = express();
 app.use(bodyParser());
 app.use(cors());
 var reservePairs = {};
-app.post("/hook", async function (req, res) {
+app.post("/", async function (req, res) {
   if (req.body.fee > 5000) {
   }
   try {
