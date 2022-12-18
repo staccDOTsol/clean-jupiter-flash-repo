@@ -134,7 +134,7 @@ setTimeout(async function () {
 		// rpc connection
 		connection, // optional
 		// slippage
-		slippage: 100, // optional
+		slippage: 3, // optional
 	});
 
 	market = await SolendMarket.initialize(
@@ -215,7 +215,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 				// rpc connection
 				connection, // optional
 				// slippage
-				slippage: 100, // optional
+				slippage: 3, // optional
 			});
 		}
 		if (!market) {
@@ -270,8 +270,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		console.log(routes.length);
 		if (!routes[0]) return
 		if (innn < routes[0].amountOut * 10 ** dec) {
-			var abc = 0// Math.floor(Math.random() * 3);
-			if (routes[abc]) {
+			for (var abc of [0,1,2]){
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 					try {
@@ -280,12 +279,10 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 							
 							let routes2 = prism.getRoutes((routes[abc].amountOut) / 1.015); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
-							console.log(routes2[0])
-							console.log(routes[0])
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 2);
 								try {
-									if (routes2[bca]) {
+									for (var bca of [0,1,2]) {
 										console.log(
 											routes2[bca].amountOut > routes[abc].amountIn * 1.043
 										);
