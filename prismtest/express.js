@@ -393,7 +393,7 @@ return
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** 6),
-													preTransaction.instructions.length, //+pt.instructions.length,
+													1+preTransaction.instructions.length, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
