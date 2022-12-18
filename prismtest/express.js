@@ -257,7 +257,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		let maybe = await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(amountToTrade ); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
@@ -277,7 +277,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
 							
-							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.009); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes((routes[abc].amountOut/ 1.009)  / 10 ** tokenb.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = Math.floor(Math.random() * 2);
