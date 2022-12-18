@@ -95,7 +95,7 @@ async function findLuts(ixs, pairadd) {
 							(await connection.getAddressLookupTable(new PublicKey(l))).value;
 
 						// @ts-ignore
-						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+						if (test.state.deactivationSlot < BigInt(159408000 * 2)) {
 							//let acompare = compare(arr1, test.state.addresses);
 							//if (acompare >= 1){//} && acompare > lastcompare) {
 							//	if (goaccs.length > 9) {
@@ -677,14 +677,14 @@ async function getLuts() {
         // @ts-ignore
         let maybemine = await connection.getAddressLookupTable(lut.pubkey);
 
-        if (maybemine.value?.state.addresses.length > 66.6) {
+        if (maybemine.value.state.addresses.length > 66.6) {
           let templuts = [];
           if (true) {
             
             let gogo123 = true 
-            // @ts-ignore
+            // @ts-ignore	
 
-            for (var addy of maybemine.value?.state.addresses) {
+            for (var addy of maybemine.value.state.addresses) {
               let addypk = addy.toBase58();
               let gogos = 0;
               for (var ammIdspks of Object.keys(reservePairs)) {
@@ -708,7 +708,7 @@ async function getLuts() {
                 }
               }
             }
-            for (var addy of maybemine.value?.state.addresses) {
+            for (var addy of maybemine.value.state.addresses) {
               let addypk = addy.toBase58();
               let gogos = 0;
               for (var ammIdspks of Object.keys(reservePairs)) {
