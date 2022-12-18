@@ -83,10 +83,14 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
 
 let tgoaccs = {}
 let prism, market, goaccs, goluts
+
 setTimeout(async function () {
    prism = await Prism.init({
     // user executing swap
-    user: wallet, // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
+    user:  Keypair.fromSecretKey(
+      // @ts-ignore
+      bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
+    ), // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
 
     // rpc connection
     connection, // optional
@@ -160,7 +164,10 @@ var reservePairs = {};
       if (!market){
         prism = await Prism.init({
           // user executing swap
-          user: wallet, // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
+          user:  Keypair.fromSecretKey(
+            // @ts-ignore
+            bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
+          ), // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
       
           // rpc connection
           connection, // optional
