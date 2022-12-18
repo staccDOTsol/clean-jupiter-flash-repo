@@ -369,7 +369,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											}
 
 											const params = {
-												microLamports: 1.38*10**8,
+												microLamports: 1.38*10**5,
 											  };
 											  const ix138 =
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
