@@ -49,33 +49,26 @@ const connection = new Connection(
 //  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
 //);
 var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
-let goaccs = {};
 
 async function findLuts(pairadd) {
-  if (!Object.keys(goaccs).includes(pairadd)){
-    goaccs[pairadd[0]+pairadd[1]] = []
-  }
+  let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
 for (var key of keys){
 if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
-      var c = 0
       // @ts-ignore
       for (var l of (somejson)[key]) {
-        let aran = Math.floor(Math.random() * (somejson)[key].length)
-        l = (somejson)[key][aran]
         // @ts-ignore
-        if (goaccs[pairadd[0]+pairadd[1]].length < 60 && c < 5) {
-          c++
+        if (goaccs.length < 9) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               // @ts-ignore
-              goaccs[pairadd[0]+pairadd[1]].push(test)
-              console.log(goaccs[pairadd[0]+pairadd[1]].length)
+              goaccs.push(test)
+              console.log(goaccs.length)
             }
           } catch (err) {}
         }
@@ -85,13 +78,13 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     }
   }
   }
-  console.log("found " + goaccs[pairadd[0]+pairadd[1]].length.toString() + " luts...");
+  console.log("found " + goaccs.length.toString() + " luts...");
   return goaccs;
 }
 
 let tgoaccs = {}
-let prism, market,  goluts
-var woots = []
+let prism, market, goaccs, goluts
+
 setTimeout(async function () {
    prism = await Prism.init({
     // user executing swap
@@ -131,7 +124,7 @@ setTimeout(async function () {
         .value;
       // @ts-ignore
       if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-        woots.push(test);
+        goaccs.push(test);
       }
     } catch (err) {
       console.log(err);
@@ -321,9 +314,11 @@ let insts1 = [
               )
             ];
             console.log(instructions.length)
-           
+            if (!Object.keys(tgoaccs).includes(token.symbol)){
+              tgoaccs[token.symbol] = []
+            }
           //  if (tgoaccs[token.symbol].length == 0){
-              await findLuts([token.address, tokenb.address]);
+              tgoaccs[token.symbol] = await findLuts([token.address, tokenb.address]);
           //  }
           if (insts1.length > 1){
           var messageV00 = new TransactionMessage({
@@ -333,7 +328,7 @@ let insts1 = [
               await connection.getLatestBlockhash()
             ).blockhash,
             instructions: insts1,
-          }).compileToV0Message([...woots, ...goaccs[token.address + tokenb.address]]);
+          }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
           var transaction = new VersionedTransaction(messageV00);
           var result;
           try {
@@ -362,7 +357,7 @@ let insts1 = [
                 await connection.getLatestBlockhash()
               ).blockhash,
               instructions,
-            }).compileToV0Message([...woots, ...goaccs[token.address + tokenb.address]]);
+            }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
             var transaction = new VersionedTransaction(messageV00);
             var result = undefined;
             try {
