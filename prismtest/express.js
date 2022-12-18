@@ -142,7 +142,7 @@ setTimeout(async function () {
 		tokenbs.push({
 			address: res.config.liquidityToken.mint,
 			decimals: res.config.liquidity6,
-			symbol: res.config.liquidityToken.symbol,
+			symbol: res.config.asset,
 		});
 		console.log(res.config.liquidityFeeReceiverAddress);
 	}
@@ -221,7 +221,7 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 		}
 		const reserve = market.reserves[i];
 		// @ts-ignore
-		let symbol = reserve.config.liquidityToken.symbol;
+		let symbol = reserve.config.asset;
 		mod = Math.random() * 15 + 1;
 		console.log(symbol + " ... ... ... mod: " + mod.toString());
 		const token = {
