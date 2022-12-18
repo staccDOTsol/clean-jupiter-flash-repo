@@ -199,6 +199,7 @@ var reservePairs = {};
 // invalid cache. I will recommend using a paid RPC endpoint.
 let atokens = {}
 async function dothehorriblething(i, tokenbc, innn, dec) {
+	mod = mod / 1.5
 	const tokenb = tokenbc
 	//i = 10
 	try {
