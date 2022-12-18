@@ -273,9 +273,6 @@ console.log(wallet.publicKey.toBase58())
                 c++
             }
             
-let insts1 = [
-  ...preTransaction.instructions, ...pt.instructions]
-  console.log(insts1.length)
   
   const associatedDestinationTokenAddr = await Token.getAssociatedTokenAddress(
     ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -305,7 +302,7 @@ let insts1 = [
     }
   }
             let instructions = [
-              ...preTransaction,
+              ...preTransaction.instructions,
               flashBorrowReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
                 new PublicKey(reserve.config.liquidityAddress),
