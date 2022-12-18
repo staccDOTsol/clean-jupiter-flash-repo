@@ -267,7 +267,7 @@ return
 		).address;
 		console.log(routes.length);
 		if (!routes[0]) return
-		if (innn < routes[0].amountOut * 10 ** dec) {
+		if (innn / 10 < routes[0].amountOut * 10 ** dec) {
 			var abc = Math.floor(Math.random() * 3);
 			if (routes[abc]) {
 				try {
