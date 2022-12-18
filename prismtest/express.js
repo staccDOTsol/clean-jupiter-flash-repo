@@ -317,9 +317,11 @@ return
 												}
 												c++;
 											}
-											if (pt.instructions.length > 1) {
+											 if (pt.instructions.length > 1) {
 												thepaydirt.push(pt.instructions[1]);
-											}else if (pt.instructions.length > 0) {
+
+											}
+											else if (pt.instructions.length == 1) {
 												thepaydirt.push(pt.instructions[0]);
 
 											}
@@ -371,8 +373,12 @@ return
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
 											let instructions = [ix138];
-											 if (preTransaction.instructions.length >= 1) {
+											 if (preTransaction.instructions.length > 1) {
 												instructions.push(preTransaction.instructions[1]);
+
+											}
+											else  if (preTransaction.instructions.length == 1){
+												instructions.push(preTransaction.instructions[0]);
 
 											}
 											instructions.push(
