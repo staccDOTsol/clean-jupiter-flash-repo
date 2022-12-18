@@ -442,15 +442,15 @@ const someroutes = await getRoutes ({
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.liquidityAddress),
 													new PublicKey(
-														market.reserves[i].config.liquidityAddress//liquidityFeeReceiverAddress
+														market.reserves[i].config.liquidityFeeReceiverAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
-													SOLEND_PRODUCTION_PROGRAM_ID,
+													SOLEND_PRODUCTION_PROGRAM_ID/*,
                 new PublicKey(jaregms[atokens[i].symbol]),
-                new PublicKey(market.reserves[i].config.liquidityToken.mint)
+                new PublicKey(market.reserves[i].config.liquidityToken.mint*/)
 												)
 											);
 											instructions.push(
