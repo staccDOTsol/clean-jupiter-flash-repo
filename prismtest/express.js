@@ -256,11 +256,11 @@ return
 		let amountToTrade = (amount * (mod));
 		amountToTrade = parseInt(amountToTrade / 100)
 
-console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
+console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
 		let maybe = await prism.loadRoutes(atokens[i].address, tokenb.address); //, oldData[atokens[i].address + tokenb.address]))
 
 		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes((amountToTrade) / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes((amountToTrade) / 10 ** atokens[i].decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
@@ -381,7 +381,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
+													Math.ceil(routes[abc].amountIn * 10 ** atokens[i].decimals),
 													new PublicKey(market.reserves[i].config.liquidityAddress),
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.address),
