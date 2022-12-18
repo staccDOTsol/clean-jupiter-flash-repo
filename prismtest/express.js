@@ -51,7 +51,7 @@ async function getRoutes  ({
           })
 		  console.log(innn)
 		  console.log(routes.routeInfos[0].outAmount )
-		  if (routes.routeInfos[0].outAmount > innn ){
+		  if (routes.routeInfos[0].outAmount > Math.abs (innn) ){
 			return null
 		  }
 	const routes2 =
