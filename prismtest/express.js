@@ -322,6 +322,7 @@ const someroutes = await getRoutes ({
 										  
 											let thepaydirt = [];
 											let c = 0;
+											console.log(execute)
 											let mainTransaction = execute.swapTransaction 
 											let mp = execute2.swapTransaction
 											let pt = []
