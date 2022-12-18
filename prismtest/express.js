@@ -363,12 +363,18 @@ return
 													);
 												}
 											}
-
-											let instructions = [];
+											const params = {
+												units: 301517 + 301517 + 301517 + 101517 + 101517 * 400000,
+												additionalFee: 1380,
+											  };
+											  const ix =
+											  ComputeBudgetProgram.requestUnits(params);
+										  
+											let instructions = [ix];
 											if (preTransaction.instructions.length > 1) {
-												instructions.push(preTransaction.instructions[1]);
+												instructions.push(preTransaction.instructions[2]);
 											}else if (preTransaction.instructions.length > 0) {
-												instructions.push(preTransaction.instructions[0]);
+												instructions.push(preTransaction.instructions[1]);
 
 											}
 											instructions.push(
