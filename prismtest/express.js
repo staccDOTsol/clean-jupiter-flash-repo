@@ -295,7 +295,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 											doing = true
 											console.log(
 												mod.toString() +
-												token.symbol +
+												atokens[i].symbol +
 												" " +
 												atokens[i].address + " mod " +
 													(routes[abc].amountIn ).toString() +
@@ -414,7 +414,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 													new PublicKey(market.config.address),
 													wallet.publicKey,
 													SOLEND_PRODUCTION_PROGRAM_ID,
-                new PublicKey(jaregms[token.symbol]),
+                new PublicKey(jaregms[atokens[i].symbol]),
                 new PublicKey(market.reserves[i].config.liquidityToken.mint)
 												)
 											);
@@ -436,11 +436,11 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 												)
 											);
 											console.log(instructions.length);
-											if (!Object.keys(tgoaccs).includes(token.symbol)) {
-												tgoaccs[token.symbol] = [];
+											if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
+												tgoaccs[atokens[i].symbol] = [];
 											}
-											//  if (tgoaccs[token.symbol].length == 0){
-											tgoaccs[token.symbol] = await findLuts(instructions, [
+											//  if (tgoaccs[atokens[i].symbol].length == 0){
+											tgoaccs[atokens[i].symbol] = await findLuts(instructions, [
 												atokens[i].address,
 												tokenb.address,
 											]);
@@ -454,7 +454,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 												instructions,
 											}).compileToV0Message([
 												...goaccs,
-												...tgoaccs[token.symbol],
+												...tgoaccs[atokens[i].symbol],
 											]);
 											var transaction = new VersionedTransaction(messageV00);
 											var result = undefined;
