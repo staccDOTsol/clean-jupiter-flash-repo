@@ -295,7 +295,7 @@ return
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-										//	doing = true
+											doing = true
 											console.log(
 												"trading " + (amountToTrade / 10 ** 6).toString() + " " //+
 												//token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
@@ -437,7 +437,6 @@ return
 											var result = undefined;
 											try {
 												transaction.sign([wallet]);
-												doing = false
 												result = await sendAndConfirmTransaction(
 													superconnection,
 													// @ts-ignore
@@ -445,6 +444,8 @@ return
 													{ skipPreflight: false },
 													{ skipPreflight: false }
 												);
+												doing = false
+
 												for (var i = 0; i<=100; i++){
 												console.log("tx: https://solscan.io/tx/" + result);
 												}
