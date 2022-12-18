@@ -283,7 +283,7 @@ return
 									" " +
 									tokenb.address
 							);
-							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.005); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.01); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = Math.floor(Math.random() * 7);
