@@ -250,13 +250,13 @@ return
 		// await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		//let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let amountToTrade = (amount * (mod));
-		amountToTrade = amountToTrade / 100
+		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + amountToTrade.toString())
 		let maybe = await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes((amountToTrade) / 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes(parseInt(amountToTrade) / 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
