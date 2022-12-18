@@ -120,10 +120,12 @@ setTimeout(async function () {
   }
 doTheThing()
 })
+let oldData: any = {}
 let tokens = JSON.parse(fs.readFileSync("./tokens.json").toString());
 let mod = 6.66;
 let tokenbs: any = []
  async function dothehorriblething(i: number){
+  //i = 10
   try {
       //    i = 10
     const reserve = market.reserves[i];
@@ -152,7 +154,7 @@ let tokenbs: any = []
       }
     }
 
-    await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+    await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, {}); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
     const amountToTrade = Math.floor(amount * (mod / 100));
     let stuff = JSON.parse(fs.readFileSync('./luts.json').toString())
@@ -171,7 +173,10 @@ let tokenbs: any = []
       return
     }
     
-    await prism.loadRoutes(token.address, tokenb.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+let maybe =     (await prism.loadRoutes(token.address, tokenb.address, oldData))
+if (!maybe) return 
+
+oldData[token.address + tokenb.address] = maybe.oldData[token.address + tokenb.address]; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
     let tokenAccount = (
       await getOrCreateAssociatedTokenAccount(
@@ -186,7 +191,7 @@ let tokenbs: any = []
       if (routes[abc]) {
       try {
 
-    await prism.loadRoutes(tokenb.address, token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+        oldData[tokenb.address + token.address] =      (await prism.loadRoutes(tokenb.address, token.address, oldData)).oldData[tokenb.address + token.address] ; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
 
     for (var bca of [1,2]) {

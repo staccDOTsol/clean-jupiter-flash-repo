@@ -55,6 +55,8 @@ function getMercurialPools(data) {
             let authority = (0, pubkey_1.findProgramAddressSync)([programAccounts[i].publicKey.toBuffer()], new web3_js_1.PublicKey(types_1.MERCURIAL_PROGRAM_ID))[0];
             let pool = Object.assign(Object.assign({}, decoded), { authority: authority, swapAccount: programAccounts[i].publicKey.toBase58(), provider: "mercurial" });
             let tokenAmounts = [];
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
             let tokenMints = [];
             for (let fir = 0; fir < pool.tokenAccountsLength; fir++) {
                 let deserialized = (0, sdk_1.deserializeAccount)(mintResponses[start + fir].account.data);

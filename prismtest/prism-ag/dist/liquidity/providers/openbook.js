@@ -37,8 +37,8 @@ function getOpenbookMarkets(data) {
             let market = Object.assign(Object.assign({}, market_1.MARKET_STATE_LAYOUT_V2.decode(marketInfo.accountInfo.data)), { provider: "openbook" });
             let coinMint = market.quoteMint.toBase58();
             let pcMint = market.baseMint.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (openbook[coinMint] || (openbook[coinMint] = [])).push(Object.assign(Object.assign({}, market), { other: pcMint }));
             (openbook[pcMint] || (openbook[pcMint] = [])).push(Object.assign(Object.assign({}, market), { other: coinMint }));
         });

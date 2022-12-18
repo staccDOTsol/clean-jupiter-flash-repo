@@ -38,8 +38,10 @@ function getSarosPools(data) {
             let pool = Object.assign(Object.assign({}, decoded), { authority: authority, swapAccount: programAccounts[i].publicKey.toBase58(), provider: "saros" });
             let coinMint = pool.mintA.toBase58();
             let pcMint = pool.mintB.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
+            //console.log(coinMint)
+            //console.log(pcMint)
             if (pool.curveType != 0)
                 continue;
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, pool), { other: pcMint }));

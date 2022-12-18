@@ -33,7 +33,7 @@ export declare class Prism {
     loadPrismStats(): Promise<any>;
     static loadUserTradeHistory(publicKey: PublicKey): Promise<any>;
     loadUserTradeHistory(): Promise<any>;
-    loadRoutes(from: string, to: string, direct?: boolean): Promise<void>;
+    loadRoutes(from: string, to: string, oldData: any, direct?: boolean): Promise<void>;
     getRoutes(amount: number): any;
     generateSwapTransactions(route: any): Promise<{
         preTransaction: any;

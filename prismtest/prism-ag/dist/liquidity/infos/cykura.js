@@ -32,10 +32,11 @@ function loadCykura(liquidity, connection, result) {
         let pools = {};
         for (let i = 0; i < liquidity.length; i++) {
             let pool = liquidity[i];
+            console.log(pool)
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
             let coinMint = pool.mintA.toBase58();
             let pcMint = pool.mintB.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, pool), { other: pcMint }));
             (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, pool), { other: coinMint }));
         }

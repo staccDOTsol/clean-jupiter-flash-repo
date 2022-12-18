@@ -10,8 +10,8 @@ function getOrcaPools(connection) {
             let pool = orca.getPool(poolId);
             let coinMint = pool.getTokenA().mint.toBase58();
             let pcMint = pool.getTokenB().mint.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = []))
                 .push({ pool: pool, other: pcMint, provider: "orca" });
             (pools[pcMint] || (pools[pcMint] = []))

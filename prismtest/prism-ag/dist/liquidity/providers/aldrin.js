@@ -46,10 +46,12 @@ function getAldrinPools(connection, data) {
         let pools = {};
         for (let i = 0; i < allPools.length; i++) {
             let pool = Object.assign(Object.assign({}, allPools[i]), { provider: "aldrin" });
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
             let coinMint = pool.baseTokenMint.toBase58();
             let pcMint = pool.quoteTokenMint.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, pool), { other: pcMint }));
             (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, pool), { other: coinMint }));
         }

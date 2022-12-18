@@ -4,4 +4,4 @@ export declare function possibleRoutes(fromCoin: TokenInfo, toCoin: TokenInfo, L
     routes: any;
     toLoad: any;
 };
-export declare function loadLiquidityInfos(fromCoin: TokenInfo, toCoin: TokenInfo, LI: any, connection: Connection, tokenMap: any, direct: boolean, reverse: boolean): Promise<any>;
+export declare function loadLiquidityInfos(fromCoin: TokenInfo, toCoin: TokenInfo, oldData: any, LI: any, connection: Connection, tokenMap: any, direct: boolean, reverse: boolean): Promise<any>;

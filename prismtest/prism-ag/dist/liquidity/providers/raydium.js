@@ -36,8 +36,8 @@ function getRaydiumAmms(data) {
             if (amm.status.toNumber() == 6) {
                 let coinMint = amm.coinMintAddress.toBase58();
                 let pcMint = amm.pcMintAddress.toBase58();
-                console.log(coinMint)
-                console.log(pcMint)
+                //console.log(coinMint)
+                //console.log(pcMint)
                 if (coinMint != pcMint) {
                     (amms[coinMint] || (amms[coinMint] = [])).push(Object.assign(Object.assign({}, amm), { other: pcMint }));
                     (amms[pcMint] || (amms[pcMint] = [])).push(Object.assign(Object.assign({}, amm), { other: coinMint }));

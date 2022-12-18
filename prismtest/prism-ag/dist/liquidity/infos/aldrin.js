@@ -26,7 +26,6 @@ function loadAldrin(liquidity, infos) {
         for (let i = 0; i < 2 * liquidity.length; i++) {
             let accountInfo = (0, sdk_1.deserializeAccount)(infos[i].account.data);
             results.push({
-                pubkey: accountInfo === null || account === void 0 ? void 0 : infos[i].publicKey.toBase58(),
                 mint: accountInfo === null || accountInfo === void 0 ? void 0 : accountInfo.mint,
                 owner: accountInfo === null || accountInfo === void 0 ? void 0 : accountInfo.owner,
                 amount: accountInfo === null || accountInfo === void 0 ? void 0 : accountInfo.amount,

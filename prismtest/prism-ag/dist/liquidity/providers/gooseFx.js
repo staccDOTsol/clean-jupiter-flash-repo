@@ -58,7 +58,10 @@ function getGooseFxCacheData(connection) {
             for (let i = 0; i < programAccounts.length; i++) {
                 let decoded = exports.PAIR_LAYOUT.decode(programAccounts[i].accountInfo.data);
                 let pool = Object.assign(Object.assign({}, decoded), { swapAccount: programAccounts[i].publicKey.toBase58(), provider: "gooseFX" });
-                if (pool.mints.length != 2)
+                
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
+            if (pool.mints.length != 2)
                     continue;
                 pairDatas.push(swap.getPairAddress(pool.mints[0], pool.mints[1]));
                 decodedPools.push(pool);
@@ -88,6 +91,9 @@ function getGooseFxPools(connection, data) {
         for (let i = 0; i < programAccounts.length; i++) {
             let decoded = exports.PAIR_LAYOUT.decode(programAccounts[i].accountInfo.data);
             let pool = Object.assign(Object.assign({}, decoded), { swapAccount: programAccounts[i].publicKey.toBase58(), provider: "gooseFX" });
+            
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
             if (pool.mints.length != 2)
                 continue;
             pairDatas.push(swap.getPairAddress(pool.mints[0], pool.mints[1]));
@@ -103,8 +109,8 @@ function getGooseFxPools(connection, data) {
             pool.wasm = wasm;
             let coinMint = pool.mints[0].toBase58();
             let pcMint = pool.mints[1].toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, pool), { other: pcMint }));
             (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, pool), { other: coinMint }));
         }

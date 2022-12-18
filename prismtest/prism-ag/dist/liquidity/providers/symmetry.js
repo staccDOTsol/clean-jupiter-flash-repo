@@ -41,8 +41,8 @@ function getSymmetryFunds(data) {
                 };
                 let coinMint = tokenList[i].tokenMint;
                 let pcMint = tokenList[j].tokenMint;
-                console.log(coinMint)
-                console.log(pcMint)
+                //console.log(coinMint)
+                //console.log(pcMint)
                 (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, swap), { other: pcMint }));
                 (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, swap), { other: coinMint }));
             }

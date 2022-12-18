@@ -64,6 +64,8 @@ function getCykuraPools(connection) {
             pool.vault0 = (0, pubkey_1.findProgramAddressSync)([new web3_js_1.PublicKey(pool.poolAccount).toBuffer(), new web3_js_1.PublicKey(types_1.TOKEN_PROGRAM_ID).toBuffer(), pool.mintA.toBuffer()], spl_token_1.ASSOCIATED_TOKEN_PROGRAM_ID)[0];
             pool.vault1 = (0, pubkey_1.findProgramAddressSync)([new web3_js_1.PublicKey(pool.poolAccount).toBuffer(), new web3_js_1.PublicKey(types_1.TOKEN_PROGRAM_ID).toBuffer(), pool.mintB.toBuffer()], spl_token_1.ASSOCIATED_TOKEN_PROGRAM_ID)[0];
             decodedAccounts.push(pool);
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
             pool.tickProvider = new SolanaTickDataProvider(cyclosCore, {
                 token0: pool.mintA,
                 token1: pool.mintB,
@@ -77,8 +79,8 @@ function getCykuraPools(connection) {
             let pool = decodedAccounts[i];
             let coinMint = pool.mintA.toBase58();
             let pcMint = pool.mintB.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, pool), { other: pcMint }));
             (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, pool), { other: coinMint }));
         }

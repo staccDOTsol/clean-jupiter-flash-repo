@@ -51,8 +51,8 @@ function getSaberPools(data) {
             let swap = Object.assign(Object.assign({}, swaps[i]), { swapAccountData: result[i], provider: "saber" });
             let coinMint = swap.underlyingTokens[0];
             let pcMint = swap.underlyingTokens[1];
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (pools[coinMint] || (pools[coinMint] = [])).push(Object.assign(Object.assign({}, swap), { other: pcMint }));
             (pools[pcMint] || (pools[pcMint] = [])).push(Object.assign(Object.assign({}, swap), { other: coinMint }));
         }

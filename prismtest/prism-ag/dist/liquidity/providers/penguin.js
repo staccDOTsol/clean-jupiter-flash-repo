@@ -39,8 +39,10 @@ function getPenguinPools(data) {
             let pool = Object.assign(Object.assign({}, decoded), { authority: authority, swapAccount: programAccounts[i].publicKey.toBase58(), provider: "penguin" });
             let coinMint = new web3_js_1.PublicKey(pool.mintA).toBase58();
             let pcMint = new web3_js_1.PublicKey(pool.mintB).toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(pool.quoteTokenVault.toBase58())
+            //console.log(pool.baseTokenVault.toBase58())
+            //console.log(coinMint)
+            //console.log(pcMint)
             if (pool.curveType != 0) {
                 continue;
             }

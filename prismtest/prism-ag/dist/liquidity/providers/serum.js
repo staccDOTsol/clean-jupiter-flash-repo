@@ -38,8 +38,8 @@ function getSerumMarkets(data) {
             serum.all[marketInfo.publicKey.toBase58()] = market;
             let coinMint = market.quoteMint.toBase58();
             let pcMint = market.baseMint.toBase58();
-            console.log(coinMint)
-            console.log(pcMint)
+            //console.log(coinMint)
+            //console.log(pcMint)
             (serum[coinMint] || (serum[coinMint] = [])).push(Object.assign(Object.assign({}, market), { other: pcMint }));
             (serum[pcMint] || (serum[pcMint] = [])).push(Object.assign(Object.assign({}, market), { other: coinMint }));
         });
