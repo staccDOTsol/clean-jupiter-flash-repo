@@ -93,7 +93,7 @@ async function findLuts(ixs, pairadd) {
 						// @ts-ignore
 						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 							let acompare = compare(arr1, test.state.addresses);
-							if (acompare >= 1 || test.state.addresses.length > 200) {
+							if (acompare >= 3 ) {
 								if (goaccs.length > 14) {
 									lastcompare = acompare;
 								} else {
