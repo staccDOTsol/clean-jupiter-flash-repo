@@ -1,0 +1,395 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CYKURA_LAYOUT = exports.SERUM_LAYOUT = exports.STEP_SWAP_LAYOUT = exports.SAROS_SWAP_LAYOUT = exports.SENCHA_SWAP_LAYOUT = exports.MERCURIAL_SWAP_LAYOUT = exports.CROPPER_TOKEN_SWAP_LAYOUT = exports.AMM_INFO_LAYOUT_STABLE = exports.AMM_INFO_LAYOUT_V4 = exports.AMM_INFO_LAYOUT_V3 = exports.AMM_INFO_LAYOUT = exports.ACCOUNT_LAYOUT = exports.MINT_LAYOUT = exports.MIDDLE_COINS = exports.TRANSITIVE_STATE_OLD = exports.TRANSITIVE_STATE = exports.GOOSEFX_CONTROLLER = exports.GOOSEFX_PROGRAM = exports.MSOL_MINT_AUTHORITY = exports.RESERVE_PDA = exports.LIQ_POOL_MSOL_LEG_AUTHORITY = exports.LIQ_POOL_MSOL_LEG = exports.LIQ_POOL_SOL_LEG_PDA = exports.MSOL_MINT = exports.MARINADE_STATE = exports.MARINADE_PROGRAM_ID = exports.STEPN_PROGRAM_ID = exports.CYKURA_FACTORY_STATE_ADDRESS = exports.CYKURA_PROGRAM_ID = exports.PENGUIN_PROGRAM_ID = exports.STEP_PROGRAM_ID = exports.SAROS_PROGRAM_ID = exports.SENCHA_PROGRAM_ID = exports.MERCURIAL_PROGRAM_ID = exports.SABER_PROGRAM_ID = exports.CROPPER_FEE_ACCOUNT = exports.CROPPER_STATE_ACCOUNT = exports.CROPPER_PROGRAM_ID = exports.LIFINITY_PROGRAM_ID = exports.CREMA_PROGRAM_ID = exports.OPENBOOK_PROGRAM_ID = exports.SERUM_PROGRAM_ID_V3 = exports.LIQUIDITY_POOL_PROGRAM_ID_V4 = exports.TOKEN_PROGRAM_ID = exports.PRISM_OWNER = exports.KNOWN_PAIRS = exports.ENDPOINT = exports.SABER_SWAPS = exports.TOKEN_LIST_URI = void 0;
+const borsh_1 = require("@project-serum/borsh");
+const layout_1 = require("@project-serum/serum/lib/layout");
+exports.TOKEN_LIST_URI = "https://d2o6auu6zcqb6o.cloudfront.net/tokenlist.json";
+exports.SABER_SWAPS = "https://raw.githubusercontent.com/saber-hq/saber-registry-dist/master/data/swaps.mainnet.json";
+exports.ENDPOINT = "https://solana-api.projectserum.com/";
+exports.KNOWN_PAIRS = "https://d2o6auu6zcqb6o.cloudfront.net/pairs.json";
+exports.PRISM_OWNER = "3qgS5KYBTFJ6Lt8GujDEQLcgfLPSnFZ5VFMrxoes7rXs";
+exports.TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+exports.LIQUIDITY_POOL_PROGRAM_ID_V4 = '675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8';
+exports.SERUM_PROGRAM_ID_V3 = '9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin';
+exports.OPENBOOK_PROGRAM_ID = 'srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX';
+exports.CREMA_PROGRAM_ID = '6MLxLqiXaaSUpkgMnWDTuejNZEz3kE7k2woyHGVFw319';
+exports.LIFINITY_PROGRAM_ID = 'EewxydAPCCVuNEyrVN68PuSYdQ7wKn27V9Gjeoi8dy3S';
+exports.CROPPER_PROGRAM_ID = 'CTMAxxk34HjKWxQ3QLZK1HpaLXmBveao3ESePXbiyfzh';
+exports.CROPPER_STATE_ACCOUNT = '3hsU1VgsBgBgz5jWiqdw9RfGU6TpWdCmdah1oi4kF3Tq';
+exports.CROPPER_FEE_ACCOUNT = 'DyDdJM9KVsvosfXbcHDp4pRpmbMHkRq3pcarBykPy4ir';
+exports.SABER_PROGRAM_ID = "addresses";
+exports.MERCURIAL_PROGRAM_ID = 'MERLuDFBMmsHnsBPZw2sDQZHvXFMwp8EdjudcU2HKky';
+exports.SENCHA_PROGRAM_ID = 'SCHAtsf8mbjyjiv4LkhLKutTf6JnZAbdJKFkXQNMFHZ';
+exports.SAROS_PROGRAM_ID = 'SSwapUtytfBdBn1b9NUGG6foMVPtcWgpRU32HToDUZr';
+exports.STEP_PROGRAM_ID = 'SSwpMgqNDsyV7mAgN9ady4bDVu5ySjmmXejXvy2vLt1';
+exports.PENGUIN_PROGRAM_ID = 'PSwapMdSai8tjrEXcxFeQth87xC4rRsa4VA5mhGhXkP';
+exports.CYKURA_PROGRAM_ID = 'cysPXAjehMpVKUapzbMCCnpFxUFFryEWEaLgnb9NrR8';
+exports.CYKURA_FACTORY_STATE_ADDRESS = 'DBsMwKfeoUHhxMi9x6wd2AsT12UwUCssjNbUzu1aKgqj';
+exports.STEPN_PROGRAM_ID = 'Dooar9JkhdZ7J3LHN3A7YCuoGRUggXhQaG4kijfLGU2j';
+exports.MARINADE_PROGRAM_ID = 'MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD';
+exports.MARINADE_STATE = '8szGkuLTAux9XMgZ2vtY39jVSowEcpBfFfD8hXSEqdGC';
+exports.MSOL_MINT = 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So';
+exports.LIQ_POOL_SOL_LEG_PDA = 'UefNb6z6yvArqe4cJHTXCqStRsKmWhGxnZzuHbikP5Q';
+exports.LIQ_POOL_MSOL_LEG = '7GgPYjS5Dza89wV6FpZ23kUJRG5vbQ1GM25ezspYFSoE';
+exports.LIQ_POOL_MSOL_LEG_AUTHORITY = 'EyaSjUtSgo9aRD1f8LWXwdvkpDTmXAW54yoSHZRF14WL';
+exports.RESERVE_PDA = 'Du3Ysj1wKbxPKkuPPnvzQLQh8oMSVifs3jGZjJWXFmHN';
+exports.MSOL_MINT_AUTHORITY = '3JLPCS1qM2zRw3Dp6V4hZnYHd4toMNPkNesXdX9tg6KM';
+exports.GOOSEFX_PROGRAM = '7WduLbRfYhTJktjLw5FDEyrqoEv61aTTCuGAetgLjzN5';
+exports.GOOSEFX_CONTROLLER = '8CxKnuJeoeQXFwiG6XiGY2akBjvJA5k3bE52BfnuEmNQ';
+exports.TRANSITIVE_STATE = '5EUiihMbweSuBAFgU5KR7X1x8TJapNRaf9AyAXk73vC8';
+exports.TRANSITIVE_STATE_OLD = 'HXgqkq5hn6QxrtJmtPW7igf7G4mrxbqS5c8NQybnxYi2';
+exports.MIDDLE_COINS = [
+    { symbol: 'USDC', mintAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', decimals: 6 },
+    { symbol: 'RAY', mintAddress: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', decimals: 6 },
+    { symbol: 'SOL', mintAddress: 'So11111111111111111111111111111111111111112', decimals: 9 },
+    { symbol: 'PAI', mintAddress: 'Ea5SjE2Y6yvCeW5dYTn7PYMuW5ikXkvbGdcmSnXeaLjS', decimals: 6 },
+    { symbol: 'USDT', mintAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', decimals: 6 },
+    { symbol: 'mSOL', mintAddress: 'mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So', decimals: 9 },
+    { symbol: 'ETH', mintAddress: '2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk', decimals: 6 },
+];
+exports.MINT_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u32)('mintAuthorityOption'),
+    (0, borsh_1.publicKey)('mintAuthority'),
+    (0, borsh_1.u64)('supply'),
+    (0, borsh_1.u8)('decimals'),
+    (0, borsh_1.bool)('initialized'),
+    (0, borsh_1.u32)('freezeAuthorityOption'),
+    (0, borsh_1.publicKey)('freezeAuthority')
+]);
+exports.ACCOUNT_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.publicKey)('mint'),
+    (0, borsh_1.publicKey)('owner'),
+    (0, borsh_1.u64)('amount'),
+    (0, borsh_1.u32)('delegateOption'),
+    (0, borsh_1.publicKey)('delegate'),
+    (0, borsh_1.u8)('state'),
+    (0, borsh_1.u32)('isNativeOption'),
+    (0, borsh_1.u64)('isNative'),
+    (0, borsh_1.u64)('delegatedAmount'),
+    (0, borsh_1.u32)('closeAuthorityOption'),
+    (0, borsh_1.publicKey)('closeAuthority')
+]);
+exports.AMM_INFO_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('status'),
+    (0, borsh_1.u64)('nonce'),
+    (0, borsh_1.u64)('orderNum'),
+    (0, borsh_1.u64)('depth'),
+    (0, borsh_1.u64)('coinDecimals'),
+    (0, borsh_1.u64)('pcDecimals'),
+    (0, borsh_1.u64)('state'),
+    (0, borsh_1.u64)('resetFlag'),
+    (0, borsh_1.u64)('fee'),
+    (0, borsh_1.u64)('minSize'),
+    (0, borsh_1.u64)('volMaxCutRatio'),
+    (0, borsh_1.u64)('pnlRatio'),
+    (0, borsh_1.u64)('amountWaveRatio'),
+    (0, borsh_1.u64)('coinLotSize'),
+    (0, borsh_1.u64)('pcLotSize'),
+    (0, borsh_1.u64)('minPriceMultiplier'),
+    (0, borsh_1.u64)('maxPriceMultiplier'),
+    (0, borsh_1.u64)('needTakePnlCoin'),
+    (0, borsh_1.u64)('needTakePnlPc'),
+    (0, borsh_1.u64)('totalPnlX'),
+    (0, borsh_1.u64)('totalPnlY'),
+    (0, borsh_1.u64)('systemDecimalsValue'),
+    (0, borsh_1.publicKey)('poolCoinTokenAccount'),
+    (0, borsh_1.publicKey)('poolPcTokenAccount'),
+    (0, borsh_1.publicKey)('coinMintAddress'),
+    (0, borsh_1.publicKey)('pcMintAddress'),
+    (0, borsh_1.publicKey)('lpMintAddress'),
+    (0, borsh_1.publicKey)('ammOpenOrders'),
+    (0, borsh_1.publicKey)('serumMarket'),
+    (0, borsh_1.publicKey)('serumProgramId'),
+    (0, borsh_1.publicKey)('ammTargetOrders'),
+    (0, borsh_1.publicKey)('ammQuantities'),
+    (0, borsh_1.publicKey)('poolWithdrawQueue'),
+    (0, borsh_1.publicKey)('poolTempLpTokenAccount'),
+    (0, borsh_1.publicKey)('ammOwner'),
+    (0, borsh_1.publicKey)('pnlOwner')
+]);
+exports.AMM_INFO_LAYOUT_V3 = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('status'),
+    (0, borsh_1.u64)('nonce'),
+    (0, borsh_1.u64)('orderNum'),
+    (0, borsh_1.u64)('depth'),
+    (0, borsh_1.u64)('coinDecimals'),
+    (0, borsh_1.u64)('pcDecimals'),
+    (0, borsh_1.u64)('state'),
+    (0, borsh_1.u64)('resetFlag'),
+    (0, borsh_1.u64)('fee'),
+    (0, borsh_1.u64)('min_separate'),
+    (0, borsh_1.u64)('minSize'),
+    (0, borsh_1.u64)('volMaxCutRatio'),
+    (0, borsh_1.u64)('pnlRatio'),
+    (0, borsh_1.u64)('amountWaveRatio'),
+    (0, borsh_1.u64)('coinLotSize'),
+    (0, borsh_1.u64)('pcLotSize'),
+    (0, borsh_1.u64)('minPriceMultiplier'),
+    (0, borsh_1.u64)('maxPriceMultiplier'),
+    (0, borsh_1.u64)('needTakePnlCoin'),
+    (0, borsh_1.u64)('needTakePnlPc'),
+    (0, borsh_1.u64)('totalPnlX'),
+    (0, borsh_1.u64)('totalPnlY'),
+    (0, borsh_1.u64)('poolTotalDepositPc'),
+    (0, borsh_1.u64)('poolTotalDepositCoin'),
+    (0, borsh_1.u64)('systemDecimalsValue'),
+    (0, borsh_1.publicKey)('poolCoinTokenAccount'),
+    (0, borsh_1.publicKey)('poolPcTokenAccount'),
+    (0, borsh_1.publicKey)('coinMintAddress'),
+    (0, borsh_1.publicKey)('pcMintAddress'),
+    (0, borsh_1.publicKey)('lpMintAddress'),
+    (0, borsh_1.publicKey)('ammOpenOrders'),
+    (0, borsh_1.publicKey)('serumMarket'),
+    (0, borsh_1.publicKey)('serumProgramId'),
+    (0, borsh_1.publicKey)('ammTargetOrders'),
+    (0, borsh_1.publicKey)('ammQuantities'),
+    (0, borsh_1.publicKey)('poolWithdrawQueue'),
+    (0, borsh_1.publicKey)('poolTempLpTokenAccount'),
+    (0, borsh_1.publicKey)('ammOwner'),
+    (0, borsh_1.publicKey)('pnlOwner'),
+    (0, borsh_1.publicKey)('srmTokenAccount')
+]);
+exports.AMM_INFO_LAYOUT_V4 = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('status'),
+    (0, borsh_1.u64)('nonce'),
+    (0, borsh_1.u64)('orderNum'),
+    (0, borsh_1.u64)('depth'),
+    (0, borsh_1.u64)('coinDecimals'),
+    (0, borsh_1.u64)('pcDecimals'),
+    (0, borsh_1.u64)('state'),
+    (0, borsh_1.u64)('resetFlag'),
+    (0, borsh_1.u64)('minSize'),
+    (0, borsh_1.u64)('volMaxCutRatio'),
+    (0, borsh_1.u64)('amountWaveRatio'),
+    (0, borsh_1.u64)('coinLotSize'),
+    (0, borsh_1.u64)('pcLotSize'),
+    (0, borsh_1.u64)('minPriceMultiplier'),
+    (0, borsh_1.u64)('maxPriceMultiplier'),
+    (0, borsh_1.u64)('systemDecimalsValue'),
+    // Fees
+    (0, borsh_1.u64)('minSeparateNumerator'),
+    (0, borsh_1.u64)('minSeparateDenominator'),
+    (0, borsh_1.u64)('tradeFeeNumerator'),
+    (0, borsh_1.u64)('tradeFeeDenominator'),
+    (0, borsh_1.u64)('pnlNumerator'),
+    (0, borsh_1.u64)('pnlDenominator'),
+    (0, borsh_1.u64)('swapFeeNumerator'),
+    (0, borsh_1.u64)('swapFeeDenominator'),
+    // OutPutData
+    (0, borsh_1.u64)('needTakePnlCoin'),
+    (0, borsh_1.u64)('needTakePnlPc'),
+    (0, borsh_1.u64)('totalPnlPc'),
+    (0, borsh_1.u64)('totalPnlCoin'),
+    (0, borsh_1.u64)('poolOpenTime'),
+    (0, borsh_1.u64)('punishPcAmount'),
+    (0, borsh_1.u64)('punishCoinAmount'),
+    (0, borsh_1.u64)('orderbookToInitTime'),
+    (0, borsh_1.u128)('swapCoinInAmount'),
+    (0, borsh_1.u128)('swapPcOutAmount'),
+    (0, borsh_1.u64)('swapCoin2PcFee'),
+    (0, borsh_1.u128)('swapPcInAmount'),
+    (0, borsh_1.u128)('swapCoinOutAmount'),
+    (0, borsh_1.u64)('swapPc2CoinFee'),
+    (0, borsh_1.publicKey)('poolCoinTokenAccount'),
+    (0, borsh_1.publicKey)('poolPcTokenAccount'),
+    (0, borsh_1.publicKey)('coinMintAddress'),
+    (0, borsh_1.publicKey)('pcMintAddress'),
+    (0, borsh_1.publicKey)('lpMintAddress'),
+    (0, borsh_1.publicKey)('ammOpenOrders'),
+    (0, borsh_1.publicKey)('serumMarket'),
+    (0, borsh_1.publicKey)('serumProgramId'),
+    (0, borsh_1.publicKey)('ammTargetOrders'),
+    (0, borsh_1.publicKey)('poolWithdrawQueue'),
+    (0, borsh_1.publicKey)('poolTempLpTokenAccount'),
+    (0, borsh_1.publicKey)('ammOwner'),
+    (0, borsh_1.publicKey)('pnlOwner')
+]);
+exports.AMM_INFO_LAYOUT_STABLE = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('status'),
+    (0, borsh_1.publicKey)('own_address'),
+    (0, borsh_1.u64)('nonce'),
+    (0, borsh_1.u64)('orderNum'),
+    (0, borsh_1.u64)('depth'),
+    (0, borsh_1.u64)('coinDecimals'),
+    (0, borsh_1.u64)('pcDecimals'),
+    (0, borsh_1.u64)('state'),
+    (0, borsh_1.u64)('resetFlag'),
+    (0, borsh_1.u64)('minSize'),
+    (0, borsh_1.u64)('volMaxCutRatio'),
+    (0, borsh_1.u64)('amountWaveRatio'),
+    (0, borsh_1.u64)('coinLotSize'),
+    (0, borsh_1.u64)('pcLotSize'),
+    (0, borsh_1.u64)('minPriceMultiplier'),
+    (0, borsh_1.u64)('maxPriceMultiplier'),
+    (0, borsh_1.u64)('systemDecimalsValue'),
+    (0, borsh_1.u64)('ammMaxPrice'),
+    (0, borsh_1.u64)('ammMiddlePrice'),
+    (0, borsh_1.u64)('ammPriceMultiplier'),
+    // Fees
+    (0, borsh_1.u64)('minSeparateNumerator'),
+    (0, borsh_1.u64)('minSeparateDenominator'),
+    (0, borsh_1.u64)('tradeFeeNumerator'),
+    (0, borsh_1.u64)('tradeFeeDenominator'),
+    (0, borsh_1.u64)('pnlNumerator'),
+    (0, borsh_1.u64)('pnlDenominator'),
+    (0, borsh_1.u64)('swapFeeNumerator'),
+    (0, borsh_1.u64)('swapFeeDenominator'),
+    // OutPutData
+    (0, borsh_1.u64)('needTakePnlCoin'),
+    (0, borsh_1.u64)('needTakePnlPc'),
+    (0, borsh_1.u64)('totalPnlPc'),
+    (0, borsh_1.u64)('totalPnlCoin'),
+    (0, borsh_1.u128)('poolTotalDepositPc'),
+    (0, borsh_1.u128)('poolTotalDepositCoin'),
+    (0, borsh_1.u128)('swapCoinInAmount'),
+    (0, borsh_1.u128)('swapPcOutAmount'),
+    (0, borsh_1.u128)('swapPcInAmount'),
+    (0, borsh_1.u128)('swapCoinOutAmount'),
+    (0, borsh_1.u64)('swapPcFee'),
+    (0, borsh_1.u64)('swapCoinFee'),
+    (0, borsh_1.publicKey)('poolCoinTokenAccount'),
+    (0, borsh_1.publicKey)('poolPcTokenAccount'),
+    (0, borsh_1.publicKey)('coinMintAddress'),
+    (0, borsh_1.publicKey)('pcMintAddress'),
+    (0, borsh_1.publicKey)('lpMintAddress'),
+    (0, borsh_1.publicKey)('ammOpenOrders'),
+    (0, borsh_1.publicKey)('serumMarket'),
+    (0, borsh_1.publicKey)('serumProgramId'),
+    (0, borsh_1.publicKey)('ammTargetOrders'),
+    (0, borsh_1.publicKey)('poolWithdrawQueue'),
+    (0, borsh_1.publicKey)('poolTempLpTokenAccount'),
+    (0, borsh_1.publicKey)('ammOwner'),
+    (0, borsh_1.publicKey)('pnlOwner'),
+    (0, borsh_1.u128)('currentK'),
+    (0, borsh_1.u128)('padding1'),
+    (0, borsh_1.publicKey)('padding2')
+]);
+exports.CROPPER_TOKEN_SWAP_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u8)('version'),
+    (0, borsh_1.u8)('isInitialized'),
+    (0, borsh_1.u8)('nonce'),
+    (0, borsh_1.publicKey)('ammId'),
+    (0, borsh_1.publicKey)('serumProgramId'),
+    (0, borsh_1.publicKey)('serumMarket'),
+    (0, borsh_1.publicKey)('tokenProgramId'),
+    (0, borsh_1.publicKey)('tokenAAccount'),
+    (0, borsh_1.publicKey)('tokenBAccount'),
+    (0, borsh_1.publicKey)('poolMint'),
+    (0, borsh_1.publicKey)('mintA'),
+    (0, borsh_1.publicKey)('mintB'),
+]);
+exports.MERCURIAL_SWAP_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u8)('version'),
+    (0, borsh_1.bool)('isInitialized'),
+    (0, borsh_1.u8)('nonce'),
+    (0, borsh_1.u64)('amplificationCoefficient'),
+    (0, borsh_1.u64)('feeNumerator'),
+    (0, borsh_1.u64)('adminFeeNumerator'),
+    (0, borsh_1.u32)('tokenAccountsLength'),
+    (0, borsh_1.u64)('precisionFactor'),
+    (0, borsh_1.array)((0, borsh_1.u64)(), 4, 'precisionMultipliers'),
+    (0, borsh_1.array)((0, borsh_1.publicKey)(), 4, 'tokenAccounts'),
+    (0, borsh_1.publicKey)('poolMint'),
+    (0, borsh_1.publicKey)('adminTokenMint'),
+    (0, borsh_1.bool)('swapEnabled'),
+    (0, borsh_1.bool)('addLiquidityEnabled'),
+]);
+exports.SENCHA_SWAP_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('anchor'),
+    (0, borsh_1.publicKey)('factory'),
+    (0, borsh_1.u8)('bump'),
+    (0, borsh_1.u64)('index'),
+    (0, borsh_1.publicKey)('adminKey'),
+    (0, borsh_1.publicKey)('reservesA'),
+    (0, borsh_1.publicKey)('mintA'),
+    (0, borsh_1.publicKey)('adminFeesA'),
+    (0, borsh_1.publicKey)('reservesB'),
+    (0, borsh_1.publicKey)('mintB'),
+    (0, borsh_1.publicKey)('adminFeesB'),
+    (0, borsh_1.bool)('isPaused'),
+    (0, borsh_1.publicKey)('poolMint'),
+    (0, borsh_1.u64)('tradeFeeKbps'),
+    (0, borsh_1.u64)('withdrawFeeKbps'),
+    (0, borsh_1.u64)('adminTradeFeeKbps'),
+    (0, borsh_1.u64)('adminWithdrawFeeKbps'),
+]);
+exports.SAROS_SWAP_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u8)('version'),
+    (0, borsh_1.bool)('isInitialized'),
+    (0, borsh_1.u8)('bumpSeed'),
+    (0, borsh_1.publicKey)('tokenProgramId'),
+    (0, borsh_1.publicKey)('tokenA'),
+    (0, borsh_1.publicKey)('tokenB'),
+    (0, borsh_1.publicKey)('poolMint'),
+    (0, borsh_1.publicKey)('mintA'),
+    (0, borsh_1.publicKey)('mintB'),
+    (0, borsh_1.publicKey)('poolFeeAccount'),
+    (0, borsh_1.u64)('tradeFeeNumerator'),
+    (0, borsh_1.u64)('tradeFeeDenominator'),
+    (0, borsh_1.u64)('ownerTradeFeeNumerator'),
+    (0, borsh_1.u64)('ownerTradeFeeDenominator'),
+    (0, borsh_1.u64)('ownerWithdrawFeeNumerator'),
+    (0, borsh_1.u64)('ownerWithdrawFeeDenominator'),
+    (0, borsh_1.u64)('hostFeeNumerator'),
+    (0, borsh_1.u64)('hostFeeDenominator'),
+    (0, borsh_1.u8)('curveType'),
+]);
+exports.STEP_SWAP_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u8)('version'),
+    (0, borsh_1.u8)('isInitialized'),
+    (0, borsh_1.u8)('nonce'),
+    (0, borsh_1.publicKey)('tokenProgramId'),
+    (0, borsh_1.publicKey)('tokenAccountA'),
+    (0, borsh_1.publicKey)('tokenAccountB'),
+    (0, borsh_1.publicKey)('poolMint'),
+    (0, borsh_1.publicKey)('mintA'),
+    (0, borsh_1.publicKey)('mintB'),
+    (0, borsh_1.publicKey)('feeAccount'),
+    (0, borsh_1.u64)('tradeFeeNumerator'),
+    (0, borsh_1.u64)('tradeFeeDenominator'),
+]);
+exports.SERUM_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.array)((0, borsh_1.u8)(), 5, 'serumBlob'),
+    (0, layout_1.accountFlagsLayout)('accountFlags'),
+    (0, borsh_1.publicKey)('ownAddress'),
+    (0, borsh_1.u64)('vaultSignerNonce'),
+    (0, borsh_1.publicKey)('baseMint'),
+    (0, borsh_1.publicKey)('quoteMint'),
+    (0, borsh_1.publicKey)('baseVault'),
+    (0, borsh_1.u64)('baseDepositsTotal'),
+    (0, borsh_1.u64)('baseFeesAccrued'),
+    (0, borsh_1.publicKey)('quoteVault'),
+    (0, borsh_1.u64)('quoteDepositsTotal'),
+    (0, borsh_1.u64)('quoteFeesAccrued'),
+    (0, borsh_1.u64)('quoteDustThreshold'),
+    (0, borsh_1.publicKey)('requestQueue'),
+    (0, borsh_1.publicKey)('eventQueue'),
+    (0, borsh_1.publicKey)('bids'),
+    (0, borsh_1.publicKey)('asks'),
+    (0, borsh_1.u64)('baseLotSize'),
+    (0, borsh_1.u64)('quoteLotSize'),
+    (0, borsh_1.u64)('feeRateBps'),
+    (0, borsh_1.u64)('referrerRebatesAccrued'),
+    (0, borsh_1.publicKey)('authority'),
+    (0, borsh_1.publicKey)('pruneAuthority'),
+    (0, borsh_1.publicKey)('consumeEventsAuthority'),
+]);
+exports.CYKURA_LAYOUT = (0, borsh_1.struct)([
+    (0, borsh_1.u64)('anchor'),
+    (0, borsh_1.u8)('bump'),
+    (0, borsh_1.publicKey)('mintA'),
+    (0, borsh_1.publicKey)('mintB'),
+    (0, borsh_1.u32)('fee'),
+    (0, borsh_1.u16)('tickSpacing'),
+    (0, borsh_1.u64)('liquidity'),
+    (0, borsh_1.u64)('sqrtPriceX32'),
+    (0, borsh_1.i32)('tick'),
+    (0, borsh_1.u16)('observationIndex'),
+    (0, borsh_1.u16)('observationCardinality'),
+    (0, borsh_1.u16)('observationCardinalityNext'),
+    (0, borsh_1.u64)('feeGrowthGlobal0x32'),
+    (0, borsh_1.u64)('feeGrowthGlobal1x32'),
+    (0, borsh_1.u64)('protocolFeesTokenA'),
+    (0, borsh_1.u64)('protocolFeesTokenB'),
+    (0, borsh_1.u8)('unlocked'),
+]);
