@@ -229,6 +229,9 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 			symbol: symbol,
 		};
 
+		if (tokenb.address == token.address){
+return
+		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
 				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"), //HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
@@ -538,7 +541,6 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-					if (tokenb.address != token.address){
 						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 
 						await dothehorriblething(
@@ -546,7 +548,7 @@ app.post("/", async function (req, res) {
 							tokenb,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
-					}
+					
 					}
 					a++;
 
