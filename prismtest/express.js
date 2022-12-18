@@ -225,8 +225,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
-		else {
-			console.log(market.reserves)
+		else  if (market.reserves[i]){
 		const reserve = market.reserves[i];
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
