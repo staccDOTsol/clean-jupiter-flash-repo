@@ -561,9 +561,7 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
-setTimeout(async function(){
 						  dothehorriblething(i, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
-}, Math.random() * 200)
 setTimeout(async function(){
 /*don't dot his it fucks up token
 						 dothehorriblething(
