@@ -237,7 +237,7 @@ var reservePairs = {};
 let maybe =     (await prism.loadRoutes(token.address, tokenb.address))//, oldData[token.address + tokenb.address]))
 
 //oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-    let routes = prism.getRoutes(amountToTrade / 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
+    let routes = prism.getRoutes(Math.floor(amountToTrade) / 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
 let tokenAccount = (
       await getOrCreateAssociatedTokenAccount(
         connection, // connection
