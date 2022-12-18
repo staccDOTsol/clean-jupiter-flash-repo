@@ -1,4 +1,3 @@
-const { Prism } = require("@prism-hq/prism-ag");
 const { SolendMarket } = require("./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
@@ -11,15 +10,73 @@ const {
 const { TransactionMessage, VersionedTransaction, ComputeBudgetProgram } = require("@solana/web3.js");
 const fs = require("fs");
 const bs58 = require("bs58");
+
+
+const JSBI =require( "jsbi");
 const {
-	AddressLookupTableProgram,
-	Connection,
-	GetProgramAccountsConfig,
-	Keypair,
-	PublicKey,
-	sendAndConfirmTransaction,
-	Transaction,
-} = require("@solana/web3.js");
+  Jupiter,
+} = require( "@jup-ag/core" ) ;
+const Decimal = require( "decimal.js");
+
+async function getRoutes  (
+  jupiter,
+  inputToken,
+  outputToken,
+  inputAmount,
+  slippageBps
+) {
+  try {
+    if (!inputToken || !outputToken) {
+      return null;
+    }
+
+    const inputAmountInSmallestUnits = Math.round(inputAmount * 10 ** inputToken.decimals)
+      
+
+    const routes =  await jupiter.computeRoutes({
+            inputMint: new PublicKey(inputToken.address),
+            outputMint: new PublicKey(outputToken.address),
+            amount: JSBI.BigInt(inputAmountInSmallestUnits), // raw input amount of tokens
+            slippageBps,
+            forceFetch: true,
+          })
+	const routes2 =
+		outputToken && inputToken
+		  ? await jupiter.computeRoutes({
+			  inputMint: new PublicKey(outputToken.address),
+			  outputMint: new PublicKey(inputToken.address),
+			  amount: routes.routesInfos[0].outAmount, // raw input amount of tokens
+			  slippageBps,
+			  forceFetch: true,
+			})
+		  : null;	  
+    if (routes && routes.routesInfos && routes2 && routes2.routesInfos) {
+      console.log("Possible number of routes:", routes.routesInfos.length, " ", routes2.routesInfos.length);
+      console.log(
+        "Best quotes: ",
+        new Decimal(routes.routesInfos[0].outAmount.toString())
+          .div(10 ** outputToken.decimals)
+          .toString(),
+        `(${outputToken.symbol})`
+      );console.log(
+        "Best quotes: ",
+        new Decimal(routes2.routesInfos[0].outAmount.toString())
+          .div(10 ** inputToken.decimals)
+          .toString(),
+        `(${inputToken.symbol})`
+      );
+      return [routes, routes2];
+    } else {
+      return null;
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+const api = "https://quote-api.jup.ag/v4/quote?inputMint=So11111111111111111111111111111111111111112&outputMint=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&amount=1000000000&slippageBps=50&onlyDirectRoutes=false&userPublicKey=EjXYEx6KH6gyKyQuUxj631Nu68Db9MzBL58ThsYtkgmJ&asLegacyTransaction=false"
 function compare(arr1, arr2) {
 	let count = 0;
 	const max = arr1.length > arr2.length ? arr2.length : arr1.length;
@@ -61,81 +118,17 @@ var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 );
 //var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
-async function findLuts(ixs, pairadd) {
-	var arr1 = [];
-	//for (var ix of ixs) {
-	//	try {
-	//	for (var k of ix.keys) {
-		//	arr1.push(k.pubkey);
-	//	}
-	//} catch(err){
-
-	//}
-	//}
-	connection = new Connection(
-		ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
-	);
-	let goaccs = [];
-	let somejson = JSON.parse(fs.readFileSync("./luts.json").toString());
-	let keys = Object.keys(somejson);
-	let lastcompare = 0;
-	let cs = [];
-
-	for (var key of keys) {
-		
-
-	if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1) {
-		try {
-			// @ts-ignore
-			for (var l of somejson[key]) {
-				// @ts-ignore
-				if (goaccs.length < 30) {
-					try {
-						let test = // @ts-ignore
-							(await connection.getAddressLookupTable(new PublicKey(l))).value;
-
-						// @ts-ignore
-						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-							//let acompare = compare(arr1, test.state.addresses);
-							//if (acompare >= 1){//} && acompare > lastcompare) {
-							//	if (goaccs.length > 9) {
-							//		lastcompare = acompare;
-							////	} else {
-									//lastcompare = acompare - 2;
-							//	}
-								// @ts-ignore
-								goaccs.push(test);
-								console.log(goaccs.length);
-							//}
-						}
-					} catch (err) {}
-				}
-			}
-		} catch (err) {
-			//console.log(err)
-		}
-	}
-  }
-	console.log("found " + goaccs.length.toString() + " luts...");
-	return goaccs;
-}
-
 let tgoaccs = {};
-let prism, market, goluts;
+let jupiter, market, goluts;
 let goaccs = [];
 setTimeout(async function () {
-	prism = await Prism.init({
-		// user executing swap
-		user: Keypair.fromSecretKey(
-			// @ts-ignore
-			bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
-		), // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
-
-		// rpc connection
-		connection, // optional
-		// slippage
-		slippage: 3, // optional
-	});
+	jupiter = await Jupiter.load({
+		connection, routeCacheDuration: 0,
+		cluster: ENV,
+		platformFeeAndAccounts,
+		user: USER_KEYPAIR, shouldLoadSerumOpenOrders: true,
+		restrictIntermediateTokens: false, usePreloadedAddressLookupTableCache: false
+	  });
 
 	market = await SolendMarket.initialize(
 		connection,
@@ -206,19 +199,14 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		if (!doing){
 		//	doing = true
 		//    i = 10
-		if (!prism) {
-			prism = await Prism.init({
-				// user executing swap
-				user: Keypair.fromSecretKey(
-					// @ts-ignore
-					bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
-				), // optional (if you don't provide upon init, then you'll need to call prism.setSigner() after user connects the wallet)
-
-				// rpc connection
-				connection, // optional
-				// slippage
-				slippage: 3, // optional
-			});
+		if (!jupiter) {
+			jupiter = await Jupiter.load({
+				connection, routeCacheDuration: 0,
+				cluster: ENV,
+				platformFeeAndAccounts,
+				user: USER_KEYPAIR, shouldLoadSerumOpenOrders: true,
+				restrictIntermediateTokens: false, usePreloadedAddressLookupTableCache: false
+			  });
 		}
 		if (!market) {
 			market = await SolendMarket.initialize(
@@ -258,11 +246,13 @@ return
 		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
-		let maybe = await prism.loadRoutes(atokens[i].address, tokenb.address); //, oldData[atokens[i].address + tokenb.address]))
-
-		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes((amountToTrade) / 10 ** atokens[i].decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
-		let tokenAccount = (
+const routes = await getRoutes ({
+	jupiter,
+	inputToken: atokens[i].address,
+	outputToken: tokenb.address,
+	amountToTrade: (amountToTrade) / 10 ** atokens[i].decimals,
+	slippageBps: 2})
+	let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
 				wallet, // fee payer
@@ -270,27 +260,21 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 				wallet.publicKey
 			)
 		).address;
-		console.log(routes.length);
-		if (!routes[0]) return
-		if (innn / 5 < routes[0].amountMid * 10 ** dec) {
-			for (var abc of [0,1,2]){
+		console.log(routes.routesInfos.length);
+		console.log(routes2.routesInfos.length);
+		if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
+			for (var abc of [0]){
 				try {
-					let maybe2 = await prism.loadRoutes(tokenb.address, atokens[i].address); //, oldData[tokenb.address + atokens[i].address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-					try {
-						//  oldData[tokenb.address + atokens[i].address] =    maybe2.oldData
-						if (true) {
-							
-							let routes2 = prism.getRoutes(((routes[abc].amountMid) / 1.001)); // get routes based on from Token amount 10 USDC -> ? PRISM
-							console.log(routes2.length);
+					
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 2);
 								try {
-									for (var bca of [0,1,2]) {
-										console.log(
-											routes2[bca].amountMid > routes[abc].amountIn * 1.002
-										);
+									for (var bca of [0]) {
+										
 										if (
-											routes2[bca].amountMid > routes[abc].amountIn * 1.002 &&
+											new Decimal(routes.routesInfos[0].inAmount.toString())
+          .div(10 ** tokenb.decimals) > new Decimal(routes2.routesInfos[0].outAmount.toString())
+          .div(10 ** atokens[i].decimals)* 1.002 &&
 											!doing
 										) {
 											doing = true
@@ -299,24 +283,30 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 												atokens[i].symbol +
 												" " +
 												atokens[i].address + " mod " +
-													(routes[abc].amountIn ).toString() +
-													"$ " +
-													(routes[abc].amountMid).toString() +
-													" outamnt " +
+													
 													tokenb.symbol +
 													" " +
 													tokenb.address
 											);
-											console.log(wallet.publicKey.toBase58());
-
-											let { preTransaction, mainTransaction } =
-												await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
-
-											let { preTransaction: pt, mainTransaction: mp } =
-												await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
+											const execute = await jupiter.exchange({
+												routeInfo,
+											  });
+											  const execute2 = await jupiter.exchange({
+												  routeInfo: routeInfo2,
+												});
+										  
 											let thepaydirt = [];
 											let c = 0;
-
+											let mainTransaction = execute.swapTransaction 
+											let mp = execute2.swapTransaction
+											let pt = []
+											let preTransaction = []
+											if (execute.setupTransaction){
+												preTransaction = execute.setupTransaction 
+											}
+											if (execute2.setupTransaction){
+												pt = execute.setupTransaction
+											}
 											for (var ix of [...mainTransaction.instructions]) {
 												if (!thepaydirt.includes(ix)) {
 													thepaydirt.push(ix);
@@ -441,10 +431,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 												tgoaccs[atokens[i].symbol] = [];
 											}
 											//  if (tgoaccs[atokens[i].symbol].length == 0){
-											tgoaccs[atokens[i].symbol] = await findLuts(instructions, [
-												atokens[i].address,
-												tokenb.address,
-											]);
+											tgoaccs[atokens[i].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
 											//  }
 											var messageV00 = new TransactionMessage({
 												payerKey: wallet.publicKey,
@@ -478,38 +465,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 												fs.writeFileSync("txs.txt", txs);
 											} catch (err) {
 												console.log(err);
-/*
-		await prism.loadRoutes(atokens[i].address, tokenb.address); //, oldData[atokens[i].address + tokenb.address]))
 
-		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(100/ 10 ** atokens[i].address); // get routes based on from Token amount 10 USDC -> ? PRISM
-	
-		let { preTransaction, mainTransaction } =
-		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
-
-let insts = [...preTransaction.instructions, ...mainTransaction.instructions]
-var tx = new Transaction().add(...insts)
-tx.feePayer = wallet.publicKey
-tx.blockhash = (await connection.getLatestBlockhash()).blockhash
-var result = await connection.sendTransaction(tx, [wallet]
-	)
-	console.log('tx1: ' + result)
-		 await prism.loadRoutes(tokenb.address, atokens[i].address); //, oldData[atokens[i].address + tokenb.address]))
-
-		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes2 = prism.getRoutes(routes[0].amountMid / 2); // get routes based on from Token amount 10 USDC -> ? PRISM
-
-	let { preTransaction: pt, mainTransaction: mp } =
-		await prism.generateSwapTransactions(routes2[0]); 
-
-let insts2 = [...pt.instructions, ...mp.instructions]
-var tx = new Transaction().add(...insts2)
-tx.feePayer = wallet.publicKey
-tx.blockhash = (await connection.getLatestBlockhash()).blockhash
-var result = await connection.sendTransaction(tx, [wallet]
-	)
-	console.log('tx2: ' + result)
-	*/
 											}
 											if (result != undefined) {
 												mod = mod * 10;
@@ -523,16 +479,13 @@ var result = await connection.sendTransaction(tx, [wallet]
 								}
 							}
 						}
-					} catch (err) {
-						console.log(err);
+                        catch (err){
+                            console.log(err)
+                        }
 					}
-				} catch (err) {
-					console.log(err);
 				}
 			}
-		}
-	}
-	}
+	
 	} catch (err) {
 		console.log(err);
 	}

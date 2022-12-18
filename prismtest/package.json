@@ -23,6 +23,7 @@
 		"./src/generator.js"
 	],
 	"dependencies": {
+		"@jup-ag/core": "^4.0.0-beta.0",
 		"@prism-hq/prism-ag": "0.2.19",
 		"@project-serum/borsh": "^0.2.5",
 		"@solana/spl-token": "0.1.8",
