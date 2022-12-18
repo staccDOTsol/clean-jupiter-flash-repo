@@ -325,11 +325,11 @@ const someroutes = await getRoutes ({
 											let thepaydirt = [];
 											let c = 0;
 											let DecompileArgs1 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
-											let decompiled1 = VersionedMessage.decompile(
+											let decompiled1 = TransactionMessage.decompile(
 											execute.swapTransaction.message,
 											DecompileArgs1)
 											let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
-											let decompiled2 = VersionedMessage.decompile(
+											let decompiled2 = TransactionMessage.decompile(
 											execute2.swapTransaction.message,
 											DecompileArgs2)
 											let mainTransaction = new Transaction().add(...decompiled1.instructions)
