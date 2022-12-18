@@ -205,15 +205,7 @@ let maybe =     (await prism.loadRoutes(token.address, tokenb.address))//, oldDa
 
 //oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
-    let tokenAccount = (
-      await getOrCreateAssociatedTokenAccount(
-        connection, // connection
-        wallet, // fee payer
-        new PublicKey(reserve.config.liquidityToken.mint),
-        wallet.publicKey,
-        true // mint
-      )
-    ).address;
+    let tokenAccount =  new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1")
     console.log(routes.length)
     if (true){
 
