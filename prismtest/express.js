@@ -269,12 +269,14 @@ return
 		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
-const [routes, routes2]  = await getRoutes ({
+const someroutes = await getRoutes ({
 	jupiter,
 	inputToken: atokens[i].address,
 	outputToken: tokenb.address,
 	amountToTrade: (amountToTrade) / 10 ** atokens[i].decimals,
 	slippageBps: 2})
+	const routes = someroutes[0]
+	const routes2 = someroutes[1]
 	let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
@@ -288,7 +290,7 @@ const [routes, routes2]  = await getRoutes ({
 		if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
 			for (var abc of [0]){
 				try {
-					
+					 
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 2);
 								try {
