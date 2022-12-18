@@ -1,5 +1,5 @@
 const { Prism } = require("@prism-hq/prism-ag");
-const { SolendMarket } = require("./solend-sdk/save/classes");
+const { SolendMarket } = require("./solend-sdk/save/classes");//./solend-sdk/save/classes
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
@@ -8,7 +8,7 @@ const {
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
-const { TransactionMessage, VersionedTransaction } = require("@solana/web3.js");
+const { TransactionMessage, VersionedTransaction, ComputeBudgetProgram } = require("@solana/web3.js");
 const fs = require("fs");
 const bs58 = require("bs58");
 const {
@@ -364,13 +364,12 @@ return
 												}
 											}
 											const params = {
-												units: 301517 + 301517 + 301517 + 101517 + 101517 * 400000,
-												additionalFee: 1380,
+												microLamports: 1380,
 											  };
-											  const ix =
-											  ComputeBudgetProgram.requestUnits(params);
+											  const ix138 =
+											  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
-											let instructions = [ix];
+											let instructions = [ix138];
 											if (preTransaction.instructions.length > 1) {
 												instructions.push(preTransaction.instructions[2]);
 											}else if (preTransaction.instructions.length > 0) {
@@ -556,7 +555,9 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-						await  dothehorriblething(2, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+						await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+
+						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 
 					
 				//	}
