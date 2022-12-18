@@ -234,7 +234,7 @@ var reservePairs = {};
     //let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
     const amountToTrade = Math.floor(amount * (mod / 100));
    
-    console.log(mod.toString() ' mod ' + amountToTrade.toString() + '$')
+    console.log(mod.toString()  + ' mod ' + amountToTrade.toString() + '$')
 let maybe =     (await prism.loadRoutes(token.address, tokenb.address))//, oldData[token.address + tokenb.address]))
 
 //oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
