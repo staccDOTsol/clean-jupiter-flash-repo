@@ -21,7 +21,7 @@ const bs58 = require("bs58");
 
 const JSBI =require( "jsbi");
 const {
-  Jupiter,
+  Jupiter, getPlatformFeeAccounts,
 } = require( "@jup-ag/core" ) ;
 const Decimal = require( "decimal.js");
 
@@ -129,6 +129,14 @@ let tgoaccs = {};
 let jupiter, market, goluts;
 let goaccs = [];
 setTimeout(async function () {
+	const platformFeeAndAccounts = {
+		feeBps: 50,
+		feeAccounts: await getPlatformFeeAccounts(
+		  connection,
+		  wallet.publicKey // The platform fee account owner
+		),
+	  };
+  
 	jupiter = await Jupiter.load({
 		connection, routeCacheDuration: 0,
 		cluster: 'mainnet-beta',
@@ -207,11 +215,20 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		//	doing = true
 		//    i = 10
 		if (!jupiter) {
+			  // If you want to add platformFee as integrator: https://docs.jup.ag/jupiter-core/adding-platform-fees
+			  const platformFeeAndAccounts = {
+				feeBps: 50,
+				feeAccounts: await getPlatformFeeAccounts(
+				  connection,
+				  wallet.publicKey // The platform fee account owner
+				),
+			  };
+		  
 			jupiter = await Jupiter.load({
 				connection, routeCacheDuration: 0,
-				cluster: ENV,
+				cluster: 'mainnet-beta',
 				platformFeeAndAccounts,
-				user: USER_KEYPAIR, shouldLoadSerumOpenOrders: true,
+				user: wallet, shouldLoadSerumOpenOrders: true,
 				restrictIntermediateTokens: false, usePreloadedAddressLookupTableCache: false
 			  });
 		}
