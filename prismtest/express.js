@@ -197,11 +197,12 @@ app.use(cors());
 
 var reservePairs = {};
 // invalid cache. I will recommend using a paid RPC endpoint.
-async function dothehorriblething(i, tokenb, innn, dec) {
+async function dothehorriblething(i, tokenbt, innn, dec) {
+	const tokenb = tokenbt
 	//i = 10
 	try {
 		if (!doing){
-			doing = true
+		//	doing = true
 		//    i = 10
 		if (!prism) {
 			prism = await Prism.init({
