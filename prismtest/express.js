@@ -314,10 +314,10 @@ const someroutes = await getRoutes ({
 													tokenb.address
 											);
 											const execute = await jupiter.exchange({
-												routeInfo,
+												routeInfo:routes[0],
 											  });
 											  const execute2 = await jupiter.exchange({
-												  routeInfo: routeInfo2,
+												routeInfo:routes2[0],
 												});
 										  
 											let thepaydirt = [];
