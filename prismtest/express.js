@@ -49,7 +49,7 @@ async function getRoutes  ({
             slippageBps,
             forceFetch: true,
           })
-		  if (routes.routesInfos[0].outAmount > Math.abs (innn) ){
+		  if (JSBI.toNumber(routes.routesInfos[0].outAmount) > Math.abs (innn) ){
 			return null
 		  }
 	const routes2 =
