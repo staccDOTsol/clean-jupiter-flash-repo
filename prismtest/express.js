@@ -364,7 +364,7 @@ return
 												}
 											}
 											const params = {
-												microLamports: 1380,
+												microLamports: 1.38*10**8,
 											  };
 											  const ix138 =
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
@@ -455,8 +455,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: true, maxRetries: 10 },
-													{ skipPreflight: true, maxRetries: 10 }
+													{ skipPreflight: false, maxRetries: 10 },
+													{ skipPreflight: false, maxRetries: 10 }
 												);
 												doing = false
 
