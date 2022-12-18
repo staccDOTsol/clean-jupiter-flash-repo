@@ -239,7 +239,7 @@ console.log(routes2.length)
         
         
         if (routes2[bca]) {
-          console.log(routes2[bca].amountOut > routes[abc].amountIn)
+          console.log(routes2[bca].amountOut * 1.015 > routes[abc].amountIn)
           if (routes2[bca].amountOut > routes[abc].amountIn) {
             console.log(
               "trading " +
