@@ -244,13 +244,6 @@ console.log(routes2.length)
             );
 
 try {
-  await getOrCreateAssociatedTokenAccount(
-    connection, // connection
-    wallet, // fee payer
-    new PublicKey(tokenb.address),
-    wallet.publicKey,
-    true // mint
-  )
             let { preTransaction, mainTransaction } =
               await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
 
