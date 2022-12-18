@@ -447,6 +447,19 @@ async function dothehorriblething(i, tokenb, innn) {
 												fs.writeFileSync("txs.txt", txs);
 											} catch (err) {
 												console.log(err);
+
+		await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
+
+		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		let routes = prism.getRoutes(100); // get routes based on from Token amount 10 USDC -> ? PRISM
+	await prism.swap(routes[0])
+
+		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
+
+		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		let routes2 = prism.getRoutes(routes[0].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
+		await prism.swap(routes2[0])
+
 											}
 											if (result != undefined) {
 												mod = mod * 10;
