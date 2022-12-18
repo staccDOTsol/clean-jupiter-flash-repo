@@ -334,14 +334,14 @@ const someroutes = await getRoutes ({
 											DecompileArgs2)
 											let mainTransaction = new Transaction().add(...decompiled1.instructions)
 											let mp = new Transaction().add(...decompiled2.instructions)
-											let pt = []
-											let preTransaction = []
+											let pt =  new Transaction()
+											let preTransaction =  new Transaction()
 											if (execute.setupTransaction){
 												let DecompileArgs2 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
 											let decompiled2 = TransactionMessage.decompile(
 											execute.setupTransaction.message,
 											DecompileArgs2)
-											 preTransaction = new Transaction().add(...decompiled2.instructions)
+											 preTransaction.add(...decompiled2.instructions)
 											
 											}
 											if (execute2.setupTransaction){
@@ -349,7 +349,7 @@ const someroutes = await getRoutes ({
 											let decompiled2 = TransactionMessage.decompile(
 											execute2.setupTransaction.message,
 											DecompileArgs2)
-											 pt = new Transaction().add(...decompiled2.instructions)
+											 pt.add(...decompiled2.instructions)
 											}
 											for (var ix of [...mainTransaction.instructions]) {
 												if (!thepaydirt.includes(ix)) {
