@@ -494,10 +494,7 @@ const someroutes = await getRoutes ({
 												transaction.sign([wallet]);
 												result = await sendAndConfirmTransaction(
 													superconnection,
-													// @ts-ignore
 													transaction,
-													{ skipPreflight: true, maxRetries: 10 },
-													{ skipPreflight: true, maxRetries: 10 }
 												);
 												doing = false
 
