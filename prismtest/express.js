@@ -377,12 +377,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 										  
 											let instructions = [ix138];
 											let ccc2 = 0 
-											for (var ptix of preTransaction.instructions){
-												if (ccc2 > 0){
-													instructions.push(ptix)
-												}
-												ccc2++
-											}
+											
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
@@ -393,6 +388,12 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 													SOLEND_PRODUCTION_PROGRAM_ID
 												)
 											);
+											for (var ptix of preTransaction.instructions){
+												if (ccc2 > 0){
+													instructions.push(ptix)
+												}
+												ccc2++
+											}
 											if (instructions2.length > 0) {
 												instructions.push(...instructions2);
 											}
@@ -401,7 +402,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
-													preTransaction.instructions.length-1, //+pt.instructions.length,
+													1, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
