@@ -264,7 +264,7 @@ console.log(wallet.publicKey.toBase58())
                   }
                   c++
               }
-              pt.instructions.length > 0 ?  thepaydirt.push(pt.instructions[1]) : thepaydirt.push(pt.instructions[0]);
+              pt.instructions.length > 1 ?  thepaydirt.push(pt.instructions[1]) : pt.instructions.length > 0 ? thepaydirt.push(pt.instructions[0]) : null;
               c = 0
               for (var ix of [...mp.instructions]){
                 if (!thepaydirt.includes(ix)){
@@ -300,19 +300,26 @@ console.log(wallet.publicKey.toBase58())
         )
       )
     }
-  }
-            let instructions = [
-              ...preTransaction.instructions,
-              flashBorrowReserveLiquidityInstruction(
+  }         
+
+            let instructions = []
+            if (preTransaction.instructions.length > 0){
+              instructions.push(...preTransaction.instruction)
+            }
+             instructions.push( flashBorrowReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
                 new PublicKey(reserve.config.liquidityAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
                 new PublicKey(market.config.address),
                 SOLEND_PRODUCTION_PROGRAM_ID
-              ),
-              ...instructions2,
-              ...thepaydirt,
+              ))
+              if (instructions2.length > 0){
+              instructions.push(...instructions2)
+              }
+
+              instructions.push(...thepaydirt)
+              instructions.push(
               flashRepayReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
                preTransaction.instructions.length,//+pt.instructions.length,
@@ -326,7 +333,8 @@ console.log(wallet.publicKey.toBase58())
                 SOLEND_PRODUCTION_PROGRAM_ID/*,
                 new PublicKey(jaregms[token.symbol]),
                 new PublicKey(reserve.config.liquidityToken.mint)*/
-              ),
+              ))
+              instructions.push(
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
                 tokenAccount,
@@ -342,7 +350,7 @@ console.log(wallet.publicKey.toBase58())
                   )
                 ).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
               )
-            ];
+            )
             console.log(instructions.length)
             if (!Object.keys(tgoaccs).includes(token.symbol)){
               tgoaccs[token.symbol] = []
@@ -350,7 +358,6 @@ console.log(wallet.publicKey.toBase58())
           //  if (tgoaccs[token.symbol].length == 0){
               tgoaccs[token.symbol] = await findLuts([token.address, tokenb.address]);
           //  }
-        
             var messageV00 = new TransactionMessage({
               payerKey: wallet.publicKey,
               recentBlockhash: await 
