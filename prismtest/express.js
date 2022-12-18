@@ -106,7 +106,7 @@ async function findLuts(ixs, pairadd) {
 								// @ts-ignore
 								goaccs.push(test);
 								console.log(goaccs.length);
-							}
+							//}
 						}
 					} catch (err) {}
 				}
