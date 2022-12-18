@@ -161,7 +161,7 @@ var reservePairs = {};
   //i = 10
   try {
       //    i = 10
-      if (!market){
+      if (!prism){
         prism = await Prism.init({
           // user executing swap
           user:  Keypair.fromSecretKey(
@@ -174,6 +174,9 @@ var reservePairs = {};
           // slippage
           slippage: 100, // optional
         });
+      }
+      if (!market){
+       
       market = await SolendMarket.initialize(connection, "production", "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM");
       }
     const reserve = market.reserves[i];
