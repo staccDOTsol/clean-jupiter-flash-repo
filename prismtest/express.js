@@ -89,7 +89,7 @@ async function findLuts(ixs, pairadd) {
 			// @ts-ignore
 			for (var l of somejson[key]) {
 				// @ts-ignore
-				if (goaccs.length < 10) {
+				if (goaccs.length < 30) {
 					try {
 						let test = // @ts-ignore
 							(await connection.getAddressLookupTable(new PublicKey(l))).value;
@@ -97,11 +97,11 @@ async function findLuts(ixs, pairadd) {
 						// @ts-ignore
 						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 							let acompare = compare(arr1, test.state.addresses);
-							if (acompare >= 1 ) {
-								if (goaccs.length > 6) {
+							if (acompare >= 1 && acompare > lastcompare) {
+								if (goaccs.length > 9) {
 									lastcompare = acompare;
 								} else {
-									lastcompare = acompare - 5;
+									lastcompare = acompare - 2;
 								}
 								// @ts-ignore
 								goaccs.push(test);
