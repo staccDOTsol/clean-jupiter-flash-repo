@@ -1,8 +1,8 @@
 const { Prism }= require("@prism-hq/prism-ag");
-const { SolendMarket }= require("./solend-sdk/save/classes");
+const { SolendMarket }= require("@solendprotocol/solend-sdk");
 const { getOrCreateAssociatedTokenAccount }= require("./spl-token/");
 const { createTransferInstruction }= require("./spl-token/");
-const { flashRepayReserveLiquidityInstruction }= require("./solend-sdk/save/instructions/flashRepayReserveLiquidity")//./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+const { flashRepayReserveLiquidityInstruction }= require("@solendprotocol/solend-sdk")//./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { flashBorrowReserveLiquidityInstruction }= require("@solendprotocol/solend-sdk");
 const {
   TransactionMessage,
@@ -42,9 +42,11 @@ const wallet = Keypair.fromSecretKey(
 );
 console.log(wallet.publicKey.toBase58());
 var connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
-  var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
- "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-);
+  //var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+//);
+var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
+
 async function findLuts(pairadd) {
   connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
   let goaccs = [];
@@ -95,12 +97,12 @@ setTimeout(async function () {
     slippage: 100, // optional
   });
 
-   market = await SolendMarket.initialize( connection, "production")
+   market = await SolendMarket.initialize( connection, "production", "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM");
    for (var res of market.reserves){
     tokenbs.push({
       address: res.config.liquidityToken.mint,
       decimals: res.config.liquidityToken.decimals,
-      symbol: res.config.asset,
+      symbol: res.config.liquidityToken.symbol,
     })
   console.log(res.config.liquidityFeeReceiverAddress)
   }
@@ -130,7 +132,7 @@ setTimeout(async function () {
 let oldData = {}
 let tokens = JSON.parse(fs.readFileSync("./solana.tokenlist.json").toString());
 let tokens2 = JSON.parse(fs.readFileSync("./tokens.json").toString());
-let mod = 100;
+let mod = 6.66;
 let tokenbs = []
 var anobj = JSON.parse(fs.readFileSync('taps.json').toString())
 
@@ -169,12 +171,12 @@ var reservePairs = {};
       }
       if (!market){
        
-      market = await SolendMarket.initialize(connection, "production")
+      market = await SolendMarket.initialize(connection, "production", "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM");
       }
     const reserve = market.reserves[i];
     // @ts-ignore
-    let symbol = reserve.config.asset;
-    //mod = Math.random() * 5
+    let symbol = reserve.config.liquidityToken.symbol;
+    mod = Math.random() * 5
     console.log(symbol + " ... ... ... mod: " + mod.toString());
     const token = {
       address: reserve.config.liquidityToken.mint,
@@ -219,7 +221,7 @@ let tokenAccount = (
     console.log(routes.length)
     if (true){
 
-      var abc = Math.floor(Math.random()*1)
+      var abc = Math.floor(Math.random()*4)
       if (routes[abc]) {
 
 
@@ -228,24 +230,23 @@ let tokenAccount = (
 try {
  //  oldData[tokenb.address + token.address] =    maybe2.oldData
    if (routes[abc].amountOut * 0.8 > innn ){
-   let routes2 = prism.getRoutes(routes[0].amountOut ); // get routes based on from Token amount 10 USDC -> ? PRISM
+   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.015); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
     if (true){
 
-    var bca = Math.floor(Math.random()*1)
+    var bca = Math.floor(Math.random()*4)
       try {
         
         
         if (routes2[bca]) {
-          console.log(routes2[bca].amountOut  > routes[abc].amountIn)
-          if (routes2[bca].amountOut * 1.001 > routes[abc].amountIn) {
+          console.log(routes2[bca].amountOut > routes[abc].amountIn)
+          if (routes2[bca].amountOut > routes[abc].amountIn) {
             console.log(
               "trading " +
                 (amountToTrade / 10 ** token.decimals).toString() +
                 " " //+
                 //token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
             );
-             mod = mod / 1.3
 console.log(wallet.publicKey.toBase58())
 try {
   await getOrCreateAssociatedTokenAccount(
@@ -282,7 +283,7 @@ let insts1 = [
   console.log(insts1.length)
             let instructions = [
               flashBorrowReserveLiquidityInstruction(
-                Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
+                Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
                 new PublicKey(reserve.config.liquidityAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
@@ -291,18 +292,18 @@ let insts1 = [
               ),
               ...thepaydirt,
               flashRepayReserveLiquidityInstruction(
-                Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
+                Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
                0,// preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
-                new PublicKey(reserve.config.liquidityAddress),
+                new PublicKey(reserve.config.liquidityFeeReceiverAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
                 new PublicKey(market.config.address),
                 wallet.publicKey,
-                SOLEND_PRODUCTION_PROGRAM_ID,
+                SOLEND_PRODUCTION_PROGRAM_ID/*,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)
+                new PublicKey(reserve.config.liquidityToken.mint)*/
               ),
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
@@ -431,16 +432,16 @@ app.post("/", async function (req, res) {
 if (tokenb == undefined){
   tokenb = tokens2.find((t) => t.address === ch.mint);
 }
-      for (var i = 1; i<= 13; i++){
-         
+      //for (var i = 2; i<= 13; i++){
+             //   if (i != 1){
             if (tokenb != undefined){
-             await  dothehorriblething(i, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+             await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
       //  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
             }  
         a++
             
 
-     }
+    //  }
    // }
         }
       if (anobj.includes(ch.tokenAccount)){
