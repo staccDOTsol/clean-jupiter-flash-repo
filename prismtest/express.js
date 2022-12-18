@@ -221,7 +221,7 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 		const reserve = market.reserves[i];
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
-		mod = Math.random() * 5;
+		mod = Math.random() * 15 + 1;
 		console.log(symbol + " ... ... ... mod: " + mod.toString());
 		const token = {
 			address: reserve.config.liquidityToken.mint,
@@ -285,10 +285,10 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 								try {
 									if (routes2[bca]) {
 										console.log(
-											routes2[bca].amountOut > routes[abc].amountIn * 1.012
+											routes2[bca].amountOut > routes[abc].amountIn * 1.032
 										);
 										if (
-											routes2[bca].amountOut > routes[abc].amountIn * 1.012 &&
+											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
 											//doing = true
