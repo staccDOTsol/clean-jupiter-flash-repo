@@ -269,7 +269,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		).address;
 		console.log(routes.length);
 		if (!routes[0]) return
-		if (innn < routes[0].amountMid * 10 ** dec) {
+		if (innn / 5 < routes[0].amountMid * 10 ** dec) {
 			for (var abc of [0,1,2]){
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
