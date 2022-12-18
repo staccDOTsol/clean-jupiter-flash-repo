@@ -286,7 +286,7 @@ let insts1 = [
   const receiverAccount = await connection.getAccountInfo(associatedDestinationTokenAddr);
         
   
-  if (receiverAccount !== null && receiverAccount.owner.toBase58() !== destPublicKey.toBase58()) {
+  if (receiverAccount !== null && receiverAccount.owner.toBase58() !== wallet.publicKey.toBase58()) {
     // derived account of original owner was at one point transferred, so we transfer our account (only works with NFTs, not fungibles). I opened https://github.com/solana-labs/solana-program-library/issues/2514 to figure out fungibles
    
   } else {
