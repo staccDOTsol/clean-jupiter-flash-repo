@@ -165,6 +165,35 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             openbookData: (0, openbook_1.loadOpenbook)(toLoad.openbook, tokenMap, parsedInfo.openbook),
         };
         oldData[fromCoin.mintAddress+toCoin.mintAddress]=liquidityData
+        let i = -1
+        let taps =  []
+        let tapf = JSON.parse(fs.readFileSync('./taps.json').toString())
+
+        for (var data of Object.values(liquidityData)){
+            i++
+            let b = -1
+            for (var coin of Object.values(data)){
+                b++
+            try {
+                let c = -1
+                for (var ta of coin.tokenAccounts){
+
+                    try {
+                    c++
+                    let tap = ta.toBase58()
+                        if (!tapf.includes(tap)){
+                            tapf.push(tap)
+                        }
+                    } catch (err){
+
+                    }
+                }
+            } catch (err){
+                        
+            }
+    }
+}
+fs.writeFileSync('taps.json', JSON.stringify(tapf))
     }else {
         let i = -1;
         let tl = {}
@@ -172,25 +201,26 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
         for (var data of Object.values(oldData[fromCoin.mintAddress+toCoin.mintAddress])){
             i++
             let b = -1
-            for (var coin of Object.values(data)){
+            for (var coin of Object.keys(data)){
                 b++
         for(var abc of Object.keys(acoolobj)){
             try {
                 let c = -1
-                for (var ta of coin.tokenAccounts){
+                for (var ta of data[coin].tokenAccounts){
+
                     try {
                     c++
                     let tap = ta.toBase58()
-                    if (tap == abc){
-                        tl[Object.keys(Object.keys(tl)[i])[b]].tokenAmounts[c] = acoolobj[abc]
-                    console.log(acoolobj[abc])
+                        if (tap == abc){
+                            data[coin].tokenAmounts[c] = Object.values(acoolobj)[b]
+                            tl[Object.keys(oldData[fromCoin.mintAddress+toCoin.mintAddress])[i]] = data[coin]
+                    console.log(Object.values(acoolobj)[b])
                     }
                 } catch (err){
-console.log(err)
+                    console.log(err)
                 }
                 }
             } catch (err){
-                console.log(err)
             }   
         }
          

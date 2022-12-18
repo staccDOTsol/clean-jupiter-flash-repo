@@ -329,6 +329,6 @@ async function doTheThing(){
     setTimeout(async function(){
      doTheThing()
    }, 1000)
-      mod = mod / 10;
+      mod = mod / 1.66;
      
     }
