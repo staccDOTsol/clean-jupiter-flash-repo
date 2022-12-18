@@ -270,7 +270,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		console.log(routes.length);
 		if (!routes[0]) return
 		if (innn < routes[0].amountOut * 10 ** dec) {
-			var abc = Math.floor(Math.random() * 3);
+			var abc = 0// Math.floor(Math.random() * 3);
 			if (routes[abc]) {
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -278,10 +278,12 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
 							
-							let routes2 = prism.getRoutes((routes[abc].amountOut) ); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes((routes[abc].amountOut) / 1.015); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
+							console.log(routes2[0])
+							console.log(routes[0])
 							if (true) {
-								var bca = Math.floor(Math.random() * 2);
+								var bca = 0//Math.floor(Math.random() * 2);
 								try {
 									if (routes2[bca]) {
 										console.log(
