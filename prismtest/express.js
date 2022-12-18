@@ -69,7 +69,7 @@ async function findLuts(ixs, pairadd) {
 			arr1.push(k.pubkey);
 		}
 	} catch(err){
-		
+
 	}
 	}
 	connection = new Connection(
@@ -227,7 +227,6 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
 		mod = Math.random() * 15 + 1;
-		console.log(symbol + " ... ... ... mod: " + mod.toString());
 		const token = {
 			address: reserve.config.liquidityToken.mint,
 			decimals: reserve.config.liquidity6,
@@ -276,17 +275,7 @@ return
 					try {
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
-							console.log(
-								mod.toString() +
-									" mod " +
-									(amountToTrade / 10 ** 6).toString() +
-									"$ " +
-									routes[abc].amountOut.toString() +
-									" outamnt " +
-									tokenb.symbol +
-									" " +
-									tokenb.address
-							);
+							
 							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.01); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
@@ -300,10 +289,17 @@ return
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-											//doing = true
+											
 											console.log(
-												"trading " + (amountToTrade / 10 ** 6).toString() + " " //+
-												//token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
+												mod.toString() +
+													" mod " +
+													(amountToTrade / 10 ** 6).toString() +
+													"$ " +
+													routes[abc].amountOut.toString() +
+													" outamnt " +
+													tokenb.symbol +
+													" " +
+													tokenb.address
 											);
 											console.log(wallet.publicKey.toBase58());
 
