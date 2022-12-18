@@ -193,7 +193,7 @@ app.use(cors());
 
 var reservePairs = {};
 // invalid cache. I will recommend using a paid RPC endpoint.
-async function dothehorriblething(i, tokenb, innn) {
+async function dothehorriblething(i, tokenb, innn, dec) {
 	//i = 10
 	try {
 		//    i = 10
@@ -259,7 +259,7 @@ async function dothehorriblething(i, tokenb, innn) {
 			)
 		).address;
 		console.log(routes.length);
-		if (innn < routes[0].amountOut * 10 ** ch.rawTokenAmount.decimals) {
+		if (innn < routes[0].amountOut * 10 ** dec) {
 			var abc = Math.floor(Math.random() * 2);
 			if (routes[abc]) {
 				try {
@@ -537,7 +537,7 @@ app.post("/", async function (req, res) {
 						await dothehorriblething(
 							1,
 							tokenb,
-							parseFloat(ch.rawTokenAmount.tokenAmount)
+							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
 						//  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 					}
