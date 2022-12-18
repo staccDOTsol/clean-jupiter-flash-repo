@@ -42,11 +42,9 @@ const wallet = Keypair.fromSecretKey(
 );
 console.log(wallet.publicKey.toBase58());
 var connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
-  //var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
-//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-//);
-var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
-
+  var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+ "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+);
 async function findLuts(pairadd) {
   connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
   let goaccs = [];
