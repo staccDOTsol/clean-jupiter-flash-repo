@@ -594,13 +594,13 @@ app.post("/", async function (req, res) {
 	}
 	res.sendStatus(200);
 });
-/*
+
 const PromisePool = require("@supercharge/promise-pool").default;
 let luts = [];
 
 
 let theluts = JSON.parse(fs.readFileSync('./luts.json').toString());
-var connection /*
+var connection 
 setTimeout(async function () {
   // invalid cache. I will recommend using a paid RPC endpoint.
 
@@ -713,11 +713,11 @@ async function getLuts() {
     console.log(err);
   }
   setTimeout(() => {
-//    getLuts();
-  }, 1000);
+    getLuts();
+  }, 60000);
 }
 
 setTimeout(() => {
-//  getLuts();
-}, 1000);*/
+  getLuts();
+}, 60000);
 app.listen("3000");
