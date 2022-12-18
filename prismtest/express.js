@@ -81,8 +81,8 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
 }
 
 let tgoaccs = {}
-let prism, market, goaccs, goluts
-
+let prism, market, goluts
+let goaccs = []
 setTimeout(async function () {
    prism = await Prism.init({
     // user executing swap
