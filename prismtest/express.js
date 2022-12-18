@@ -312,8 +312,8 @@ let insts1 = [
                 new PublicKey(market.config.address),
                 SOLEND_PRODUCTION_PROGRAM_ID
               ),
-              ...thepaydirt,
               ...instructions2,
+              ...thepaydirt,
               flashRepayReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
                0,// preTransaction.instructions.length,//+pt.instructions.length,
