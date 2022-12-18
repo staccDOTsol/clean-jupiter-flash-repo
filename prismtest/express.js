@@ -100,6 +100,7 @@ try {      for (var l of (somejson)[key]) {
     }
   }
   } catch (err) {}
+}
   
 if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
@@ -134,7 +135,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
       //console.log(err)
     }
   }
-  }
+  
   console.log("found " + goaccs.length.toString() + " luts...");
   return goaccs;
 }
