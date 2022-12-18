@@ -25,12 +25,12 @@ const {
 } = require( "@jup-ag/core" ) ;
 const Decimal = require( "decimal.js");
 
-async function getRoutes  (
+async function getRoutes  ({
   jupiter,
   inputToken,
   outputToken,
   inputAmount,
-  slippageBps
+  slippageBps}
 ) {
   try {
     if (!inputToken || !outputToken) {
