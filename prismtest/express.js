@@ -438,8 +438,8 @@ async function dothehorriblething(i, tokenb, innn) {
 													connection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: false },
-													{ skipPreflight: false }
+													{ skipPreflight: true },
+													{ skipPreflight: true }
 												);
 												console.log("tx: https://solscan.io/tx/" + result);
 												var txs = fs.readFileSync("./txs.txt").toString();
@@ -457,13 +457,11 @@ async function dothehorriblething(i, tokenb, innn) {
 		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
 
 let insts = [...preTransaction.instructions, ...mainTransaction.instructions]
-
-var result = await sendAndConfirmTransaction(
-	connection,
-	// @ts-ignore
-	new Transaction().add(...insts),
-	{ skipPreflight: false },
-	{ skipPreflight: false })
+var tx = new Transaction().add(...insts)
+tx.feePayer = wallet.publicKey
+tx.blockhash = (await connection.getLatestBlockhash()).blockhash
+var result = await connection.sendTransaction(tx, [wallet]
+	)
 	console.log('tx1: ' + result)
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
@@ -474,13 +472,11 @@ var result = await sendAndConfirmTransaction(
 		await prism.generateSwapTransactions(routes2[0]); 
 
 let insts2 = [...pt.instructions, ...mp.instructions]
-
-var result = await sendAndConfirmTransaction(
-	connection,
-	// @ts-ignore
-	new Transaction().add(...insts2),
-	{ skipPreflight: false },
-	{ skipPreflight: false })
+var tx = new Transaction().add(...insts2)
+tx.feePayer = wallet.publicKey
+tx.blockhash = (await connection.getLatestBlockhash()).blockhash
+var result = await connection.sendTransaction(tx, [wallet]
+	)
 	console.log('tx2: ' + result)
 											}
 											if (result != undefined) {
