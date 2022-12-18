@@ -451,7 +451,7 @@ async function dothehorriblething(i, tokenb, innn) {
 		await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(100); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes(100/ 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
 	
 		let { preTransaction, mainTransaction } =
 		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
