@@ -24,7 +24,6 @@ function compare(arr1,arr2){
   const max=arr1.length>arr2.length ? arr2.length : arr1.length;
   for(var i=0;i<max;i++){
     if(arr1[i].toBase58()==arr2[i].toBase58()){
-      console.log('aha')
       count++;
     }
   }
@@ -86,7 +85,9 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               let acompare = compare(arr1, test.state.addresses)
               if (acompare > lastcompare){
+                if (goaccs.length > 10){
                 lastcompare =acompare
+                }
               // @ts-ignore
               goaccs.push(test)
               console.log(goaccs.length)
