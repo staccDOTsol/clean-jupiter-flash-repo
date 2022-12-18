@@ -410,7 +410,7 @@ app.post("/", async function (req, res) {
       var a = 2;
 
       let  tokenb = tokens.find((t) => t.address === ch.mint);
-if (tokenb == undefined){
+if (tokenb.address == undefined){
   tokenb = tokens2.find((t) => t.address === ch.mint);
 }
       //for (var i = 2; i<= 13; i++){
