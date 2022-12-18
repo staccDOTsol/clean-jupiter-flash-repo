@@ -1,14 +1,14 @@
 const { Prism } = require("@prism-hq/prism-ag");
-const { SolendMarket } = require("./solend-sdk/save/classes");//./solend-sdk/save/classes
+const { SolendMarket } = require("@solendprotocol/solend-sdk");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("@solendprotocol/solend-sdk"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
-const { TransactionMessage, VersionedTransaction, ComputeBudgetProgram } = require("@solana/web3.js");
+const { TransactionMessage, VersionedTransaction } = require("@solana/web3.js");
 const fs = require("fs");
 const bs58 = require("bs58");
 const {
@@ -56,10 +56,10 @@ console.log(wallet.publicKey.toBase58());
 var connection = new Connection(
 	ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 );
-var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
- "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-);
-//var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
+//var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+//);
+var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
 async function findLuts(ixs, pairadd) {
 	var arr1 = [];
@@ -135,14 +135,14 @@ setTimeout(async function () {
 
 	market = await SolendMarket.initialize(
 		connection,
-		"production"//,
-		//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		"production",
+		"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 	);
 	for (var res of market.reserves) {
 		tokenbs.push({
 			address: res.config.liquidityToken.mint,
-			decimals: res.config.decimals,
-			symbol: res.config.asset,
+			decimals: res.config.liquidity6,
+			symbol: res.config.liquidityToken.symbol,
 		});
 		console.log(res.config.liquidityFeeReceiverAddress);
 	}
@@ -215,18 +215,18 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 		if (!market) {
 			market = await SolendMarket.initialize(
 				connection,
-				"production"//,
-				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				"production",
+				"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		const reserve = market.reserves[i];
 		// @ts-ignore
-		let symbol = reserve.config.asset;
+		let symbol = reserve.config.liquidityToken.symbol;
 		mod = Math.random() * 15 + 1;
 		console.log(symbol + " ... ... ... mod: " + mod.toString());
 		const token = {
 			address: reserve.config.liquidityToken.mint,
-			decimals: reserve.config.decimals,
+			decimals: reserve.config.liquidity6,
 			symbol: symbol,
 		};
 
@@ -235,7 +235,7 @@ return
 		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
-				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),
+				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"), //HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
 				{ mint: new PublicKey(token.address) }
 			)
 		).value;
@@ -253,7 +253,7 @@ return
 		let maybe = await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(Math.floor(amountToTrade) / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes(Math.floor(amountToTrade) / 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
@@ -264,8 +264,8 @@ return
 		).address;
 		console.log(routes.length);
 		if (!routes[0]) return
-		if (true){//innn / 5 < routes[0].amountOut * 10 ** dec) {
-			var abc = 0// Math.floor(Math.random() * 2);
+		if (innn / 5 < routes[0].amountOut * 10 ** dec) {
+			var abc = Math.floor(Math.random() * 2);
 			if (routes[abc]) {
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -275,7 +275,7 @@ return
 							console.log(
 								mod.toString() +
 									" mod " +
-									(amountToTrade / 10 ** token.decimals).toString() +
+									(amountToTrade / 10 ** 6).toString() +
 									"$ " +
 									routes[abc].amountOut.toString() +
 									" outamnt " +
@@ -283,22 +283,22 @@ return
 									" " +
 									tokenb.address
 							);
-							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.007); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.01); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
-								var bca = 0//Math.floor(Math.random() * 7);
+								var bca = Math.floor(Math.random() * 7);
 								try {
 									if (routes2[bca]) {
 										console.log(
-											routes2[bca].amountOut > routes[abc].amountIn * 1.009
+											routes2[bca].amountOut > routes[abc].amountIn * 1.032
 										);
 										if (
-											routes2[bca].amountOut > routes[abc].amountIn * 1.009 &&
+											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
 											//doing = true
 											console.log(
-												"trading " + (amountToTrade / 10 ** token.decimals).toString() + " " //+
+												"trading " + (amountToTrade / 10 ** 6).toString() + " " //+
 												//token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
 											);
 											console.log(wallet.publicKey.toBase58());
@@ -363,6 +363,7 @@ return
 													);
 												}
 											}
+
 											const params = {
 												microLamports: 1.38*10**8,
 											  };
@@ -370,15 +371,15 @@ return
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
 											let instructions = [ix138];
-											if (preTransaction.instructions.length > 1) {
+											if (preTransaction.instructions.length >= 2) {
 												instructions.push(preTransaction.instructions[2]);
-											}else if (preTransaction.instructions.length > 0) {
+											}else if (preTransaction.instructions.length >= 1) {
 												instructions.push(preTransaction.instructions[1]);
 
 											}
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
+													Math.ceil(routes[abc].amountIn * 10 ** 6),
 													new PublicKey(reserve.config.liquidityAddress),
 													tokenAccount,
 													new PublicKey(reserve.config.address),
@@ -393,20 +394,20 @@ return
 											instructions.push(...thepaydirt);
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
+													Math.ceil(routes[abc].amountIn * 10 ** 6),
 													preTransaction.instructions.length, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
-														reserve.config.liquidityAddress//liquidityFeeReceiverAddress
+														reserve.config.liquidityFeeReceiverAddress
 													),
 													tokenAccount,
 													new PublicKey(reserve.config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
-													SOLEND_PRODUCTION_PROGRAM_ID,
+													SOLEND_PRODUCTION_PROGRAM_ID /*,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)
+                new PublicKey(reserve.config.liquidityToken.mint)*/
 												)
 											);
 											instructions.push(
@@ -423,7 +424,7 @@ return
 																),
 															}
 														)
-													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
+													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** 6)
 												)
 											);
 											console.log(instructions.length);
@@ -455,8 +456,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: false, maxRetries: 10 },
-													{ skipPreflight: false, maxRetries: 10 }
+													{ skipPreflight: true, maxRetries: 10 },
+													{ skipPreflight: true, maxRetries: 10 }
 												);
 												doing = false
 
@@ -472,7 +473,7 @@ return
 		await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(100/ 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes = prism.getRoutes(100/ 10 ** 6); // get routes based on from Token amount 10 USDC -> ? PRISM
 	
 		let { preTransaction, mainTransaction } =
 		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
@@ -555,13 +556,15 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-						await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
-
 						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 
+						await dothehorriblething(
+							1,
+							tokenb,
+							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
+						);
 					
-				//	}
-				}
+					}
 					a++;
 
 					//  }
