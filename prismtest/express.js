@@ -277,17 +277,17 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
 							
-							let routes2 = prism.getRoutes(Math.floor((routes[abc].amountMid) / 1.009)); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes(Math.floor((routes[abc].amountMid) / 1.006)); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 2);
 								try {
 									for (var bca of [0,1,2]) {
 										console.log(
-											routes2[bca].amountMid > routes[abc].amountIn * 1.013
+											routes2[bca].amountMid > routes[abc].amountIn * 1.004
 										);
 										if (
-											routes2[bca].amountMid > routes[abc].amountIn * 1.013 &&
+											routes2[bca].amountMid > routes[abc].amountIn * 1.004 &&
 											!doing
 										) {
 											doing = true
