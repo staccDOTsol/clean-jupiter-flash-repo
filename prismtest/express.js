@@ -62,10 +62,10 @@ async function findLuts(ixs, pairadd) {
 var arr1 = []
 for (var ix of ixs){
   for (var k of ix.keys){
-    arr1.push(k)
+    arr1.push(k.pubkey)
   }
 }
-
+console.log(arr1)
   connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
   let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
