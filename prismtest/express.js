@@ -49,7 +49,7 @@ async function getRoutes  ({
             slippageBps,
             forceFetch: true,
           })
-		  if (routes.routeInfos[0].outAmount > innn / 5){
+		  if (routes.routeInfos[0].outAmount > innn ){
 			return null
 		  }
 	const routes2 =
