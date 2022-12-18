@@ -89,7 +89,7 @@ async function findLuts(ixs, pairadd) {
 			// @ts-ignore
 			for (var l of somejson[key]) {
 				// @ts-ignore
-				if (goaccs.length < 300) {
+				if (goaccs.length < 10) {
 					try {
 						let test = // @ts-ignore
 							(await connection.getAddressLookupTable(new PublicKey(l))).value;
