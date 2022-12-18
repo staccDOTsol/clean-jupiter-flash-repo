@@ -214,7 +214,9 @@ let maybe =     (await prism.loadRoutes(token.address, tokenb.address))//, oldDa
       )
     ).address;
     console.log(routes.length)
-    for (var abc of [Math.floor(Math.random()*4)]) {
+    if (true){
+
+      var abc = Math.floor(Math.random()*4)
       if (routes[abc]) {
 
 
@@ -225,7 +227,9 @@ try {
    if (routes[abc].amountOut * 0.8 > innn ){
    let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
-    for (var bca of [Math.floor(Math.random()*4)]) {
+    if (true){
+
+    var bca = Math.floor(Math.random()*4)
       try {
         
         
