@@ -555,7 +555,7 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 
 						await dothehorriblething(
 							1,
