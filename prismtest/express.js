@@ -401,7 +401,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
-													1+preTransaction.instructions.length-1, //+pt.instructions.length,
+													preTransaction.instructions.length-1, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
