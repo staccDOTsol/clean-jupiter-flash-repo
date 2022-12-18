@@ -21,6 +21,7 @@ const {
 } = require("@solana/web3.js");
 
 const jaregms = {
+  USDC:"2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1",
   mSOL: "98ujMj4PcFBN6Rd4VRdELdwFMHEGtfGuN6uiTUs3QVPV",
   stSOL: "BgPgvbe11wMVGazRrX1jNgQnKzpRpPt1AVFHFenEtbAH",
   UST: "HtGvMME7965JxDfmUb2oQLWK3mfQxqRQGXXjigZDZoHH",
@@ -295,16 +296,7 @@ let insts1 = [
               ),
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
-                (
-                  await connection.getParsedTokenAccountsByOwner(
-                    wallet.publicKey,
-                    {
-                      mint: new PublicKey(
-                        reserve.config.liquidityToken.mint
-                      ),
-                    }
-                  )
-                ).value[0].pubkey,
+                new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1"),
                 wallet.publicKey, // from's owner
                 (
                   await connection.getParsedTokenAccountsByOwner(
