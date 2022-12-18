@@ -380,9 +380,9 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
-													new PublicKey(reserve..liquidityAddress),
+													new PublicKey(reserve.liquidityAddress),
 													tokenAccount,
-													new PublicKey(reserve..address),
+													new PublicKey(reserve.address),
 													new PublicKey(market.config.address),
 													SOLEND_PRODUCTION_PROGRAM_ID
 												)
@@ -403,17 +403,17 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
 													1, //+pt.instructions.length,
 													tokenAccount,
-													new PublicKey(reserve..liquidityAddress),
+													new PublicKey(reserve.liquidityAddress),
 													new PublicKey(
-														reserve..liquidityAddress//liquidityFeeReceiverAddress
+														reserve.liquidityAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
-													new PublicKey(reserve..address),
+													new PublicKey(reserve.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
 													SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve..liquidityToken.mint)
+                new PublicKey(reserve.liquidityToken.mint)
 												)
 											);
 											instructions.push(
@@ -426,7 +426,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 															wallet.publicKey,
 															{
 																mint: new PublicKey(
-																	reserve..liquidityToken.mint
+																	reserve.liquidityToken.mint
 																),
 															}
 														)
