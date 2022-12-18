@@ -433,20 +433,20 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 											var result = undefined;
 											try {
 												transaction.sign([wallet]);
-
-												 sendAndConfirmTransaction(
+												doing = false
+												result = await sendAndConfirmTransaction(
 													superconnection,
 													// @ts-ignore
 													transaction,
 													{ skipPreflight: true },
 													{ skipPreflight: true }
-												);/*
+												);
 												for (var i = 0; i<=100; i++){
 												console.log("tx: https://solscan.io/tx/" + result);
 												}
 												var txs = fs.readFileSync("./txs.txt").toString();
 												txs += "\nhttps://solscan.io/tx/" + result;
-												fs.writeFileSync("txs.txt", txs); */
+												fs.writeFileSync("txs.txt", txs);
 											} catch (err) {
 												console.log(err);
 /*
