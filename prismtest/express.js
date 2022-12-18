@@ -259,7 +259,7 @@ async function dothehorriblething(i, tokenb, innn) {
 			)
 		).address;
 		console.log(routes.length);
-		if (true) {
+		if (innn < routes[0].amountOut * 10 ** ch.rawTokenAmount.decimals) {
 			var abc = Math.floor(Math.random() * 2);
 			if (routes[abc]) {
 				try {
