@@ -560,11 +560,11 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 setTimeout(async function(){
-						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
 setTimeout(async function(){
 
-						await dothehorriblething(
+						 dothehorriblething(
 							1,
 							tokenb,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
