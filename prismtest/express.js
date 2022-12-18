@@ -58,7 +58,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
       // @ts-ignore
       for (var l of (somejson)[key]) {
         // @ts-ignore
-        if (goaccs.length < 9) {
+        if (goaccs.length < 39) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
@@ -209,7 +209,15 @@ let maybe =     (await prism.loadRoutes(token.address, tokenb.address))//, oldDa
 
 //oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
-    let tokenAccount =  new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1")
+let tokenAccount = (
+      await getOrCreateAssociatedTokenAccount(
+        connection, // connection
+        wallet, // fee payer
+        new PublicKey(reserve.config.liquidityToken.mint),
+        wallet.publicKey,
+        true // mint
+      )
+    ).address;
     console.log(routes.length)
     if (true){
 
@@ -241,6 +249,13 @@ console.log(routes2.length)
             );
 console.log(wallet.publicKey.toBase58())
 try {
+  await getOrCreateAssociatedTokenAccount(
+    connection, // connection
+    wallet, // fee payer
+    new PublicKey(tokenb.address),
+    wallet.publicKey,
+    true // mint
+  )
             let { preTransaction, mainTransaction } =
               await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
 
