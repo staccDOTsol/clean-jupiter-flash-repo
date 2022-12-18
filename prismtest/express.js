@@ -60,7 +60,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
       // @ts-ignore
       for (var l of (somejson)[key]) {
         // @ts-ignore
-        if (goaccs.length < 75) {
+        if (goaccs.length < 36) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
