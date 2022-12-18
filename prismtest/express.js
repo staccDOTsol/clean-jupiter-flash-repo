@@ -98,7 +98,7 @@ async function findLuts(ixs, pairadd) {
 						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 							let acompare = compare(arr1, test.state.addresses);
 							if (acompare >= 1 ) {
-								if (goaccs.length > 14) {
+								if (goaccs.length > 6) {
 									lastcompare = acompare;
 								} else {
 									lastcompare = acompare - 5;
@@ -278,20 +278,20 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
 							
-							let routes2 = prism.getRoutes((routes[abc].amountOut/ 1.009) ); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes((routes[abc].amountOut/ 1.015) ); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = Math.floor(Math.random() * 2);
 								try {
 									if (routes2[bca]) {
 										console.log(
-											routes2[bca].amountOut > routes[abc].amountIn * 1.0105
+											routes2[bca].amountOut > routes[abc].amountIn * 1.023
 										);
 										if (
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-											doing = true
+										//	doing = true
 											console.log(
 												mod.toString() +
 												token.symbol +
