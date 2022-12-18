@@ -466,7 +466,7 @@ var result = await connection.sendTransaction(tx, [wallet]
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes2 = prism.getRoutes(routes[0].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes2 = prism.getRoutes(routes[0].amountOut / 2); // get routes based on from Token amount 10 USDC -> ? PRISM
 
 	let { preTransaction: pt, mainTransaction: mp } =
 		await prism.generateSwapTransactions(routes2[0]); 
