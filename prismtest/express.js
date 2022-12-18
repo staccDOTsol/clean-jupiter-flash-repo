@@ -438,8 +438,8 @@ async function dothehorriblething(i, tokenb, innn) {
 													connection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: true },
-													{ skipPreflight: true }
+													{ skipPreflight: false },
+													{ skipPreflight: false }
 												);
 												console.log("tx: https://solscan.io/tx/" + result);
 												var txs = fs.readFileSync("./txs.txt").toString();
@@ -462,8 +462,8 @@ var result = await sendAndConfirmTransaction(
 	connection,
 	// @ts-ignore
 	new Transaction().add(...insts),
-	{ skipPreflight: true },
-	{ skipPreflight: true })
+	{ skipPreflight: false },
+	{ skipPreflight: false })
 	console.log('tx1: ' + result)
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
@@ -479,8 +479,8 @@ var result = await sendAndConfirmTransaction(
 	connection,
 	// @ts-ignore
 	new Transaction().add(...insts2),
-	{ skipPreflight: true },
-	{ skipPreflight: true })
+	{ skipPreflight: false },
+	{ skipPreflight: false })
 	console.log('tx2: ' + result)
 											}
 											if (result != undefined) {
