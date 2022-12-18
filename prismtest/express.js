@@ -235,7 +235,7 @@ return
 		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
-				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"), //HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
+				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),
 				{ mint: new PublicKey(token.address) }
 			)
 		).value;
