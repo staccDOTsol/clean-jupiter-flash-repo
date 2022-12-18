@@ -33,9 +33,6 @@ async function getRoutes  (
   slippageBps
 ) {
   try {
-    if (!inputToken || !outputToken) {
-      return null;
-    }
 
     const inputAmountInSmallestUnits = Math.round(inputAmount * 10 ** inputToken.decimals)
       
@@ -273,7 +270,7 @@ const someroutes = await getRoutes ({
 	jupiter,
 	inputToken: atokens[i],
 	outputToken: tokenb,
-	amountToTrade: (amountToTrade) / 10 ** atokens[i].decimals,
+	inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
 	slippageBps: 2})
 	const routes = someroutes[0]
 	const routes2 = someroutes[1]
