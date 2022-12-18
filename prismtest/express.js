@@ -84,7 +84,7 @@ async function findLuts(ixs, pairadd) {
 	for (var key of keys) {
 		
 
-	if (key.indexOf(pairadd[0]) != -1 && key.indexOf(pairadd[1]) != -1) {
+	if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1) {
 		try {
 			// @ts-ignore
 			for (var l of somejson[key]) {
