@@ -246,9 +246,9 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		let symbol = market.reserves[i].config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001; 	
 		 atokens[i] = {
-			address: market.reserves[i].config.liquidityToken.address,
-			decimals: market.reserves[i].config.liquidityToken.decimals,
-			symbol: market.reserves[i].config.liquidityToken.symbol,
+			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+			decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
+			symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
 		};
 
 		if (tokenb.address == atokens[i].address){
