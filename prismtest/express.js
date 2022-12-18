@@ -270,7 +270,7 @@ return
 		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
-const routes = await getRoutes ({
+const [routes, routes2]  = await getRoutes ({
 	jupiter,
 	inputToken: atokens[i].address,
 	outputToken: tokenb.address,
