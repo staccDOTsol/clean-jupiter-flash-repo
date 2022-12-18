@@ -294,7 +294,7 @@ return
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-											doing = true
+										//	doing = true
 											console.log(
 												"trading " + (amountToTrade / 10 ** 6).toString() + " " //+
 												//token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
