@@ -371,9 +371,7 @@ return
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
 											let instructions = [ix138];
-											if (preTransaction.instructions.length >= 2) {
-												instructions.push(preTransaction.instructions[2]);
-											}else if (preTransaction.instructions.length >= 1) {
+											 if (preTransaction.instructions.length >= 1) {
 												instructions.push(preTransaction.instructions[1]);
 
 											}
