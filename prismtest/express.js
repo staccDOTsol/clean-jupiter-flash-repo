@@ -84,10 +84,8 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               let acompare = compare(arr1, test.state.addresses)
-              if (acompare > lastcompare){
-                if (goaccs.length > 10){
+              if (acompare > lastcompare -15){
                 lastcompare =acompare
-                }
               // @ts-ignore
               goaccs.push(test)
               console.log(goaccs.length)
