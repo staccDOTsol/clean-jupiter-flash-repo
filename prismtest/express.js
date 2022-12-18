@@ -442,8 +442,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: true },
-													{ skipPreflight: true }
+													{ skipPreflight: false },
+													{ skipPreflight: false }
 												);
 												for (var i = 0; i<=100; i++){
 												console.log("tx: https://solscan.io/tx/" + result);
