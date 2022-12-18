@@ -265,7 +265,7 @@ return
 		console.log(routes.length);
 		if (!routes[0]) return
 		if (true){//innn / 5 < routes[0].amountOut * 10 ** dec) {
-			var abc = Math.floor(Math.random() * 2);
+			var abc = 0// Math.floor(Math.random() * 2);
 			if (routes[abc]) {
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -286,7 +286,7 @@ return
 							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.01); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
-								var bca = Math.floor(Math.random() * 7);
+								var bca = 0//Math.floor(Math.random() * 7);
 								try {
 									if (routes2[bca]) {
 										console.log(
