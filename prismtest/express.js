@@ -351,43 +351,14 @@ let insts1 = [
           //  if (tgoaccs[token.symbol].length == 0){
               tgoaccs[token.symbol] = await findLuts([token.address, tokenb.address]);
           //  }
-          if (insts1.length > 1){
-          var messageV00 = new TransactionMessage({
-            payerKey: wallet.publicKey,
-            recentBlockhash: await 
-            (// @ts-ignore
-              await connection.getLatestBlockhash()
-            ).blockhash,
-            instructions: insts1,
-          }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
-          var transaction = new VersionedTransaction(messageV00);
-          var result;
-          try {
-            transaction.sign([wallet]);
-
-            result = await sendAndConfirmTransaction(
-              connection,
-              // @ts-ignore
-              transaction,
-              { skipPreflight: true },
-              { skipPreflight: true }
-            );
-            console.log("tx1: https://solscan.io/tx/" + result);
-            var txs = fs.readFileSync('./txs.txt').toString()
-            txs+='\nhttps://solscan.io/tx/' + result 
-            fs.writeFileSync('txs.txt', txs)
-          } catch (err) {
-            console.log(err);
-          
-          }
-        }
+        
             var messageV00 = new TransactionMessage({
               payerKey: wallet.publicKey,
               recentBlockhash: await 
               (// @ts-ignore
                 await connection.getLatestBlockhash()
               ).blockhash,
-              instructions,
+              instructions: [...insts1, ...instructions],
             }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
             var transaction = new VersionedTransaction(messageV00);
             var result = undefined;
