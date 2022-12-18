@@ -300,8 +300,8 @@ const someroutes = await getRoutes ({
 										
 										if (
 											new Decimal(routes.routesInfos[0].inAmount.toString())
-          .div(10 ** tokenb.decimals) < new Decimal(routes2.routesInfos[0].outAmount.toString())
-          .div(10 ** atokens[i].decimals)* 1.0072 &&
+          .div(10 ** tokenb.decimals) * 1.0072 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+          .div(10 ** atokens[i].decimals) &&
 											!doing
 										) {
 											//doing = true
