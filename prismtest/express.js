@@ -264,10 +264,10 @@ console.log(wallet.publicKey.toBase58())
                   }
                   c++
               }
-              thepaydirt.push(pt.instructions[1])
+              pt.instructions.length > 0 ?  thepaydirt.push(pt.instructions[1]) : thepaydirt.push(pt.instructions[0]);
               c = 0
               for (var ix of [...mp.instructions]){
-                if (!thepaydirt.includes(ix)&& c > 0){
+                if (!thepaydirt.includes(ix)){
                   thepaydirt.push(ix)
                 }
                 c++
@@ -360,7 +360,7 @@ let insts1 = [
               (// @ts-ignore
                 await connection.getLatestBlockhash()
               ).blockhash,
-              instructions: [...preTransaction, ...instructions],
+              instructions
             }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
             var transaction = new VersionedTransaction(messageV00);
             var result = undefined;
