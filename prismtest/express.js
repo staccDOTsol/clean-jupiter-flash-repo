@@ -196,6 +196,7 @@ var reservePairs = {};
 async function dothehorriblething(i, tokenb, innn, dec) {
 	//i = 10
 	try {
+		if (!doing){
 		//    i = 10
 		if (!prism) {
 			prism = await Prism.init({
@@ -517,6 +518,7 @@ var result = await connection.sendTransaction(tx, [wallet]
 				}
 			}
 		}
+	}
 	} catch (err) {
 		doing = false;
 		console.log(err);
