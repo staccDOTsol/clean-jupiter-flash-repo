@@ -246,7 +246,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		let symbol = market.reserves[i].config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001; 	
 		 atokens[i] = {
-			address: market.reserves[i].config.mint,
+			address: market.reserves[i].config.liquidityToken.address,
 			decimals: market.reserves[i].config.liquidityToken.decimals,
 			symbol: market.reserves[i].config.liquidityToken.symbol,
 		};
