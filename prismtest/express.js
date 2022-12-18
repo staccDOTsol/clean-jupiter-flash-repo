@@ -283,17 +283,17 @@ return
 									" " +
 									tokenb.address
 							);
-							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.01); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes(routes[abc].amountOut / 1.007); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 7);
 								try {
 									if (routes2[bca]) {
 										console.log(
-											routes2[bca].amountOut > routes[abc].amountIn * 1.032
+											routes2[bca].amountOut > routes[abc].amountIn * 1.009
 										);
 										if (
-											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
+											routes2[bca].amountOut > routes[abc].amountIn * 1.009 &&
 											!doing
 										) {
 											//doing = true
