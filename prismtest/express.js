@@ -225,14 +225,15 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
+		else {
 		const reserve = market.reserves[i];
 		// @ts-ignore
-		let symbol = reserve.liquidityToken.symbol;
+		let symbol = reserve.config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001;
 		const token = {
-			address: reserve.liquidityToken.address,
-			decimals: reserve.liquidityToken.decimals,
-			symbol: reserve.asset,
+			address: reserve.config.liquidityToken.address,
+			decimals: reserve.config.liquidityToken.decimals,
+			symbol: reserve.config.asset,
 		};
 
 		if (tokenb.address == token.address){
@@ -263,7 +264,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
 				wallet, // fee payer
-				new PublicKey(reserve.liquidityToken.mint),
+				new PublicKey(reserve.config.liquidityToken.mint),
 				wallet.publicKey
 			)
 		).address;
@@ -380,9 +381,9 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
-													new PublicKey(reserve.liquidityAddress),
+													new PublicKey(reserve.config.liquidityAddress),
 													tokenAccount,
-													new PublicKey(reserve.address),
+													new PublicKey(reserve.config.address),
 													new PublicKey(market.config.address),
 													SOLEND_PRODUCTION_PROGRAM_ID
 												)
@@ -403,17 +404,17 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
 													1, //+pt.instructions.length,
 													tokenAccount,
-													new PublicKey(reserve.liquidityAddress),
+													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
-														reserve.liquidityAddress//liquidityFeeReceiverAddress
+														reserve.config.liquidityAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
-													new PublicKey(reserve.address),
+													new PublicKey(reserve.config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
 													SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.liquidityToken.mint)
+                new PublicKey(reserve.config.liquidityToken.mint)
 												)
 											);
 											instructions.push(
@@ -426,7 +427,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 															wallet.publicKey,
 															{
 																mint: new PublicKey(
-																	reserve.liquidityToken.mint
+																	reserve.config.liquidityToken.mint
 																),
 															}
 														)
@@ -528,6 +529,7 @@ var result = await connection.sendTransaction(tx, [wallet]
 				}
 			}
 		}
+	}
 	}
 	} catch (err) {
 		console.log(err);
