@@ -8,7 +8,7 @@ const {
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
-const { TransactionMessage, VersionedTransaction } = require("@solana/web3.js");
+const { TransactionMessage, VersionedTransaction, ComputeBudgetProgram } = require("@solana/web3.js");
 const fs = require("fs");
 const bs58 = require("bs58");
 const {
