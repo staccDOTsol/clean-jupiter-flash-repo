@@ -130,7 +130,7 @@ setTimeout(async function () {
 let oldData = {}
 let tokens = JSON.parse(fs.readFileSync("./solana.tokenlist.json").toString());
 let tokens2 = JSON.parse(fs.readFileSync("./tokens.json").toString());
-let mod = 6.66;
+let mod = 100;
 let tokenbs = []
 var anobj = JSON.parse(fs.readFileSync('taps.json').toString())
 
