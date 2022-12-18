@@ -139,8 +139,8 @@ setTimeout(async function () {
 
 	market = await SolendMarket.initialize(
 		connection,
-		"production",
-		"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		"production"
+		//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 	);
 	for (var res of market.reserves) {
 		tokenbs.push({
@@ -221,8 +221,8 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		if (!market) {
 			market = await SolendMarket.initialize(
 				connection,
-				"production",
-				"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				"production"
+				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		const reserve = market.reserves[i];
