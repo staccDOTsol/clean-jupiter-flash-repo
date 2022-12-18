@@ -264,7 +264,7 @@ return
 		).address;
 		console.log(routes.length);
 		if (!routes[0]) return
-		if (innn < routes[0].amountOut * 10 ** dec) {
+		if (innn / 5 < routes[0].amountOut * 10 ** dec) {
 			var abc = Math.floor(Math.random() * 2);
 			if (routes[abc]) {
 				try {
@@ -296,7 +296,7 @@ return
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-											doing = true
+											//doing = true
 											console.log(
 												"trading " + (amountToTrade / 10 ** 6).toString() + " " //+
 												//token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
@@ -450,8 +450,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: true },
-													{ skipPreflight: true }
+													{ skipPreflight: true, maxRetries: 10 },
+													{ skipPreflight: true, maxRetries: 10 }
 												);
 												doing = false
 
