@@ -258,8 +258,9 @@ let tokenAccount = (
    let maybe2=   (await prism.loadRoutes(tokenb.address, token.address))//, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 try {
  //  oldData[tokenb.address + token.address] =    maybe2.oldData
-   if (routes[abc].amountOut * 0.8 > innn ){
-   let routes2 = prism.getRoutes(Math.floor(routes[abc].amountOut / 1.0001)); // get routes based on from Token amount 10 USDC -> ? PRISM
+   if (true){
+    console.log(routes[abc].amountOut.toString() + ' outamnt')
+   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.0001); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
     if (true){
 
