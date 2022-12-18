@@ -433,7 +433,7 @@ if (tokenb == undefined){
       //for (var i = 2; i<= 13; i++){
              //   if (i != 1){
             if (tokenb){
-              await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+            // await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
         await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
             }  
         a++
