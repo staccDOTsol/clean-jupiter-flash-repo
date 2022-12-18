@@ -605,7 +605,7 @@ app.post("/", async function (req, res) {
 					if (!Object.keys(reservePairs).includes(rp)) {
 						reservePairs[rp] = [];
 					}
-					console.log(abc.account);
+					//console.log(abc.account);
 					if (!reservePairs[rp].includes(abc.account)) {
 						reservePairs[rp].push(abc.account);
 					} else {
@@ -683,7 +683,7 @@ async function getLuts() {
                     if (pk === addypk && !Object.keys(theluts).includes(ammIdspks)) {
                       //templuts.push(lut.pubkey.toBase58())
                       gogo123=true
-                      console.log(gogo123)
+                      //console.log(gogo123)
 
                     } else if (pk === addypk) {
                       //  templuts.push(lut.pubkey.toBase58())
@@ -707,8 +707,8 @@ async function getLuts() {
                     if (pk === addypk && !Object.keys(theluts).includes(ammIdspks)) {
                       //templuts.push(lut.pubkey.toBase58())
                       theluts[ammIdspks] = [lut.pubkey.toBase58()];
-                      console.log(Object.keys(theluts).length);
-                      console.log(ammIdspks)
+                    console.log(Object.keys(theluts).length);
+                    //  console.log(ammIdspks)
                       fs.writeFileSync("./luts.json", JSON.stringify(theluts));
                       gogos++;
                       
