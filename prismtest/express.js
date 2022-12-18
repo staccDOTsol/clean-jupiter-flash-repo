@@ -289,7 +289,7 @@ return
 											routes2[bca].amountOut > routes[abc].amountIn * 1.032 &&
 											!doing
 										) {
-											
+											doing = true
 											console.log(
 												mod.toString() +
 													" mod " +
