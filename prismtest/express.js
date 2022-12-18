@@ -559,6 +559,7 @@ app.post("/", async function (req, res) {
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenbt != undefined) {
+						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
 setTimeout(async function(){
 						  dothehorriblething(0, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
@@ -569,8 +570,9 @@ setTimeout(async function(){
 							tokenbt,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
+						 
 					}, Math.random() * 200)
-
+				}
 					}
 					a++;
 
