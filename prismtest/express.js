@@ -413,11 +413,9 @@ let insts1 = [
               mod = mod * 10;
             }
             
-          } catch (err){
-            console.log(err)
-          }
+          } 
         }
-      }
+      
       } catch (err) {
         console.log(err);
       }
