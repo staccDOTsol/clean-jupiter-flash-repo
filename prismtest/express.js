@@ -491,10 +491,11 @@ const someroutes = await getRoutes ({
 											var transaction = new VersionedTransaction(messageV00);
 											var result = undefined;
 											try {
+												transaction.sign([wallet]);
 												result = await sendAndConfirmTransaction(
 													superconnection,
 													transaction,
-													[wallet]
+													{}
 												);
 												doing = false
 
