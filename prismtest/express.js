@@ -6,8 +6,7 @@ const {
 	Keypair,
 	PublicKey,
 	sendAndConfirmTransaction,
-	TransactionMessage,
-	VersionedTransaction,
+
   } = require( "@solana/web3.js" );
 const {
 	flashRepayReserveLiquidityInstruction,
