@@ -535,10 +535,7 @@ app.post("/", async function (req, res) {
 		if (abc.tokenBalanceChanges.length > 0) {
 			for (var ch of abc.tokenBalanceChanges) {
 				if (
-					parseFloat(ch.rawTokenAmount.tokenAmount) >
-						1000 * 10 ** ch.rawTokenAmount.decimals ||
-					parseFloat(ch.rawTokenAmount.tokenAmount) <
-						1000 * 10 ** ch.rawTokenAmount.decimals
+					true
 				) {
 					if (mod < 0.0001) {
 						mod = 100;
