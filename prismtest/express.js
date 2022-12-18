@@ -100,7 +100,9 @@ setTimeout(async function () {
       decimals: res.config.liquidityToken.decimals,
       symbol: res.config.liquidityToken.symbol,
     })
+  console.log(res.config.liquidityFeeReceiverAddress)
   }
+  
    goaccs = [];
    goluts = [
     "BYCAUgBHwZaVXZsbH7ePZro9YVFKChLE8Q6z4bUvkF1f",
@@ -284,7 +286,7 @@ let insts1 = [
                0,// preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
-                new PublicKey(reserve.config.liquidityAddress),
+                new PublicKey(reserve.config.liquidityFeeReceiverAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
                 new PublicKey(market.config.address),
