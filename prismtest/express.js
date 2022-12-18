@@ -314,10 +314,10 @@ const someroutes = await getRoutes ({
 													tokenb.address
 											);
 											const execute = await jupiter.exchange({
-												routeInfo:routes[0],
+												routeInfo:routes.routesInfos[0],
 											  });
 											  const execute2 = await jupiter.exchange({
-												routeInfo:routes2[0],
+												routeInfo:routes2.routesInfos[0],
 												});
 										  
 											let thepaydirt = [];
@@ -397,7 +397,7 @@ const someroutes = await getRoutes ({
 											
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** atokens[i].decimals),
+													Math.ceil(amountToTrade),
 													new PublicKey(market.reserves[i].config.liquidityAddress),
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.address),
@@ -418,7 +418,7 @@ const someroutes = await getRoutes ({
 											instructions.push(...thepaydirt);
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** atokens[i].address),
+													Math.ceil(amountToTrade),
 													1, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.liquidityAddress),
