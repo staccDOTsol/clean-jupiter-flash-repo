@@ -201,7 +201,7 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 	//i = 10
 	try {
 		if (!doing){
-		//	doing = true
+			doing = true
 		//    i = 10
 		if (!prism) {
 			prism = await Prism.init({
