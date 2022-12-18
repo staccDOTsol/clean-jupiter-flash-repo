@@ -537,12 +537,16 @@ app.post("/", async function (req, res) {
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenb != undefined) {
+
+					if (tokenb.address != token.address){
+						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+
 						await dothehorriblething(
 							1,
 							tokenb,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
-						//  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+					}
 					}
 					a++;
 
