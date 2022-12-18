@@ -89,7 +89,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
                 lastcompare =acompare
                 }
                 else {
-                  lastcompare =acompare-25
+                  lastcompare =acompare-5
 
                 }
               // @ts-ignore
