@@ -48,15 +48,14 @@ async function getRoutes  (
             forceFetch: true,
           })
 	const routes2 =
-		outputToken && inputToken
-		  ? await jupiter.computeRoutes({
+		await jupiter.computeRoutes({
 			  inputMint: new PublicKey(outputToken.address),
 			  outputMint: new PublicKey(inputToken.address),
 			  amount: routes.routesInfos[0].outAmount, // raw input amount of tokens
 			  slippageBps,
 			  forceFetch: true,
 			})
-		  : null;	  
+		  ;	  
     if (routes && routes.routesInfos && routes2 && routes2.routesInfos) {
       console.log("Possible number of routes:", routes.routesInfos.length, " ", routes2.routesInfos.length);
       console.log(
