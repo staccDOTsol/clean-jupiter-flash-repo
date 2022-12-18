@@ -197,8 +197,8 @@ app.use(cors());
 
 var reservePairs = {};
 // invalid cache. I will recommend using a paid RPC endpoint.
-async function dothehorriblething(i, tokenbt, innn, dec) {
-	const tokenb = tokenbt
+async function dothehorriblething(i, tokenbc, innn, dec) {
+	const tokenb = tokenbc
 	//i = 10
 	try {
 		if (!doing){
