@@ -264,7 +264,9 @@ class Prism {
             this.lastFromCoin = this.fromCoin;
             this.lastToCoin = this.toCoin;
             this.liquidityInfos = yield (0, liquidityInfos_1.loadLiquidityInfos)(this.fromCoin, this.toCoin, oldData,this.liquidityProviders, this.connection, tokenMap, direct, false);
+        return this.liquidityInfos
         });
+        
     }
     getRoutes(amount) {
         return (0, aggregator_1.findRoutes)(this.fromCoin, this.toCoin, amount, this.liquidityInfos, this.liquidityProviders, this.settings);

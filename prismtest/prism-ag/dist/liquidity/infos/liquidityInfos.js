@@ -105,7 +105,8 @@ function possibleRoutes(fromCoin, toCoin, LI, tokenMap, direct) {
         toLoad: toLoad,
     };
 }
-const fs = require('fs')
+const fs = require('fs');
+const { BN } = require("bn.js");
 const acoolobj = JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 exports.possibleRoutes = possibleRoutes;
 function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap, direct, reverse) {
@@ -116,8 +117,7 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             return routes;
         }
         let liquidityData
-        
-        if (!Object.keys(oldData).includes(fromCoin.mintAddress+toCoin.mintAddress)){
+        if (oldData == undefined){
         let pubkeys = [
             ...(0, serum_1._loadSerum)(toLoad.serum),
             ...(0, raydium_1._loadRaydium)(toLoad.raydium),
@@ -164,7 +164,7 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             gooseFxData: (0, gooseFx_1.loadGooseFx)(toLoad.gooseFX, parsedInfo.gooseFX),
             openbookData: (0, openbook_1.loadOpenbook)(toLoad.openbook, tokenMap, parsedInfo.openbook),
         };
-        oldData[fromCoin.mintAddress+toCoin.mintAddress]=liquidityData
+        oldData=liquidityData
         let i = -1
         let taps =  []
         let tapf = JSON.parse(fs.readFileSync('./taps.json').toString())
@@ -177,7 +177,6 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             try {
                 let c = -1
                 for (var ta of coin.tokenAccounts){
-
                     try {
                     c++
                     let tap = ta.toBase58()
@@ -194,11 +193,11 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
     }
 }
 fs.writeFileSync('taps.json', JSON.stringify(tapf))
+console.log(tapf.length)
     }else {
         let i = -1;
         let tl = {}
-
-        for (var data of Object.values(oldData[fromCoin.mintAddress+toCoin.mintAddress])){
+        for (var data of Object.values(oldData)){
             i++
             let b = -1
             for (var coin of Object.keys(data)){
@@ -212,8 +211,8 @@ fs.writeFileSync('taps.json', JSON.stringify(tapf))
                     c++
                     let tap = ta.toBase58()
                         if (tap == abc){
-                            data[coin].tokenAmounts[c] = Object.values(acoolobj)[b]
-                            tl[Object.keys(oldData[fromCoin.mintAddress+toCoin.mintAddress])[i]] = data[coin]
+                            data[coin].tokenAmounts[c] = new BN( Object.values(acoolobj)[b] )
+                            tl[Object.keys(oldData)[i]] = data[coin]
                     console.log(Object.values(acoolobj)[b])
                     }
                 } catch (err){
@@ -229,7 +228,7 @@ fs.writeFileSync('taps.json', JSON.stringify(tapf))
         liquidityData = tl
       //  if ()
 }
-    
+console.log(routes.length)
         return {
             routes: routes,
             liquidityData: liquidityData,

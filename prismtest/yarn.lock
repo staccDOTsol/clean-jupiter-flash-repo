@@ -869,7 +869,7 @@
     rpc-websockets "^7.5.0"
     superstruct "^0.14.2"
 
-"@solendprotocol/solend-sdk@latest":
+"@solendprotocol/solend-sdk@^0.6.9":
   version "0.6.9"
   resolved "https://registry.yarnpkg.com/@solendprotocol/solend-sdk/-/solend-sdk-0.6.9.tgz#ff51246edd90feb830b24da1d0632373e928093c"
   integrity sha512-KToDqIDsn11hdNY3M/Lew5spSF2ML2S8q5H21pwjVxFW1BV01Mgm0Y1sD6pLnQ9epQUAqxtbGj1oUETs6bqFMQ==

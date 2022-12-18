@@ -1,7 +1,7 @@
 import { Prism } from "./prism-ag";
 import { SolendMarket } from "./solend-sdk/save/classes";
 import { getOrCreateAssociatedTokenAccount } from "./spl-token/";
-//import { createTransferInstruction } from "./spl-token/";
+import { createTransferInstruction } from "./spl-token/";
 import { flashRepayReserveLiquidityInstruction } from "./solend-sdk/save/instructions/flashRepayReserveLiquidity";
 import { flashBorrowReserveLiquidityInstruction } from "@solendprotocol/solend-sdk";
 import {
@@ -154,7 +154,7 @@ let tokenbs: any = []
       }
     }
 
-    await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, {}); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+    await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
     const amountToTrade = Math.floor(amount * (mod / 100));
     let stuff = JSON.parse(fs.readFileSync('./luts.json').toString())
@@ -172,11 +172,11 @@ let tokenbs: any = []
     if (tokenb.address == token.address){
       return
     }
+    tokenb = token
     
-let maybe =     (await prism.loadRoutes(token.address, tokenb.address, oldData))
-if (!maybe) return 
+let maybe =     (await prism.loadRoutes(token.address, tokenb.address, oldData[token.address + tokenb.address]))
 
-oldData[token.address + tokenb.address] = maybe.oldData[token.address + tokenb.address]; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
     let routes = prism.getRoutes(amountToTrade / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
     let tokenAccount = (
       await getOrCreateAssociatedTokenAccount(
@@ -187,19 +187,24 @@ oldData[token.address + tokenb.address] = maybe.oldData[token.address + tokenb.a
         true // mint
       )
     ).address;
-    for (var abc of [1,2,3]) {
+    console.log(routes.length)
+    for (var abc of [0, 1]) {
       if (routes[abc]) {
+/*
+
       try {
-
-        oldData[tokenb.address + token.address] =      (await prism.loadRoutes(tokenb.address, token.address, oldData)).oldData[tokenb.address + token.address] ; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-    let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
-
-    for (var bca of [1,2]) {
+   let maybe2=   (await prism.loadRoutes(tokenb.address, token.address, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+try {
+   oldData[tokenb.address + token.address] =    maybe2.oldData
+   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
+console.log(routes2.length)
+    for (var bca of [0,1,2]) {
       try {
         
         
         if (routes2[bca]) {
-          if (routes2[bca].amountOut > routes[abc].amountIn) {
+          console.log(routes2[bca].amountOut > routes[abc].amountIn) */
+          if (routes[abc].amountOut > routes[abc].amountIn) {
             console.log(
               "trading " +
                 (amountToTrade / 10 ** token.decimals).toString() +
@@ -210,11 +215,19 @@ try {
             let { preTransaction, mainTransaction } =
               await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
 
-              let { preTransaction: pt, mainTransaction: mp } =
-              await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
+//              let { preTransaction: pt, mainTransaction: mp } =
+//              await prism.generateSwapTransactions(routes2[bca]); // execute swap (sign, send and confirm transaction)
+              let thepaydirt: any[] = []
+
+              for (var ix of [...mainTransaction.instructions]){//,
+               // ...mp.instructions]){
+                  if (!thepaydirt.includes(ix)){
+                    thepaydirt.push(ix)
+                  }
+              }
 let insts1: any = [
-  ...preTransaction.instructions,
-  ...pt.instructions]
+  ...preTransaction.instructions]
+ // ...pt.instructions]
             let instructions: any = [
               flashBorrowReserveLiquidityInstruction(
                 amountToTrade,
@@ -224,11 +237,10 @@ let insts1: any = [
                 new PublicKey(market.config.address),
                 SOLEND_PRODUCTION_PROGRAM_ID
               ),
-              ...mainTransaction.instructions,
-              ...mp.instructions,
+              ...thepaydirt,
               flashRepayReserveLiquidityInstruction(
                 amountToTrade,
-                preTransaction.instructions.length+pt.instructions.length,
+                preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
                 new PublicKey(reserve.config.liquidityAddress),
@@ -239,7 +251,7 @@ let insts1: any = [
                 SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
                 new PublicKey(reserve.config.liquidityToken.mint)
-              )/*,
+              ),
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
                 new PublicKey(jaregms[token.symbol]),
@@ -254,7 +266,7 @@ let insts1: any = [
                     }
                   )
                 ).value[0].account.data.parsed.info.tokenAmount.amount + Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
-              )*/
+              )
             ];
             if (!Object.keys(tgoaccs).includes(token.symbol)){
               tgoaccs[token.symbol] = []
@@ -328,15 +340,18 @@ let insts1: any = [
             console.log(err)
           }
         }
-      }
+      }/*
       } catch (err) {
         console.log(err);
       }
     }
+  } catch (err){
+    console.log(err)
+  }
   } catch (err) {
     console.log(err);
   }
-}
+}*/
 }
   } catch (err) {
     console.log(err);
@@ -359,6 +374,6 @@ async function doTheThing(){
     setTimeout(async function(){
      doTheThing()
    }, 1000)
-      mod = mod / 10;
+      mod = mod / 2;
      
     }
