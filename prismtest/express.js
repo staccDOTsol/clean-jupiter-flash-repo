@@ -100,7 +100,7 @@ try {      for (var l of (somejson)[key]) {
     }
   }
   } catch (err) {}
-}
+  
 if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
       // @ts-ignore
