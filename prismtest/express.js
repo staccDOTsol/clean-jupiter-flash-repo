@@ -283,7 +283,7 @@ let insts1 = [
   console.log(insts1.length)
             let instructions = [
               flashBorrowReserveLiquidityInstruction(
-                amountToTrade,
+                Math.ceil(routes[abc].amountIn * 1.25),
                 new PublicKey(reserve.config.liquidityAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
@@ -292,7 +292,7 @@ let insts1 = [
               ),
               ...thepaydirt,
               flashRepayReserveLiquidityInstruction(
-                amountToTrade,
+                Math.ceil(routes[abc].amountIn * 1.25),
                0,// preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
