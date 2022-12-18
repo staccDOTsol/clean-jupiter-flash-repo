@@ -131,9 +131,9 @@ let goaccs = [];
 setTimeout(async function () {
 	jupiter = await Jupiter.load({
 		connection, routeCacheDuration: 0,
-		cluster: ENV,
+		cluster: 'mainnet-beta',
 		platformFeeAndAccounts,
-		user: USER_KEYPAIR, shouldLoadSerumOpenOrders: true,
+		user: wallet, shouldLoadSerumOpenOrders: true,
 		restrictIntermediateTokens: false, usePreloadedAddressLookupTableCache: false
 	  });
 
