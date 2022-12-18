@@ -237,8 +237,8 @@ console.log(routes2.length)
         
         
         if (routes2[bca]) {
-          console.log(routes2[bca].amountOut > routes[abc].amountIn)
-          if (routes2[bca].amountOut > routes[abc].amountIn) {
+          console.log(routes2[bca].amountOut  > routes[abc].amountIn)
+          if (routes2[bca].amountOut * 1.001 > routes[abc].amountIn) {
             console.log(
               "trading " +
                 (amountToTrade / 10 ** token.decimals).toString() +
