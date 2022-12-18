@@ -427,7 +427,7 @@ if (tokenb == undefined){
              //   if (i != 1){
             if (tokenb != undefined){
              await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
-      //  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+        await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
             }  
         a++
             
