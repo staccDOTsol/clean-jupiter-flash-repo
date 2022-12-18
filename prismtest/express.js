@@ -552,21 +552,21 @@ app.post("/", async function (req, res) {
 					}
 					var a = 2;
 
-					let tokenb = tokens.find((t) => t.address === ch.mint);
-					if (tokenb == undefined) {
-						tokenb = tokens2.find((t) => t.address === ch.mint);
+					let tokenbt = tokens.find((t) => t.address === ch.mint);
+					if (tokenbt == undefined) {
+						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
-					if (tokenb != undefined) {
+					if (tokenbt != undefined) {
 setTimeout(async function(){
-						  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(0, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
 setTimeout(async function(){
 
 						 dothehorriblething(
 							1,
-							tokenb,
+							tokenbt,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
 					}, Math.random() * 200)
