@@ -450,7 +450,7 @@ const someroutes = await getRoutes ({
 													wallet.publicKey,
 													SOLEND_PRODUCTION_PROGRAM_ID/*,
                 new PublicKey(jaregms[atokens[i].symbol]),
-                new PublicKey(market.reserves[i].config.liquidityToken.mint*/)
+                new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 												)
 											);
 											instructions.push(
