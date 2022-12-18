@@ -33,6 +33,9 @@ async function getRoutes  (
   slippageBps
 ) {
   try {
+    if (!inputToken || !outputToken) {
+      return null;
+    }
 
     const inputAmountInSmallestUnits = Math.round(inputAmount * 10 ** inputToken.decimals)
       
