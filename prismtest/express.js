@@ -53,7 +53,7 @@ let goaccs = {};
 
 async function findLuts(pairadd) {
   if (!Object.keys(goaccs).includes(pairadd)){
-    goaccs[pairadd] = []
+    goaccs[pairadd[0]+pairadd[1]] = []
   }
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
@@ -66,7 +66,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
         let aran = Math.floor(Math.random() * (somejson)[key].length)
         l = (somejson)[key][aran]
         // @ts-ignore
-        if (goaccs[pairadd].length < 60 && c < 5) {
+        if (goaccs[pairadd[0]+pairadd[1]].length < 60 && c < 5) {
           c++
           try {
             let test = // @ts-ignore
@@ -74,8 +74,8 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               // @ts-ignore
-              goaccs[pairadd].push(test)
-              console.log(goaccs[pairadd].length)
+              goaccs[pairadd[0]+pairadd[1]].push(test)
+              console.log(goaccs[pairadd[0]+pairadd[1]].length)
             }
           } catch (err) {}
         }
@@ -85,7 +85,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     }
   }
   }
-  console.log("found " + goaccs[pairadd].length.toString() + " luts...");
+  console.log("found " + goaccs[pairadd[0]+pairadd[1]].length.toString() + " luts...");
   return goaccs;
 }
 
@@ -333,7 +333,7 @@ let insts1 = [
               await connection.getLatestBlockhash()
             ).blockhash,
             instructions: insts1,
-          }).compileToV0Message([...woots, ...goaccs[token.address, tokenb.address]]);
+          }).compileToV0Message([...woots, ...goaccs[token.address + tokenb.address]]);
           var transaction = new VersionedTransaction(messageV00);
           var result;
           try {
@@ -362,7 +362,7 @@ let insts1 = [
                 await connection.getLatestBlockhash()
               ).blockhash,
               instructions,
-            }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
+            }).compileToV0Message([...woots, ...goaccs[token.address + tokenb.address]]);
             var transaction = new VersionedTransaction(messageV00);
             var result = undefined;
             try {
