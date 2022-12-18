@@ -23,7 +23,7 @@
 		"./src/generator.js"
 	],
 	"dependencies": {
-		"@prism-hq/prism-ag": "^0.2.29",
+		"@prism-hq/prism-ag": "0.2.19",
 		"@project-serum/borsh": "^0.2.5",
 		"@solana/spl-token": "0.1.8",
 		"@solana/web3.js": "1.61.0",
