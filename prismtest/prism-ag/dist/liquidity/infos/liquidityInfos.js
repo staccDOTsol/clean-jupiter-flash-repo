@@ -26,9 +26,11 @@ const penguin_1 = require("./penguin");
 const mercurial_1 = require("./mercurial");
 const cykura_1 = require("./cykura");
 const stepn_1 = require("./stepn");
+const marinade_1 = require("./marinade");
 const gooseFx_1 = require("./gooseFx");
 const getMultInfo_1 = require("../../utils/getMultInfo");
 const openbook_1 = require("./openbook");
+const balansol_1 = require("./balansol");
 function possibleRoutes(fromCoin, toCoin, LI, tokenMap, direct) {
     let directOptions = [];
     let allFromOptions = {};
@@ -105,20 +107,16 @@ function possibleRoutes(fromCoin, toCoin, LI, tokenMap, direct) {
         toLoad: toLoad,
     };
 }
-const fs = require('fs');
-const { BN } = require("bn.js");
-const acoolobj = JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 exports.possibleRoutes = possibleRoutes;
-function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap, direct, reverse) {
+function loadLiquidityInfos(fromCoin, toCoin, LI, connection, tokenMap, direct, reverse) {
     return __awaiter(this, void 0, void 0, function* () {
         let time = Date.now();
         let { routes, toLoad } = possibleRoutes(fromCoin, toCoin, LI, tokenMap, direct);
         if (reverse) {
             return routes;
         }
-        let liquidityData
-        if (oldData == undefined){
         let pubkeys = [
+            /* ..._loadCrema(toLoad.crema, connection), */
             ...(0, serum_1._loadSerum)(toLoad.serum),
             ...(0, raydium_1._loadRaydium)(toLoad.raydium),
             ...(0, saber_1._loadSaber)(toLoad.saber),
@@ -133,9 +131,11 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             ...(0, penguin_1._loadPenguin)(toLoad.penguin),
             ...(0, mercurial_1._loadMercurial)(toLoad.mercurial),
             ...(0, stepn_1._loadStepn)(toLoad.stepn),
+            ...(0, marinade_1._loadMarinade)(toLoad.marinade),
             ...(0, cykura_1._loadCykura)(toLoad.cykura),
             ...(0, gooseFx_1._loadGooseFx)(toLoad.gooseFX),
             ...(0, openbook_1._loadOpenbook)(toLoad.openbook),
+            ...(0, balansol_1._loadBalansol)(toLoad.balansol),
         ];
         let [parsed, slot] = yield Promise.all([
             (0, getMultInfo_1.customGetMultipleAccountInfos)(connection, pubkeys.map(x => x.account), "Fetch liquidity infos"),
@@ -145,7 +145,8 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
         for (let i = 0; i < parsed.length; i++)
             (parsedInfo[pubkeys[i].provider] || (parsedInfo[pubkeys[i].provider] = []))
                 .push(parsed[i]);
-         liquidityData = {
+        let liquidityData = {
+            /* cremaData: loadCrema(toLoad.crema, connection), */
             serumData: (0, serum_1.loadSerum)(toLoad.serum, tokenMap, parsedInfo.serum),
             raydiumData: (0, raydium_1.loadRaydium)(toLoad.raydium, parsedInfo.raydium),
             saberData: (0, saber_1.loadSaber)(toLoad.saber, parsedInfo.saber),
@@ -160,79 +161,15 @@ function loadLiquidityInfos(fromCoin, toCoin, oldData, LI, connection, tokenMap,
             penguinData: (0, penguin_1.loadPenguin)(toLoad.penguin, parsedInfo.penguin),
             mercurialData: (0, mercurial_1.loadMercurial)(toLoad.mercurial, parsedInfo.mercurial),
             stepnData: (0, stepn_1.loadStepn)(toLoad.stepn, parsedInfo.stepn),
+            marinadeData: (0, marinade_1.loadMarinade)(toLoad.marinade, connection, parsedInfo.marinade),
             cykuraData: (0, cykura_1.loadCykura)(toLoad.cykura, connection, parsedInfo.cykura),
             gooseFxData: (0, gooseFx_1.loadGooseFx)(toLoad.gooseFX, parsedInfo.gooseFX),
             openbookData: (0, openbook_1.loadOpenbook)(toLoad.openbook, tokenMap, parsedInfo.openbook),
+            balansolData: (0, balansol_1.loadBalansol)(toLoad.balansol, parsedInfo.balansol),
         };
-        oldData=liquidityData
-        let i = -1
-        let taps =  []
-        let tapf = JSON.parse(fs.readFileSync('./taps.json').toString())
-
-        for (var data of Object.values(liquidityData)){
-            i++
-            let b = -1
-            for (var coin of Object.values(data)){
-                b++
-            try {
-                let c = -1
-                for (var ta of coin.tokenAccounts){
-                    try {
-                    c++
-                    let tap = ta.toBase58()
-                        if (!tapf.includes(tap)){
-                            tapf.push(tap)
-                        }
-                    } catch (err){
-
-                    }
-                }
-            } catch (err){
-                        
-            }
-    }
-}
-fs.writeFileSync('taps.json', JSON.stringify(tapf))
-console.log(tapf.length)
-    }else {
-        let i = -1;
-        let tl = {}
-        for (var data of Object.values(oldData)){
-            i++
-            let b = -1
-            for (var coin of Object.keys(data)){
-                b++
-        for(var abc of Object.keys(acoolobj)){
-            try {
-                let c = -1
-                for (var ta of data[coin].tokenAccounts){
-
-                    try {
-                    c++
-                    let tap = ta.toBase58()
-                        if (tap == abc){
-                            data[coin].tokenAmounts[c] = new BN( Object.values(acoolobj)[b] )
-                            tl[Object.keys(oldData)[i]] = data[coin]
-                    console.log(Object.values(acoolobj)[b])
-                    }
-                } catch (err){
-                    console.log(err)
-                }
-                }
-            } catch (err){
-            }   
-        }
-         
-        }
-        }
-        liquidityData = tl
-      //  if ()
-}
-console.log(routes.length)
         return {
             routes: routes,
             liquidityData: liquidityData,
-            oldData: oldData
         };
     });
 }

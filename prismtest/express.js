@@ -1,4 +1,4 @@
-const { Prism }= require("@prism-hq/prism-ag");
+const { Prism }= require("./prism-ag");
 const { SolendMarket }= require("@solendprotocol/solend-sdk");
 const { getOrCreateAssociatedTokenAccount }= require("./spl-token/");
 const { createTransferInstruction }= require("./spl-token/");
