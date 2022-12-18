@@ -19,7 +19,16 @@ const {
   sendAndConfirmTransaction,
   Transaction,
 } = require("@solana/web3.js");
-compare = (a1, a2) => arr1.filter(v => arr2.includes(v)).length;
+function compare(arr1,arr2){
+  let count=0;
+  const max=arr1.length>arr2.length ? arr2.length : arr1.length;
+  for(var i=0;i<max;i++){
+    if(arr1[i]==arr2[i]){
+      count++;
+    }
+  }
+  return count;
+}
 
 let ALT_RPC_LIST = process.env.ALT_RPC_LIST.split(',')
 const jaregms = {
