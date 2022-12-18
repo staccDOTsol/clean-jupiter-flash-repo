@@ -271,8 +271,8 @@ return
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
 const someroutes = await getRoutes ({
 	jupiter,
-	inputToken: atokens[i].address,
-	outputToken: tokenb.address,
+	inputToken: atokens[i],
+	outputToken: tokenb,
 	amountToTrade: (amountToTrade) / 10 ** atokens[i].decimals,
 	slippageBps: 2})
 	const routes = someroutes[0]
