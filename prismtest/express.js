@@ -232,7 +232,7 @@ try {
 console.log(routes2.length)
     if (true){
 
-    var bca = Math.floor(Math.random()*4)
+    var bca = Math.floor(Math.random()*3)
       try {
         
         
