@@ -410,12 +410,12 @@ app.post("/", async function (req, res) {
       var a = 2;
 
       let  tokenb = tokens.find((t) => t.address === ch.mint);
-if (tokenb.address == undefined){
+if (tokenb == undefined){
   tokenb = tokens2.find((t) => t.address === ch.mint);
 }
       //for (var i = 2; i<= 13; i++){
              //   if (i != 1){
-            if (tokenb){
+            if (tokenb != undefined){
              await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
       //  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
             }  
