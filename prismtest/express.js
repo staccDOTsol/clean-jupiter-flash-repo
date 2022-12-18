@@ -290,7 +290,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											routes2[bca].amountMid > routes[abc].amountIn * 1.043 &&
 											!doing
 										) {
-										//	doing = true
+											doing = true
 											console.log(
 												mod.toString() +
 												token.symbol +
@@ -462,8 +462,8 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: false, maxRetries: 10 },
-													{ skipPreflight: false, maxRetries: 10 }
+													{ skipPreflight: true, maxRetries: 10 },
+													{ skipPreflight: true, maxRetries: 10 }
 												);
 												doing = false
 
