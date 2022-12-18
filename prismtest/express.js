@@ -197,6 +197,7 @@ app.use(cors());
 
 var reservePairs = {};
 // invalid cache. I will recommend using a paid RPC endpoint.
+let atokens = {}
 async function dothehorriblething(i, tokenbc, innn, dec) {
 	const tokenb = tokenbc
 	//i = 10
@@ -226,23 +227,23 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			);
 		}
 		else  if (market.reserves[i]){
-		const reserve = market.reserves[i];
+		
 		// @ts-ignore
-		let symbol = reserve.config.liquidityToken.symbol;
+		let symbol = market.reserves[i].config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001;
-		const token = {
-			address: reserve.config.mint,
-			decimals: reserve.config.liquidityToken.decimals,
-			symbol: reserve.config.asset,
+		 atokens[i] = {
+			address: market.reserves[i].config.mint,
+			decimals: market.reserves[i].config.liquidityToken.decimals,
+			symbol: market.reserves[i].config.asset,
 		};
 
-		if (tokenb.address == token.address){
+		if (tokenb.address == atokens[i].address){
 return
 		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
 				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf
-				{ mint: new PublicKey(token.address) }
+				{ mint: new PublicKey(atokens[i].address) }
 			)
 		).value
 		let amount = 0;
@@ -250,21 +251,21 @@ return
 				amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
 		}
 
-		// await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		// await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[i].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		//let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let amountToTrade = (amount * (mod));
 		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
-		let maybe = await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
+		let maybe = await prism.loadRoutes(atokens[i].address, tokenb.address); //, oldData[atokens[i].address + tokenb.address]))
 
-		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		let routes = prism.getRoutes((amountToTrade) / 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
 		let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
 				wallet, // fee payer
-				new PublicKey(reserve.config.liquidityToken.mint),
+				new PublicKey(market.reserves[i].config.liquidityToken.mint),
 				wallet.publicKey
 			)
 		).address;
@@ -273,9 +274,9 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		if (innn / 5 < routes[0].amountMid * 10 ** dec) {
 			for (var abc of [0,1,2]){
 				try {
-					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+					let maybe2 = await prism.loadRoutes(tokenb.address, atokens[i].address); //, oldData[tokenb.address + atokens[i].address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 					try {
-						//  oldData[tokenb.address + token.address] =    maybe2.oldData
+						//  oldData[tokenb.address + atokens[i].address] =    maybe2.oldData
 						if (true) {
 							
 							let routes2 = prism.getRoutes(((routes[abc].amountMid) / 1.001)); // get routes based on from Token amount 10 USDC -> ? PRISM
@@ -291,12 +292,12 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											routes2[bca].amountMid > routes[abc].amountIn * 1.002 &&
 											!doing
 										) {
-											doing = true
+											//doing = true
 											console.log(
 												mod.toString() +
 												token.symbol +
 												" " +
-												token.address + " mod " +
+												atokens[i].address + " mod " +
 													(routes[abc].amountIn ).toString() +
 													"$ " +
 													(routes[abc].amountMid).toString() +
@@ -381,9 +382,9 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
-													new PublicKey(reserve.config.liquidityAddress),
+													new PublicKey(market.reserves[i].config.liquidityAddress),
 													tokenAccount,
-													new PublicKey(reserve.config.address),
+													new PublicKey(market.reserves[i].config.address),
 													new PublicKey(market.config.address),
 													SOLEND_PRODUCTION_PROGRAM_ID
 												)
@@ -401,20 +402,20 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											instructions.push(...thepaydirt);
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
-													Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
+													Math.ceil(routes[abc].amountIn * 10 ** atokens[i].address),
 													1, //+pt.instructions.length,
 													tokenAccount,
-													new PublicKey(reserve.config.liquidityAddress),
+													new PublicKey(market.reserves[i].config.liquidityAddress),
 													new PublicKey(
-														reserve.config.liquidityAddress//liquidityFeeReceiverAddress
+														market.reserves[i].config.liquidityAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
-													new PublicKey(reserve.config.address),
+													new PublicKey(market.reserves[i].config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
 													SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)
+                new PublicKey(market.reserves[i].config.liquidityToken.mint)
 												)
 											);
 											instructions.push(
@@ -427,11 +428,11 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 															wallet.publicKey,
 															{
 																mint: new PublicKey(
-																	reserve.config.liquidityToken.mint
+																	market.reserves[i].config.liquidityToken.mint
 																),
 															}
 														)
-													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountMid * 0.8 * 10 ** token.decimals)
+													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountMid * 0.8 * 10 ** atokens[i].address)
 												)
 											);
 											console.log(instructions.length);
@@ -440,7 +441,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											}
 											//  if (tgoaccs[token.symbol].length == 0){
 											tgoaccs[token.symbol] = await findLuts(instructions, [
-												token.address,
+												atokens[i].address,
 												tokenb.address,
 											]);
 											//  }
@@ -477,10 +478,10 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											} catch (err) {
 												console.log(err);
 /*
-		await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
+		await prism.loadRoutes(atokens[i].address, tokenb.address); //, oldData[atokens[i].address + tokenb.address]))
 
-		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes = prism.getRoutes(100/ 10 ** token.decimals); // get routes based on from Token amount 10 USDC -> ? PRISM
+		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		let routes = prism.getRoutes(100/ 10 ** atokens[i].address); // get routes based on from Token amount 10 USDC -> ? PRISM
 	
 		let { preTransaction, mainTransaction } =
 		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
@@ -492,9 +493,9 @@ tx.blockhash = (await connection.getLatestBlockhash()).blockhash
 var result = await connection.sendTransaction(tx, [wallet]
 	)
 	console.log('tx1: ' + result)
-		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
+		 await prism.loadRoutes(tokenb.address, atokens[i].address); //, oldData[atokens[i].address + tokenb.address]))
 
-		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+		//oldData[atokens[i].address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		let routes2 = prism.getRoutes(routes[0].amountMid / 2); // get routes based on from Token amount 10 USDC -> ? PRISM
 
 	let { preTransaction: pt, mainTransaction: mp } =
