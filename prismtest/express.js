@@ -337,10 +337,19 @@ const someroutes = await getRoutes ({
 											let pt = []
 											let preTransaction = []
 											if (execute.setupTransaction){
-												preTransaction = execute.setupTransaction 
+												let DecompileArgs2 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
+											let decompiled2 = TransactionMessage.decompile(
+											execute.setupTransaction.message,
+											DecompileArgs2)
+											 preTransaction = new Transaction().add(...decompiled2.instructions)
+											
 											}
 											if (execute2.setupTransaction){
-												pt = execute.setupTransaction
+												let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
+											let decompiled2 = TransactionMessage.decompile(
+											execute2.setupTransaction.message,
+											DecompileArgs2)
+											 pt = new Transaction().add(...decompiled2.instructions)
 											}
 											for (var ix of [...mainTransaction.instructions]) {
 												if (!thepaydirt.includes(ix)) {
