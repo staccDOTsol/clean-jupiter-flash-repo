@@ -63,15 +63,15 @@ var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 
 async function findLuts(ixs, pairadd) {
 	var arr1 = [];
-	for (var ix of ixs) {
-		try {
-		for (var k of ix.keys) {
+	//for (var ix of ixs) {
+	//	try {
+	//	for (var k of ix.keys) {
 			arr1.push(k.pubkey);
-		}
-	} catch(err){
+	//	}
+	//} catch(err){
 
-	}
-	}
+	//}
+	//}
 	connection = new Connection(
 		ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 	);
@@ -89,20 +89,20 @@ async function findLuts(ixs, pairadd) {
 			// @ts-ignore
 			for (var l of somejson[key]) {
 				// @ts-ignore
-				if (goaccs.length < 20) {
+				if (goaccs.length < 30) {
 					try {
 						let test = // @ts-ignore
 							(await connection.getAddressLookupTable(new PublicKey(l))).value;
 
 						// @ts-ignore
 						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-							let acompare = compare(arr1, test.state.addresses);
-							if (acompare >= 1){//} && acompare > lastcompare) {
-								if (goaccs.length > 9) {
-									lastcompare = acompare;
-								} else {
+							//let acompare = compare(arr1, test.state.addresses);
+							//if (acompare >= 1){//} && acompare > lastcompare) {
+							//	if (goaccs.length > 9) {
+							//		lastcompare = acompare;
+							////	} else {
 									lastcompare = acompare - 2;
-								}
+							//	}
 								// @ts-ignore
 								goaccs.push(test);
 								console.log(goaccs.length);
