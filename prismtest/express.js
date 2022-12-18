@@ -1,4 +1,4 @@
-const { SolendMarket } = require("./solend-sdk/save/classes");
+const { SolendMarket } = require("@solendprotocol/solend-sdk")//./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
@@ -12,7 +12,7 @@ const {
   } = require( "@solana/web3.js" );
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("@solendprotocol/solend-sdk")//"./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
@@ -121,10 +121,10 @@ console.log(wallet.publicKey.toBase58());
 var connection = new Connection(
 	ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 );
-var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
-  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-);
-//var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
+//var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+//);
+var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
 let tgoaccs = {};
 let jupiter, market, goluts;
@@ -149,7 +149,7 @@ setTimeout(async function () {
 	market = await SolendMarket.initialize(
 		connection,
 		"production"
-		//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 	);
 	for (var res of market.reserves) {
 		tokenbs.push({
@@ -237,18 +237,18 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			market = await SolendMarket.initialize(
 				connection,
 				"production"
-				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		else  if (market.reserves[i]){
 		
 		// @ts-ignore
 		let symbol = market.reserves[i].config.liquidityToken.symbol;
-		//mod = Math.random() * 0.05 + 0.001;
+		//mod = Math.random() * 0.05 + 0.001; 	
 		 atokens[i] = {
 			address: market.reserves[i].config.mint,
 			decimals: market.reserves[i].config.liquidityToken.decimals,
-			symbol: market.reserves[i].config.asset,
+			symbol: market.reserves[i].config.liquidityToken.symbol,
 		};
 
 		if (tokenb.address == atokens[i].address){
@@ -256,7 +256,7 @@ return
 		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
-				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf
+				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
 				{ mint: new PublicKey(atokens[i].address) }
 			)
 		).value
@@ -408,10 +408,10 @@ const someroutes = await getRoutes ({
 											const params = {
 												microLamports: 0//1.38*10**5,
 											  };
-											  const ix138 =
-											  ComputeBudgetProgram.setComputeUnitPrice (params);
+											//  const ix138 =
+											//  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
-											let instructions = [ix138];
+											let instructions = []//ix138];
 											let ccc2 = 0 
 											
 											instructions.push(
@@ -438,7 +438,7 @@ const someroutes = await getRoutes ({
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
 													Math.ceil(amountToTrade),
-													1, //+pt.instructions.length,
+													0, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(market.reserves[i].config.liquidityAddress),
 													new PublicKey(
