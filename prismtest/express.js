@@ -201,6 +201,7 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 	//i = 10
 	try {
 		if (!doing){
+		//	doing = true
 		//    i = 10
 		if (!prism) {
 			prism = await Prism.init({
@@ -556,15 +557,18 @@ app.post("/", async function (req, res) {
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenb != undefined) {
-
+setTimeout(async function(){
 						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+}, Math.random() * 200)
+setTimeout(async function(){
 
 						await dothehorriblething(
 							1,
 							tokenb,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
 						);
-					
+					}, Math.random() * 200)
+
 					}
 					a++;
 
