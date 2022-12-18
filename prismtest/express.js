@@ -336,7 +336,7 @@ const someroutes = await getRoutes ({
 											let newix = []
 											for (var ix of decompiled2.instructions){
 												if (cc3 > 0){
-													newix.push(decompiled2)
+													newix.push(ix)
 												}
 												cc3++
 											}
