@@ -230,7 +230,7 @@ let tokenAccount = (
 try {
  //  oldData[tokenb.address + token.address] =    maybe2.oldData
    if (routes[abc].amountOut * 0.8 > innn ){
-   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.015); // get routes based on from Token amount 10 USDC -> ? PRISM
+   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.0001); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
     if (true){
 
@@ -239,8 +239,8 @@ console.log(routes2.length)
         
         
         if (routes2[bca]) {
-          console.log(routes2[bca].amountOut * 1.035 > routes[abc].amountIn)
-          if (routes2[bca].amountOut * 1.035 > routes[abc].amountIn) {
+          console.log(routes2[bca].amountOut * 1.003 > routes[abc].amountIn)
+          if (routes2[bca].amountOut * 1.003 > routes[abc].amountIn) {
             console.log(
               "trading " +
                 (amountToTrade / 10 ** token.decimals).toString() +
