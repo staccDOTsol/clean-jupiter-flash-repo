@@ -231,7 +231,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		let symbol = reserve.config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001;
 		const token = {
-			address: reserve.config.liquidityToken.mint,
+			address: reserve.config.mint,
 			decimals: reserve.config.liquidityToken.decimals,
 			symbol: reserve.config.asset,
 		};
