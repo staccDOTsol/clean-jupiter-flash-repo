@@ -58,7 +58,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
       // @ts-ignore
       for (var l of (somejson)[key]) {
         // @ts-ignore
-        if (goaccs.length < 39) {
+        if (goaccs.length < 19) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
@@ -307,7 +307,7 @@ let insts1 = [
               ),
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
-                new PublicKey("2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1"),
+                tokenAccount,
                 wallet.publicKey, // from's owner
                 (
                   await connection.getParsedTokenAccountsByOwner(
