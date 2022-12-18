@@ -269,7 +269,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 		).address;
 		console.log(routes.length);
 		if (!routes[0]) return
-		if (innn < routes[0].midAmount * 10 ** dec) {
+		if (innn < routes[0].amountMid * 10 ** dec) {
 			for (var abc of [0,1,2]){
 				try {
 					let maybe2 = await prism.loadRoutes(tokenb.address, token.address); //, oldData[tokenb.address + token.address] )); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -277,17 +277,17 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 						//  oldData[tokenb.address + token.address] =    maybe2.oldData
 						if (true) {
 							
-							let routes2 = prism.getRoutes((routes[abc].midAmount) / 1.035); // get routes based on from Token amount 10 USDC -> ? PRISM
+							let routes2 = prism.getRoutes((routes[abc].amountMid) / 1.035); // get routes based on from Token amount 10 USDC -> ? PRISM
 							console.log(routes2.length);
 							if (true) {
 								var bca = 0//Math.floor(Math.random() * 2);
 								try {
 									for (var bca of [0,1,2]) {
 										console.log(
-											routes2[bca].midAmount > routes[abc].amountIn * 1.043
+											routes2[bca].amountMid > routes[abc].amountIn * 1.043
 										);
 										if (
-											routes2[bca].midAmount > routes[abc].amountIn * 1.043 &&
+											routes2[bca].amountMid > routes[abc].amountIn * 1.043 &&
 											!doing
 										) {
 										//	doing = true
@@ -298,7 +298,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 												token.address + " mod " +
 													(routes[abc].amountIn ).toString() +
 													"$ " +
-													(routes[abc].midAmount).toString() +
+													(routes[abc].amountMid).toString() +
 													" outamnt " +
 													tokenb.symbol +
 													" " +
@@ -430,7 +430,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 																),
 															}
 														)
-													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].midAmount * 0.8 * 10 ** token.decimals)
+													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountMid * 0.8 * 10 ** token.decimals)
 												)
 											);
 											console.log(instructions.length);
@@ -494,7 +494,7 @@ var result = await connection.sendTransaction(tx, [wallet]
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		let routes2 = prism.getRoutes(routes[0].midAmount / 2); // get routes based on from Token amount 10 USDC -> ? PRISM
+		let routes2 = prism.getRoutes(routes[0].amountMid / 2); // get routes based on from Token amount 10 USDC -> ? PRISM
 
 	let { preTransaction: pt, mainTransaction: mp } =
 		await prism.generateSwapTransactions(routes2[0]); 
