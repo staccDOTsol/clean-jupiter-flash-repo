@@ -32,7 +32,7 @@ async function getRoutes  ({
   inputToken,
   outputToken,
   inputAmount,
-  slippageBps}
+  slippageBps, innn}
 ) {
   try {
     if (!inputToken || !outputToken) {
@@ -49,6 +49,9 @@ async function getRoutes  ({
             slippageBps,
             forceFetch: true,
           })
+		  if (routes.routeInfos[0].outAmount > innn / 5){
+			return null
+		  }
 	const routes2 =
 		await jupiter.computeRoutes({
 			  inputMint: new PublicKey(outputToken.address),
@@ -276,9 +279,10 @@ const someroutes = await getRoutes ({
 	inputToken: atokens[i],
 	outputToken: tokenb,
 	inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
-	slippageBps: 2})
+	slippageBps: 2, innn})
 	const routes = someroutes[0]
 	const routes2 = someroutes[1]
+
 	let tokenAccount = (
 			await getOrCreateAssociatedTokenAccount(
 				connection, // connection
@@ -299,7 +303,7 @@ const someroutes = await getRoutes ({
 									for (var bca of [0]) {
 										
 										if (
-											new Decimal(routes.routesInfos[0].inAmount.toString())
+											new Decimal 	(routes.routesInfos[0].inAmount.toString())
           .div(10 ** tokenb.decimals) * 1.0072 < new Decimal(routes2.routesInfos[0].outAmount.toString())
           .div(10 ** atokens[i].decimals) &&
 											!doing
