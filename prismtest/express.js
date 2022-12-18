@@ -619,7 +619,7 @@ let luts = [];
 
 let theluts = JSON.parse(fs.readFileSync('./luts.json').toString());
 var connection 
-var superconnection = new Connection("https://rpc.helius.xyz/?api-key=81972555-7e88-4f2c-9a43-9072b958f572", "singleGossip")
+var superconnection = new Connection("https://rpc.helius.xyz/?api-key=81972555-7e88-4f2c-9a43-9072b958f572")
 setTimeout(async function () {
   // invalid cache. I will recommend using a paid RPC endpoint.
 
