@@ -245,7 +245,7 @@ console.log(routes2.length)
                 " " //+
                 //token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
             );
-
+console.log(wallet.publicKey.toBase58())
 try {
             let { preTransaction, mainTransaction } =
               await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
