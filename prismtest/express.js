@@ -143,6 +143,7 @@ var acoolobj = {}//JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
+const { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } = require("@solana/spl-token");
 
 var app = express();
 app.use(bodyParser());
@@ -215,7 +216,6 @@ let tokenAccount = (
         wallet, // fee payer
         new PublicKey(reserve.config.liquidityToken.mint),
         wallet.publicKey,
-        true // mint
       )
     ).address;
     console.log(routes.length)
@@ -248,14 +248,8 @@ console.log(routes2.length)
                 //token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
             );
 console.log(wallet.publicKey.toBase58())
-try {
-  await getOrCreateAssociatedTokenAccount(
-    connection, // connection
-    wallet, // fee payer
-    new PublicKey(tokenb.address),
-    wallet.publicKey,
-    true // mint
-  )
+
+
             let { preTransaction, mainTransaction } =
               await prism.generateSwapTransactions(routes[abc]); // execute swap (sign, send and confirm transaction)
 
@@ -281,6 +275,34 @@ try {
 let insts1 = [
   ...preTransaction.instructions, ...pt.instructions]
   console.log(insts1.length)
+  
+  const associatedDestinationTokenAddr = await Token.getAssociatedTokenAddress(
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_PROGRAM_ID,
+    new PublicKey(tokenb.address),
+    wallet.publicKey
+  );
+  let instructions2 = []
+  const receiverAccount = await connection.getAccountInfo(associatedDestinationTokenAddr);
+        
+  
+  if (receiverAccount !== null && receiverAccount.owner.toBase58() !== destPublicKey.toBase58()) {
+    // derived account of original owner was at one point transferred, so we transfer our account (only works with NFTs, not fungibles). I opened https://github.com/solana-labs/solana-program-library/issues/2514 to figure out fungibles
+   
+  } else {
+    if (receiverAccount === null) {
+      instructions2.push(
+        Token.createAssociatedTokenAccountInstruction(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          new PublicKey(tokenb.address),
+          associatedDestinationTokenAddr,
+          wallet.publicKey,
+          wallet.publicKey,
+        )
+      )
+    }
+  }
             let instructions = [
               flashBorrowReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
@@ -291,6 +313,7 @@ let insts1 = [
                 SOLEND_PRODUCTION_PROGRAM_ID
               ),
               ...thepaydirt,
+              ...instructions2,
               flashRepayReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
                0,// preTransaction.instructions.length,//+pt.instructions.length,
@@ -318,7 +341,7 @@ let insts1 = [
                       ),
                     }
                   )
-                ).value[0].account.data.parsed.info.tokenAmount.amount + 14 //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
+                ).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
               )
             ];
             console.log(instructions.length)
