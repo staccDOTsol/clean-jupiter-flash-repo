@@ -301,7 +301,7 @@ const someroutes = await getRoutes ({
 										if (
 											new Decimal(routes.routesInfos[0].inAmount.toString())
           .div(10 ** tokenb.decimals) > new Decimal(routes2.routesInfos[0].outAmount.toString())
-          .div(10 ** atokens[i].decimals)* 1.002 &&
+          .div(10 ** atokens[i].decimals)* 1.0002 &&
 											!doing
 										) {
 											doing = true
@@ -324,7 +324,6 @@ const someroutes = await getRoutes ({
 										  
 											let thepaydirt = [];
 											let c = 0;
-											console.log(execute)
 											let DecompileArgs1 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
 											let decompiled1 = VersionedMessage.decompile(
 											execute.swapTransaction.message,
