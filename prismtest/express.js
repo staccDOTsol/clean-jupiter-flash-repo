@@ -1,10 +1,10 @@
 const { Prism } = require("@prism-hq/prism-ag");
-const { SolendMarket } = require("@solendprotocol/solend-sdk");
+const { SolendMarket } = require("./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("@solendprotocol/solend-sdk"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
@@ -56,10 +56,10 @@ console.log(wallet.publicKey.toBase58());
 var connection = new Connection(
 	ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 );
-//var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
-//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-//);
-var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
+var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+);
+//var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
 async function findLuts(ixs, pairadd) {
 	var arr1 = [];
@@ -228,7 +228,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		const reserve = market.reserves[1];
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
-		mod = Math.random() * 0.05 + 0.001;
+		//mod = Math.random() * 0.05 + 0.001;
 		const token = {
 			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
 			decimals: 6,
@@ -240,7 +240,7 @@ return
 		}
 		const pubkey = (
 			await connection.getParsedTokenAccountsByOwner(
-				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"), //HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
+				new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf
 				{ mint: new PublicKey(token.address) }
 			)
 		).value
@@ -405,15 +405,15 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
-														reserve.config.liquidityFeeReceiverAddress
+														reserve.config.liquidityAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
 													new PublicKey(reserve.config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
-													SOLEND_PRODUCTION_PROGRAM_ID /*,
+													SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)*/
+                new PublicKey(reserve.config.liquidityToken.mint)
 												)
 											);
 											instructions.push(
@@ -560,7 +560,7 @@ app.post("/", async function (req, res) {
 					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
 setTimeout(async function(){
-						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(10, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
 setTimeout(async function(){
 /*don't dot his it fucks up token
