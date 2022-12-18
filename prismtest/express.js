@@ -307,7 +307,7 @@ console.log(wallet.publicKey.toBase58())
               instructions.push(...preTransaction.instruction)
             }
              instructions.push( flashBorrowReserveLiquidityInstruction(
-                Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
+                Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
                 new PublicKey(reserve.config.liquidityAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
@@ -321,7 +321,7 @@ console.log(wallet.publicKey.toBase58())
               instructions.push(...thepaydirt)
               instructions.push(
               flashRepayReserveLiquidityInstruction(
-                Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
+                Math.ceil(routes[abc].amountIn  * 10 ** token.decimals),
                preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
