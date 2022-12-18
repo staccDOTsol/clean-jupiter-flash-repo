@@ -66,7 +66,7 @@ async function findLuts(ixs, pairadd) {
 	//for (var ix of ixs) {
 	//	try {
 	//	for (var k of ix.keys) {
-			arr1.push(k.pubkey);
+		//	arr1.push(k.pubkey);
 	//	}
 	//} catch(err){
 
