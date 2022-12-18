@@ -136,10 +136,6 @@ let mod = 6.66;
 let tokenbs = []
 var anobj = JSON.parse(fs.readFileSync('taps.json').toString())
 
-// @ts-ignore
-let ran =
-  Math.floor((Math.random() * ALT_RPC_LIST.split(",").length) / 2) +
-  Math.floor((Math.random() * ALT_RPC_LIST.split(",").length) / 2);
 
 var acoolobj = {}//JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 
