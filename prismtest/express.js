@@ -316,7 +316,12 @@ return
 												}
 												c++;
 											}
-											thepaydirt.push(...pt.instructions);
+											if (pt.instructions.length > 1) {
+												thepaydirt.push(pt.instructions[1]);
+											}else if (pt.instructions.length > 0) {{
+												thepaydirt.push(pt.instructions[0]);
+
+											}
 											c = 0;
 											for (var ix of [...mp.instructions]) {
 												if (!thepaydirt.includes(ix)) {
@@ -359,8 +364,11 @@ return
 											}
 
 											let instructions = [];
-											if (preTransaction.instructions.length > 0) {
-												instructions.push(...preTransaction.instructions);
+											if (preTransaction.instructions.length > 1) {
+												instructions.push(preTransaction.instructions[1]);
+											}else if (preTransaction.instructions.length > 0) {{
+												instructions.push(preTransaction.instructions[0]);
+
 											}
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
@@ -441,8 +449,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: false },
-													{ skipPreflight: false }
+													{ skipPreflight: true },
+													{ skipPreflight: true }
 												);
 												doing = false
 
