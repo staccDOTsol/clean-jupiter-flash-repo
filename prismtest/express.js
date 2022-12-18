@@ -452,14 +452,34 @@ async function dothehorriblething(i, tokenb, innn) {
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		let routes = prism.getRoutes(100); // get routes based on from Token amount 10 USDC -> ? PRISM
-	await prism.swap(routes[0])
+	
+		let { preTransaction, mainTransaction } =
+		await prism.generateSwapTransactions(routes[0]); // execute swap (sign, send and confirm transaction)
 
+let insts = [...preTransaction.instructions, ...mainTransaction.instructions]
+
+result = await sendAndConfirmTransaction(
+	connection,
+	// @ts-ignore
+	new Transaction().add(...insts),
+	{ skipPreflight: true },
+	{ skipPreflight: true })
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		let routes2 = prism.getRoutes(routes[0].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
-		await prism.swap(routes2[0])
 
+	let { preTransaction: pt, mainTransaction: mp } =
+		await prism.generateSwapTransactions(routes2[0]); 
+
+let insts2 = [...pt.instructions, ...mp.instructions]
+
+result = await sendAndConfirmTransaction(
+	connection,
+	// @ts-ignore
+	new Transaction().add(...insts2),
+	{ skipPreflight: true },
+	{ skipPreflight: true })
 											}
 											if (result != undefined) {
 												mod = mod * 10;
