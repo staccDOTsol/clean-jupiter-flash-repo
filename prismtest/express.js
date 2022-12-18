@@ -447,7 +447,7 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 												fs.writeFileSync("txs.txt", txs);
 											} catch (err) {
 												console.log(err);
-
+/*
 		await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -478,6 +478,7 @@ tx.blockhash = (await connection.getLatestBlockhash()).blockhash
 var result = await connection.sendTransaction(tx, [wallet]
 	)
 	console.log('tx2: ' + result)
+	*/
 											}
 											if (result != undefined) {
 												mod = mod * 10;
