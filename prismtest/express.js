@@ -332,8 +332,16 @@ const someroutes = await getRoutes ({
 											let decompiled2 = TransactionMessage.decompile(
 											execute2.swapTransaction.message,
 											DecompileArgs2)
+											var cc3 = 0 
+											let newix = []
+											for (var ix of decompiled2.instructions){
+												if (cc3 > 0){
+													newix.push(decompiled2)
+												}
+												cc3++
+											}
 											let mainTransaction = new Transaction().add(...decompiled1.instructions)
-											let mp = new Transaction().add(...decompiled2.instructions)
+											let mp = new Transaction().add(...newix)
 											let pt =  new Transaction()
 											let preTransaction =  new Transaction()
 											if (execute.setupTransaction){
