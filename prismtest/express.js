@@ -228,7 +228,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		const reserve = market.reserves[i];
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
-		mod = Math.random() * 15 + 1;
+		mod = Math.random() * 1 + 1;
 		const token = {
 			address: reserve.config.liquidityToken.mint,
 			decimals: reserve.config.liquidityToken.decimals,
