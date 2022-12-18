@@ -143,7 +143,7 @@ var acoolobj = {}//JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 var express = require("express");
 var bodyParser = require("body-parser");
 var cors = require("cors");
-const { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } = require("@solana/spl-token");
+const { TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID, Token } = require("@solana/spl-token");
 
 var app = express();
 app.use(bodyParser());
