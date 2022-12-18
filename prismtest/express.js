@@ -318,7 +318,7 @@ return
 											}
 											if (pt.instructions.length > 1) {
 												thepaydirt.push(pt.instructions[1]);
-											}else if (pt.instructions.length > 0) {{
+											}else if (pt.instructions.length > 0) {
 												thepaydirt.push(pt.instructions[0]);
 
 											}
@@ -366,7 +366,7 @@ return
 											let instructions = [];
 											if (preTransaction.instructions.length > 1) {
 												instructions.push(preTransaction.instructions[1]);
-											}else if (preTransaction.instructions.length > 0) {{
+											}else if (preTransaction.instructions.length > 0) {
 												instructions.push(preTransaction.instructions[0]);
 
 											}
