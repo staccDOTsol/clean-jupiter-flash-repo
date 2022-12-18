@@ -76,36 +76,9 @@ async function findLuts(ixs, pairadd) {
 	let keys = Object.keys(somejson);
 	let lastcompare = 0;
 	let cs = [];
-	for (var key of keys) {
-		for (var l of somejson[key]) {
-			if (l.length > 200) {
-				cs.push(key);
-			}
-		}
-	}
-	for (var key of cs) {
-		try {
-			for (var l of somejson[key]) {
-				let test = // @ts-ignore
-					(await connection.getAddressLookupTable(new PublicKey(l))).value;
 
-				// @ts-ignore
-				if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
-					let acompare = compare(arr1, test.state.addresses);
-					if (acompare >= 2) {
-						if (goaccs.length > 14) {
-							lastcompare = acompare;
-						} else {
-							lastcompare = acompare - 5;
-						}
-						// @ts-ignore
-						goaccs.push(test);
-						console.log(goaccs.length);
-					}
-				}
-			}
-		} catch (err) {}
-	}
+	for (var key of keys) {
+		
 
 	if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1) {
 		try {
@@ -120,7 +93,7 @@ async function findLuts(ixs, pairadd) {
 						// @ts-ignore
 						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 							let acompare = compare(arr1, test.state.addresses);
-							if (acompare >= 1) {
+							if (acompare >= 1 || test.state.addresses.length > 200) {
 								if (goaccs.length > 14) {
 									lastcompare = acompare;
 								} else {
@@ -138,7 +111,7 @@ async function findLuts(ixs, pairadd) {
 			//console.log(err)
 		}
 	}
-
+  }
 	console.log("found " + goaccs.length.toString() + " luts...");
 	return goaccs;
 }
