@@ -171,7 +171,7 @@ var reservePairs = {};
     const reserve = market.reserves[i];
     // @ts-ignore
     let symbol = reserve.config.liquidityToken.symbol;
-    mod = Math.random() * 1
+    mod = Math.random() * 0.2
     console.log(symbol + " ... ... ... mod: " + mod.toString());
     const token = {
       address: reserve.config.liquidityToken.mint,
