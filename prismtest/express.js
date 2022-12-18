@@ -1,10 +1,10 @@
 const { Prism } = require("@prism-hq/prism-ag");
-const { SolendMarket } = require("@solendprotocol/solend-sdk");
+const { SolendMarket } = require("./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("@solendprotocol/solend-sdk"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
@@ -56,10 +56,10 @@ console.log(wallet.publicKey.toBase58());
 var connection = new Connection(
 	ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 );
-//var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
-//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-//);
-var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
+var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+ "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+);
+//var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
 async function findLuts(ixs, pairadd) {
 	var arr1 = [];
@@ -135,8 +135,8 @@ setTimeout(async function () {
 
 	market = await SolendMarket.initialize(
 		connection,
-		"production",
-		"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		"production"//,
+		//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 	);
 	for (var res of market.reserves) {
 		tokenbs.push({
@@ -215,8 +215,8 @@ async function dothehorriblething(i, tokenb, innn, dec) {
 		if (!market) {
 			market = await SolendMarket.initialize(
 				connection,
-				"production",
-				"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				"production"//,
+				//"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		const reserve = market.reserves[i];
@@ -393,15 +393,15 @@ return
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
-														reserve.config.liquidityFeeReceiverAddress
+														reserve.config.liquidityAddress//liquidityFeeReceiverAddress
 													),
 													tokenAccount,
 													new PublicKey(reserve.config.address),
 													new PublicKey(market.config.address),
 													wallet.publicKey,
-													SOLEND_PRODUCTION_PROGRAM_ID /*,
+													SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)*/
+                new PublicKey(reserve.config.liquidityToken.mint)
 												)
 											);
 											instructions.push(
@@ -546,19 +546,15 @@ app.post("/", async function (req, res) {
 					if (tokenb == undefined) {
 						tokenb = tokens2.find((t) => t.address === ch.mint);
 					}
-					//for (var i = 2; i<= 13; i++){
+					for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-						await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+						await  dothehorriblething(i, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 
-						await dothehorriblething(
-							1,
-							tokenb,
-							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
-						);
 					
 					}
+				}
 					a++;
 
 					//  }
