@@ -225,14 +225,14 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 				"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
-		const reserve = market.reserves[1];
+		const reserve = market.reserves[i];
 		// @ts-ignore
 		let symbol = reserve.config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001;
 		const token = {
-			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-			decimals: 6,
-			symbol: "USDC",
+			address: reserve.config.liquidityToken.address,
+			decimals: reserve.config.liquidityToken.decimals,
+			symbol: reserve.config.asset,
 		};
 
 		if (tokenb.address == token.address){
@@ -555,12 +555,12 @@ app.post("/", async function (req, res) {
 					if (tokenbt == undefined) {
 						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
-					//for (var i = 2; i<= 13; i++){
+					for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
 setTimeout(async function(){
-						  dothehorriblething(10, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(i, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
 setTimeout(async function(){
 /*don't dot his it fucks up token
@@ -575,7 +575,7 @@ setTimeout(async function(){
 					}
 					a++;
 
-					//  }
+					 }
 					// }
 				}
 				if (anobj.includes(ch.tokenAccount)) {
