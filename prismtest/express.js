@@ -271,6 +271,7 @@ try {
             
 let insts1 = [
   ...preTransaction.instructions, ...pt.instructions]
+  console.log(insts1.length)
             let instructions = [
               flashBorrowReserveLiquidityInstruction(
                 amountToTrade,
@@ -320,6 +321,7 @@ let insts1 = [
                 ).value[0].account.data.parsed.info.tokenAmount.amount + 14 //+ Math.ceil(solamis[0].amountOut * 0.8 * 10 ** token.decimals)
               )
             ];
+            console.log(instructions.length)
             if (!Object.keys(tgoaccs).includes(token.symbol)){
               tgoaccs[token.symbol] = []
             }
@@ -413,8 +415,6 @@ let insts1 = [
 app.post("/", async function (req, res) {
   if (req.body.fee > 5000) {
   }
-  try {
-  } catch (err) {}
   var looking = []; 
   var rp = "";
   
