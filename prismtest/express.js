@@ -245,6 +245,7 @@ console.log(routes2.length)
                 " " //+
                 //token.symbol + ' solami fees to beat ' + solamis[0].amountOut.toString()
             );
+             mod = mod / 1.3
 console.log(wallet.publicKey.toBase58())
 try {
   await getOrCreateAssociatedTokenAccount(
