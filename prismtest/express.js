@@ -515,18 +515,15 @@ var result = await connection.sendTransaction(tx, [wallet]
 							}
 						}
 					} catch (err) {
-						doing = false;
 						console.log(err);
 					}
 				} catch (err) {
-					doing = false;
 					console.log(err);
 				}
 			}
 		}
 	}
 	} catch (err) {
-		doing = false;
 		console.log(err);
 	}
 }
