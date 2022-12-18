@@ -60,7 +60,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
       // @ts-ignore
       for (var l of (somejson)[key]) {
         // @ts-ignore
-        if (goaccs.length < 36) {
+        if (goaccs.length < 20) {
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
@@ -68,6 +68,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
               // @ts-ignore
               goaccs.push(test)
+              console.log(goaccs.length)
             }
           } catch (err) {}
         }
