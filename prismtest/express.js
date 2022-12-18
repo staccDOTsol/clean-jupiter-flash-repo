@@ -560,15 +560,15 @@ app.post("/", async function (req, res) {
 					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
 setTimeout(async function(){
-						  dothehorriblething(0, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 }, Math.random() * 200)
 setTimeout(async function(){
-
+/*don't dot his it fucks up token
 						 dothehorriblething(
 							1,
 							tokenbt,
 							parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals
-						);
+						); */
 						 
 					}, Math.random() * 200)
 				}
