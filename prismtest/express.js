@@ -456,8 +456,8 @@ return
 													superconnection,
 													// @ts-ignore
 													transaction,
-													{ skipPreflight: true, maxRetries: 10 },
-													{ skipPreflight: true, maxRetries: 10 }
+													{ skipPreflight: false, maxRetries: 10 },
+													{ skipPreflight: false, maxRetries: 10 }
 												);
 												doing = false
 
