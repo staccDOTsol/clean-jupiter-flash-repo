@@ -70,7 +70,37 @@ for (var ix of ixs){
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
 let lastcompare = 0
+let cs = []
 for (var key of keys){
+  if (keys[key].length > 200){
+  cs.push(key)
+  }
+}
+for (var key of cs){
+try {      for (var l of (somejson)[key]) {
+
+    let test = // @ts-ignore
+      (await connection.getAddressLookupTable(new PublicKey(l))).value;
+
+      // @ts-ignore
+    if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+      let acompare = compare(arr1, test.state.addresses)
+      if (acompare >= 2){
+        if (goaccs.length > 14){
+        lastcompare =acompare
+        }
+        else {
+          lastcompare =acompare-5
+
+        }
+      // @ts-ignore
+      goaccs.push(test)
+      console.log(goaccs.length)
+    }
+    }
+  }
+  } catch (err) {}
+}
 if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
       // @ts-ignore
