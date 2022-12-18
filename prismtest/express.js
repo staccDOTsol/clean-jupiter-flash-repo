@@ -269,7 +269,8 @@ console.log(routes2.length)
         
         if (routes2[bca]) {
           console.log(routes2[bca].amountOut > routes[abc].amountI* 1.009 )
-          if (routes2[bca].amountOut  > routes[abc].amountIn* 1.009) {
+          if (routes2[bca].amountOut  > routes[abc].amountIn* 1.009 && !doing) {
+            doing = true
             console.log(
               "trading " +
                 (amountToTrade / 10 ** 6).toString() +
@@ -418,27 +419,32 @@ console.log(wallet.publicKey.toBase58())
             if (result != undefined) {
               mod = mod * 10;
             }
-            
+            doing = false
           } 
         }
       
       } catch (err) {
+        doing = false
         console.log(err);
       }
     }
   }
   } catch (err){
+    doing = false
     console.log(err)
   }
   } catch (err) {
+    doing = false
     console.log(err);
   }
 }
 }
   } catch (err) {
+    doing = false
     console.log(err);
   }
- }        
+ }     
+ var doing = false   
 app.post("/", async function (req, res) {
   if (req.body.fee > 5000) {
   }
