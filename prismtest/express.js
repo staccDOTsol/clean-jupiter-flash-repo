@@ -304,7 +304,7 @@ console.log(wallet.publicKey.toBase58())
 
             let instructions = []
             if (preTransaction.instructions.length > 0){
-              instructions.push(...preTransaction.instruction)
+              instructions.push(...preTransaction.instructions)
             }
              instructions.push( flashBorrowReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 10 ** token.decimals),
