@@ -65,7 +65,6 @@ for (var ix of ixs){
     arr1.push(k.pubkey)
   }
 }
-console.log(arr1)
   connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
   let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
@@ -84,6 +83,7 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
 
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+              console.log(test.state.addresses)
               let acompare = compare(arr1, test.state.addresses)
               if (acompare > lastcompare){
                 lastcompare =acompare
