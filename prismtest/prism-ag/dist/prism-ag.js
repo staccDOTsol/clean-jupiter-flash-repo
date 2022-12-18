@@ -247,7 +247,7 @@ class Prism {
             this.user.publicKey).catch(() => null);
         });
     }
-    loadRoutes(from, to, oldData, direct = false) {
+    loadRoutes(from, to, direct = false) {
         return __awaiter(this, void 0, void 0, function* () {
             this.fromCoin = (0, utils_1.findCoinFrom)(this.tokenList.tokens, from);
             this.toCoin = (0, utils_1.findCoinFrom)(this.tokenList.tokens, to);
@@ -258,12 +258,12 @@ class Prism {
             if (this.lastFromCoin && this.lastToCoin && this.fromCoin.address == this.lastToCoin.address && this.toCoin.address == this.lastFromCoin.address) {
                 this.lastFromCoin = this.fromCoin;
                 this.lastToCoin = this.toCoin;
-                this.liquidityInfos.routes = yield (0, liquidityInfos_1.loadLiquidityInfos)(this.fromCoin, this.toCoin,oldData, this.liquidityProviders,  this.connection, tokenMap, direct, true);
+                this.liquidityInfos.routes = yield (0, liquidityInfos_1.loadLiquidityInfos)(this.fromCoin, this.toCoin, this.liquidityProviders,  this.connection, tokenMap, direct, true);
                 return;
             }
             this.lastFromCoin = this.fromCoin;
             this.lastToCoin = this.toCoin;
-            this.liquidityInfos = yield (0, liquidityInfos_1.loadLiquidityInfos)(this.fromCoin, this.toCoin, oldData,this.liquidityProviders, this.connection, tokenMap, direct, false);
+            this.liquidityInfos = yield (0, liquidityInfos_1.loadLiquidityInfos)(this.fromCoin, this.toCoin,this.liquidityProviders, this.connection, tokenMap, direct, false);
         return this.liquidityInfos
         });
         
