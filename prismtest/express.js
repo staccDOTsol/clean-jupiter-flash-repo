@@ -292,7 +292,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 											routes2[bca].amountMid > routes[abc].amountIn * 1.002 &&
 											!doing
 										) {
-											//doing = true
+											doing = true
 											console.log(
 												mod.toString() +
 												token.symbol +
