@@ -296,7 +296,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** token.decimals).toString())
 												token.symbol +
 												" " +
 												token.address + " mod " +
-													(amountToTrade / 10 ** token.decimals).toString() +
+													(routes[abc].inAmount / 10 ** token.decimals).toString() +
 													"$ " +
 													(routes[abc].amountOut / 10 ** tokenb.decimals).toString() +
 													" outamnt " +
