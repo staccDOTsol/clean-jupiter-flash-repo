@@ -550,7 +550,7 @@ app.post("/", async function (req, res) {
 					//   if (i != 1){
 					if (tokenb != undefined) {
 
-						await  dothehorriblething(10, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+						await  dothehorriblething(2, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
 
 					
 				//	}
