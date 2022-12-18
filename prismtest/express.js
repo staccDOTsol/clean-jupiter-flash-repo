@@ -556,11 +556,11 @@ app.post("/", async function (req, res) {
 					if (tokenbt == undefined) {
 						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
-					for (var i = 2; i<= 13; i++){
+					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
-						  dothehorriblething(i, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 setTimeout(async function(){
 /*don't dot his it fucks up token
 						 dothehorriblething(
@@ -570,7 +570,7 @@ setTimeout(async function(){
 						); */
 						 
 					}, Math.random() * 200)
-				}
+				//}
 					}
 					a++;
 
