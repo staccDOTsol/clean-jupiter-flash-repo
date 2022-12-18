@@ -262,6 +262,7 @@ return
 			)
 		).address;
 		console.log(routes.length);
+		if (!routes[0]) return
 		if (innn < routes[0].amountOut * 10 ** dec) {
 			var abc = Math.floor(Math.random() * 2);
 			if (routes[abc]) {
