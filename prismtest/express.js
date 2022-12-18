@@ -41,9 +41,7 @@ const wallet = Keypair.fromSecretKey(
   bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
 console.log(wallet.publicKey.toBase58());
-const connection = new Connection(
-  "https://solana-mainnet.g.alchemy.com/v2/Zf8WbWIes5Ivksj_dLGL_txHMoRA7-Kr",
-  "singleGossip"
+const connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST?.split(',').length)]
 );
 //var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 //  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
@@ -51,6 +49,7 @@ const connection = new Connection(
 var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
 
 async function findLuts(pairadd) {
+  connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST?.split(',').length)])
   let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
