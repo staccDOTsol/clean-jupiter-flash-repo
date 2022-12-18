@@ -259,8 +259,8 @@ let tokenAccount = (
 try {
  //  oldData[tokenb.address + token.address] =    maybe2.oldData
    if (true){
-    console.log(routes[abc].amountOut.toString() + ' outamnt')
-   let routes2 = prism.getRoutes(routes[abc].amountOut / 1.0001); // get routes based on from Token amount 10 USDC -> ? PRISM
+    console.log(routes[abc].amountOut.toString() + ' outamnt ' + tokenb.symbol + ' ' + tokenb.address)
+   let routes2 = prism.getRoutes(routes[abc].amountOut); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
     if (true){
 
