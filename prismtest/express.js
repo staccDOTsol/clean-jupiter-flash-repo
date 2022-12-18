@@ -19,6 +19,8 @@ const {
   sendAndConfirmTransaction,
   Transaction,
 } = require("@solana/web3.js");
+compare = (a1, a2) => arr1.filter(v => arr2.includes(v)).length;
+
 let ALT_RPC_LIST = process.env.ALT_RPC_LIST.split(',')
 const jaregms = {
   USDC:"2wpYeJQmQAPaQFpB8jZPPbPuJPXgVLNPir2ohwGBCFD1",
@@ -47,11 +49,19 @@ var connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LI
 //);
 var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
 
-async function findLuts(pairadd) {
+async function findLuts(ixs, pairadd) {
+var arr1 = []
+for (var ix of ixs){
+  for (var k of ix.keys){
+    arr1.push(k)
+  }
+}
+
   connection = new Connection(ALT_RPC_LIST[Math.floor(Math.random()*ALT_RPC_LIST.length)])
   let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
+let lastcompare = 0
 for (var key of keys){
 if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
     try {
@@ -62,11 +72,16 @@ if (key.indexOf(pairadd[0]) != -1 || key.indexOf(pairadd[1]) != -1 ){
           try {
             let test = // @ts-ignore
               (await connection.getAddressLookupTable(new PublicKey(l))).value;
+
               // @ts-ignore
             if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
+              let acompare = compare(arr1, test.state.addresses)
+              if (acompare > lastcompare){
+                lastcompare =acompare
               // @ts-ignore
               goaccs.push(test)
               console.log(goaccs.length)
+            }
             }
           } catch (err) {}
         }
@@ -356,7 +371,7 @@ console.log(wallet.publicKey.toBase58())
               tgoaccs[token.symbol] = []
             }
           //  if (tgoaccs[token.symbol].length == 0){
-              tgoaccs[token.symbol] = await findLuts([token.address, tokenb.address]);
+              tgoaccs[token.symbol] = await findLuts(instructions, [token.address, tokenb.address]);
           //  }
             var messageV00 = new TransactionMessage({
               payerKey: wallet.publicKey,
