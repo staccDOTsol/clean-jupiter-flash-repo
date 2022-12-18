@@ -72,7 +72,7 @@ let keys = Object.keys(somejson)
 let lastcompare = 0
 let cs = []
 for (var key of keys){
-  if (keys[key].length > 200){
+  if ((somejson)[key].length > 200){
   cs.push(key)
   }
 }
