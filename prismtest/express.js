@@ -230,9 +230,9 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		let symbol = reserve.config.liquidityToken.symbol;
 		mod = Math.random() * 0.4 + 0.1;
 		const token = {
-			address: reserve.config.liquidityToken.mint,
-			decimals: reserve.config.liquidityToken.decimals,
-			symbol: symbol,
+			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+			decimals: 6,
+			symbol: "USDC",
 		};
 
 		if (tokenb.address == token.address){
