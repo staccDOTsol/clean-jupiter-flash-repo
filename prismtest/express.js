@@ -304,7 +304,7 @@ const someroutes = await getRoutes ({
           .div(10 ** atokens[i].decimals)* 1.0002 &&
 											!doing
 										) {
-											doing = true
+											//doing = true
 											console.log(
 												mod.toString() +
 												atokens[i].symbol +
