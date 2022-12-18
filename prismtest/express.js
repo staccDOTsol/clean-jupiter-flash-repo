@@ -2,6 +2,14 @@ const { SolendMarket } = require("./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
+	Connection,
+	Keypair,
+	PublicKey,
+	sendAndConfirmTransaction,
+	TransactionMessage,
+	VersionedTransaction,
+  } = require( "@solana/web3.js" );
+const {
 	flashRepayReserveLiquidityInstruction,
 } = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
