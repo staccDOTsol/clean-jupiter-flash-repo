@@ -50,6 +50,7 @@ async function getRoutes  ({
             forceFetch: true,
           })
 		  console.log(innn)
+		  console.log(routes.routeInfos[0].outAmount )
 		  if (routes.routeInfos[0].outAmount > innn ){
 			return null
 		  }
