@@ -1,37 +1,7 @@
-var anobj2 = []
+var anobj2 = ["EWy2hPdVT4uGrYokx65nAyn2GFBv7bUYA2pFPY96pw7Y","GM48qFn8rnqhyNMrBHyPJgUVwXQ1JvMbcu3b9zkThW9L","11111111111111111111111111111111","54q2ct7kTknGvADuHSXjtnKqMbmNQ4xpDVK2xgcnh1xv","5cvqiPREvEYmhvBt3cZ7fmrCE6tbYvwkAiuvf1pHUPBq","9gVstb8HkuYX8PqjLSc9b9zLMhFZwWX7k3ofLcWy7wyS","HLdcfovcXkHKm4iQWNQZhJypySmuGa1PGoTuB6L68hhZ","EWy2hPdVT4uGrYokx65nAyn2GFBv7bUYA2pFPY96pw7Y","GM48qFn8rnqhyNMrBHyPJgUVwXQ1JvMbcu3b9zkThW9L","11111111111111111111111111111111","3bFWy2hz9yGxvbgoRmzjUqkoYbCTWUDu7sZPHUYV39Pf","49gyyvxzf61PknHoTg2cFGYQCJRnUrC7Web8h8go7ceM","92P9U8L43ZCAKfdZxJaBAwmbb3MazdoVgrCm7R3xRnhn","11111111111111111111111111111111","FqLtqRJvoVNYU5Xpcgp5FNPv8cXCZw7CiNddjQ4nqkRo","9gizzFG33czvcTzn5N4V23uunV6YR55UNW8ow6qNPoX3","EWy2hPdVT4uGrYokx65nAyn2GFBv7bUYA2pFPY96pw7Y","GM48qFn8rnqhyNMrBHyPJgUVwXQ1JvMbcu3b9zkThW9L","3bFWy2hz9yGxvbgoRmzjUqkoYbCTWUDu7sZPHUYV39Pf","49gyyvxzf61PknHoTg2cFGYQCJRnUrC7Web8h8go7ceM","92P9U8L43ZCAKfdZxJaBAwmbb3MazdoVgrCm7R3xRnhn","11111111111111111111111111111111","J7xkQZ4eCsyHR7XDMcGbHeiFZo6vXPmQC2Va8aqo8jLx","bqPxs71QGXNW2SXEvjAaBgLzjhSZfQpmhcVBYoisBo6","EpehbDhGq8xEc3Yy5nJ2dgY2zWRHaRsbUiMTgh36N8J7","11111111111111111111111111111111","J7xkQZ4eCsyHR7XDMcGbHeiFZo6vXPmQC2Va8aqo8jLx","bqPxs71QGXNW2SXEvjAaBgLzjhSZfQpmhcVBYoisBo6","EpehbDhGq8xEc3Yy5nJ2dgY2zWRHaRsbUiMTgh36N8J7","11111111111111111111111111111111","J7xkQZ4eCsyHR7XDMcGbHeiFZo6vXPmQC2Va8aqo8jLx","bqPxs71QGXNW2SXEvjAaBgLzjhSZfQpmhcVBYoisBo6","EpehbDhGq8xEc3Yy5nJ2dgY2zWRHaRsbUiMTgh36N8J7","11111111111111111111111111111111","65sR8agQm768HYCjktunDJG3bbQszi7U8VD4pAKEYiXW","G5Q7dTUPYw5pEXbfzZbAFSaPstP9bdFmEJ7XXcyrkxVJ","EZd87x1Fu1ufV7pVRuXAEcL9y6aEMWWqtpcr7AHdU8ms","BLcaKjTnX3ggFMxhUeiZz32mpgiLeKYV2QWQ72JxgjdV","GgstY3wF2avMfPd7pAgVWUXaHaPFDkvyjMkTTsPNqmwE","BZRKweQTuVGWKZAL6Qrtgi1HPkuqzKxnJWLLJrqSm8Xs","Go93HBNLMK6QnSHyZTViAoti9GCmSRhkeZMiVoJmcrud","2uZVPMdS8VFwMEZjZNzP1f78m1zaqvT3R2JwMs1w9fU3","5nazSj6MfaEeuAoQezMG3raWuZiyFjE7fmURUgDeP8cF","3bFWy2hz9yGxvbgoRmzjUqkoYbCTWUDu7sZPHUYV39Pf","49gyyvxzf61PknHoTg2cFGYQCJRnUrC7Web8h8go7ceM","92P9U8L43ZCAKfdZxJaBAwmbb3MazdoVgrCm7R3xRnhn","3tu1Pac9N8sP8R9zHwmFvU258CPhbRSweVjdb2K2SVjt","9SbaPafChbA5aCm2ZB52viFVTEb6Mf9VeHxGeJetdHCf","9AWmAX6AgzVBWYHLRbjbHH5g9XJuoHM1vvaa3HfHxDx3","EWy2hPdVT4uGrYokx65nAyn2GFBv7bUYA2pFPY96pw7Y","GM48qFn8rnqhyNMrBHyPJgUVwXQ1JvMbcu3b9zkThW9L","FqLtqRJvoVNYU5Xpcgp5FNPv8cXCZw7CiNddjQ4nqkRo","9gizzFG33czvcTzn5N4V23uunV6YR55UNW8ow6qNPoX3","JDeFmK1Mw2jzSyQehUY1VrBQwhvkH7DkaYYtpeiSBzsu","HMmtcsCD48mu9LWpjRKdHzb7TmQd4sRzHoyHSQVAjYUG","9bbJYqSBxgUtNBpSEDrU6RzoNEpAPrtU7e8RRG1XjJUY","11111111111111111111111111111111","BLcaKjTnX3ggFMxhUeiZz32mpgiLeKYV2QWQ72JxgjdV","GgstY3wF2avMfPd7pAgVWUXaHaPFDkvyjMkTTsPNqmwE","BZRKweQTuVGWKZAL6Qrtgi1HPkuqzKxnJWLLJrqSm8Xs","FqLtqRJvoVNYU5Xpcgp5FNPv8cXCZw7CiNddjQ4nqkRo","9gizzFG33czvcTzn5N4V23uunV6YR55UNW8ow6qNPoX3","EWy2hPdVT4uGrYokx65nAyn2GFBv7bUYA2pFPY96pw7Y","GM48qFn8rnqhyNMrBHyPJgUVwXQ1JvMbcu3b9zkThW9L","JDeFmK1Mw2jzSyQehUY1VrBQwhvkH7DkaYYtpeiSBzsu","HMmtcsCD48mu9LWpjRKdHzb7TmQd4sRzHoyHSQVAjYUG","9bbJYqSBxgUtNBpSEDrU6RzoNEpAPrtU7e8RRG1XjJUY","11111111111111111111111111111111","BLcaKjTnX3ggFMxhUeiZz32mpgiLeKYV2QWQ72JxgjdV","GgstY3wF2avMfPd7pAgVWUXaHaPFDkvyjMkTTsPNqmwE","BZRKweQTuVGWKZAL6Qrtgi1HPkuqzKxnJWLLJrqSm8Xs","J7xkQZ4eCsyHR7XDMcGbHeiFZo6vXPmQC2Va8aqo8jLx","bqPxs71QGXNW2SXEvjAaBgLzjhSZfQpmhcVBYoisBo6","EpehbDhGq8xEc3Yy5nJ2dgY2zWRHaRsbUiMTgh36N8J7","65sR8agQm768HYCjktunDJG3bbQszi7U8VD4pAKEYiXW","G5Q7dTUPYw5pEXbfzZbAFSaPstP9bdFmEJ7XXcyrkxVJ","EZd87x1Fu1ufV7pVRuXAEcL9y6aEMWWqtpcr7AHdU8ms","Go93HBNLMK6QnSHyZTViAoti9GCmSRhkeZMiVoJmcrud","2uZVPMdS8VFwMEZjZNzP1f78m1zaqvT3R2JwMs1w9fU3","5nazSj6MfaEeuAoQezMG3raWuZiyFjE7fmURUgDeP8cF","3bFWy2hz9yGxvbgoRmzjUqkoYbCTWUDu7sZPHUYV39Pf","49gyyvxzf61PknHoTg2cFGYQCJRnUrC7Web8h8go7ceM","92P9U8L43ZCAKfdZxJaBAwmbb3MazdoVgrCm7R3xRnhn","3tu1Pac9N8sP8R9zHwmFvU258CPhbRSweVjdb2K2SVjt","9SbaPafChbA5aCm2ZB52viFVTEb6Mf9VeHxGeJetdHCf","9AWmAX6AgzVBWYHLRbjbHH5g9XJuoHM1vvaa3HfHxDx3","FznWTeu44sR9WvqVtekzGQn82z7BxErkcpDDDSmvncYY","9UMESFcuCBj8bUw6kGDx8zut1g495Y6TcyATm3ht2kqP","Ez1dYUW8FGhrJGHe4e84JTmyZYFwpjwM7GuhSaBth5Xh","7AiubbXXefRK3Tw83Y2XGovBwZ691pcdkts2S7zNE43Q","66guLcMF3qXkrMyLqDfuNKcHc7B6B36id9ZDDww4hiMv","8KX8TLQHfq9UyqNvzUrUCLiECNBdMspMmU8mghdM2SAM","2vhaJumb3hbRLUSDDy3Qk8KGGfzqThdwo8ai4tAvztGh","CC3FtDKTueNP1pmgtNWvKHZwbznyigSaiGhKsQYAfufD","CGNSvPQV4LaGy6KPag2VUktXjxEig8oQhNasm5itbpSE","HyzoG85bjV9mf5gUjgz7qNxbjT5ojPnA5f4R472wjnaL","9fsBX79ktYFNvQNMmShmatjhyBrsdPa1Q92eHPZZQXDx","CQvfEBvq8qBj4RAfB4yksNSg8K8BStdouNjUSnqz22Ky","GFp18ytc7pi7DxhXuFxAY88JSTxi7hSZZ1TpH9zC6NaH","E7kn3fUvZVcnhSPYDpys6PyPjdxH3mjmj4usPVLQVcLN","CuHxFJ4gd9Yro39k9KhAK7JX97sBpzVwjzCWLiie8jBh","6tNZmB7BDj9qE2MpxrbUwrnAz7bSbjEtcHiZrQ5Fx16","AALGPikoDSTRnfvtoUSVCxhLGvXqqRZ66wHXwnupnqZC","AaZSGju4H7AWP9YSjwPvpxXFKVUgoh5A94rjCPegFwXr","FEPtjpdDrEMfUTjCkimXH2e3h8KJTjsZYMLC6FtviTUW","CRj4DCzp7hDXyNgVhagNJmTmKjtsVLBtPDzjk6JeE2CL","2hHSmtBb7WzCaNFVun7CCmNq445dyQ9e1Tf66GCQGtjV","4ZYrDMtLE3HGWjeE9W2L3psZP7SMASnez9rzqmpfnTxa","2FRWh8BZfpeuh8Pmg7ezHvBezW8yiEGG6Fy8pCnHVyq1","8m5D8rtDdP67qZyZTXwLozVCsXJMcSiXnroWoRn9GZga","3CF2cmVJxnWKt4J4u5tzsNSYVcSvmWqbbb4iJMEmzSRr","5Nn1Fm15FqjD5DbMFBQ93Rrwppzei5GghENMmJt5qRpR","AGGZ2djPDEvrbgiBTV3P8UoB8Zf1kGawkWd2eu553o44", "JUP4Fb2cqiRUcaTHdrPC8h2gNsA2ETXiPDD33WcGuJB"]
 let acoolobj = {}
 const fs = require('fs')
-var anobj = JSON.parse(fs.readFileSync('./taps.json').toString())
-
-const { Connection, PublicKey } = require('@solana/web3.js')
-setTimeout(async() => {
-        try {
-            var anobj = JSON.parse(fs.readFileSync('./taps.json').toString())
-
-    let connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/1_5YWfzLWXOo_Y_Dm0s89VTlD5T_RKHn")
-
-for (var aaa of anobj){
-    if (!anobj2.includes(aaa)){
-        try{
-        anobj2.push(aaa)
-        acoolobj[aaa] = parseFloat((await connection.getTokenAccountBalance(new PublicKey(aaa))).value.amount)
-          fs.writeFileSync('./acoolobj.json', JSON.stringify(acoolobj))
-          console.log(acoolobj[aaa] )
-        }
-        catch (err){
-console.log(err)
-        }
-        }
-   
-    }
-}
-catch (err){
-
-
-}
-
-
-
+setTimeout(async function(){
 //https://rpc.helius.xyz/?api-key=6b1ccd35-ba2d-472a-8f54-9ac2c3c40b8b
 
 
@@ -46,7 +16,7 @@ const json  ={
 var request = require('request');
 
 request.post(
-    'https://api.helius.xyz/v0/webhooks?api-key=339338aa-3c41-41fa-9bbe-b1b0d5ce1d3b',
+    'https://api.helius.xyz/v0/webhooks?api-key=81972555-7e88-4f2c-9a43-9072b958f572',
     { json: json },
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
