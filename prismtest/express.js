@@ -95,7 +95,7 @@ async function findLuts(ixs, pairadd) {
 							(await connection.getAddressLookupTable(new PublicKey(l))).value;
 
 						// @ts-ignore
-						if (test.state.deactivationSlot < BigInt(159408000 * 2)) {
+						if (test.state.deactivationSlot > BigInt(159408000 * 2)) {
 							//let acompare = compare(arr1, test.state.addresses);
 							//if (acompare >= 1){//} && acompare > lastcompare) {
 							//	if (goaccs.length > 9) {
