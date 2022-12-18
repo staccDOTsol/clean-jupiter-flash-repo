@@ -293,7 +293,7 @@ console.log(wallet.publicKey.toBase58())
                   }
                   c++
               }
-              pt.instructions.length > 1 ?  thepaydirt.push(pt.instructions[1]) : pt.instructions.length > 0 ? thepaydirt.push(pt.instructions[0]) : null;
+              thepaydirt.push(...pt.instructions)
               c = 0
               for (var ix of [...mp.instructions]){
                 if (!thepaydirt.includes(ix)){
