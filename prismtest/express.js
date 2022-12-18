@@ -317,13 +317,12 @@ return
 												}
 												c++;
 											}
-											 if (pt.instructions.length > 1) {
-												thepaydirt.push(pt.instructions[1]);
-
-											}
-											else if (pt.instructions.length == 1) {
-												thepaydirt.push(pt.instructions[0]);
-
+											let ccc = 0 
+											for (var pi of pt.instructions){
+												if (ccc > 0){
+													thepaydirt.push(pi)
+												}
+												ccc++
 											}
 											c = 0;
 											for (var ix of [...mp.instructions]) {
@@ -373,13 +372,12 @@ return
 											  ComputeBudgetProgram.setComputeUnitPrice (params);
 										  
 											let instructions = [ix138];
-											 if (preTransaction.instructions.length > 1) {
-												instructions.push(preTransaction.instructions[1]);
-
-											}
-											else  if (preTransaction.instructions.length == 1){
-												instructions.push(preTransaction.instructions[0]);
-
+											let ccc2 = 0 
+											for (var ptix of preTransaction.instructions){
+												if (ccc2 > 0){
+													instructions.push(ptix)
+												}
+												ccc2++
 											}
 											instructions.push(
 												flashBorrowReserveLiquidityInstruction(
@@ -399,7 +397,7 @@ return
 											instructions.push(
 												flashRepayReserveLiquidityInstruction(
 													Math.ceil(routes[abc].amountIn * 10 ** 6),
-													1+preTransaction.instructions.length, //+pt.instructions.length,
+													1+preTransaction.instructions.length-1, //+pt.instructions.length,
 													tokenAccount,
 													new PublicKey(reserve.config.liquidityAddress),
 													new PublicKey(
