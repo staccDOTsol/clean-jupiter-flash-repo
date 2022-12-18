@@ -1,8 +1,8 @@
 const { Prism }= require("@prism-hq/prism-ag");
-const { SolendMarket }= require("@solendprotocol/solend-sdk");
+const { SolendMarket }= require("./solend-sdk/save/classes");
 const { getOrCreateAssociatedTokenAccount }= require("./spl-token/");
 const { createTransferInstruction }= require("./spl-token/");
-const { flashRepayReserveLiquidityInstruction }= require("@solendprotocol/solend-sdk")//./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+const { flashRepayReserveLiquidityInstruction }= require("./solend-sdk/save/instructions/flashRepayReserveLiquidity")//./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const { flashBorrowReserveLiquidityInstruction }= require("@solendprotocol/solend-sdk");
 const {
   TransactionMessage,
@@ -97,7 +97,7 @@ setTimeout(async function () {
     slippage: 100, // optional
   });
 
-   market = await SolendMarket.initialize( connection, "production", "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM");
+   market = await SolendMarket.initialize( connection, "production")
    for (var res of market.reserves){
     tokenbs.push({
       address: res.config.liquidityToken.mint,
@@ -171,7 +171,7 @@ var reservePairs = {};
       }
       if (!market){
        
-      market = await SolendMarket.initialize(connection, "production", "7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM");
+      market = await SolendMarket.initialize(connection, "production")
       }
     const reserve = market.reserves[i];
     // @ts-ignore
@@ -296,14 +296,14 @@ let insts1 = [
                0,// preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
-                new PublicKey(reserve.config.liquidityFeeReceiverAddress),
+                new PublicKey(reserve.config.liquidityAddress),
                 tokenAccount,
                 new PublicKey(reserve.config.address),
                 new PublicKey(market.config.address),
                 wallet.publicKey,
-                SOLEND_PRODUCTION_PROGRAM_ID/*,
+                SOLEND_PRODUCTION_PROGRAM_ID,
                 new PublicKey(jaregms[token.symbol]),
-                new PublicKey(reserve.config.liquidityToken.mint)*/
+                new PublicKey(reserve.config.liquidityToken.mint)
               ),
               createTransferInstruction(
                 tokenAccount, // from (should be a token account)
@@ -432,16 +432,16 @@ app.post("/", async function (req, res) {
 if (tokenb == undefined){
   tokenb = tokens2.find((t) => t.address === ch.mint);
 }
-      //for (var i = 2; i<= 13; i++){
-             //   if (i != 1){
+      for (var i = 1; i<= 13; i++){
+         
             if (tokenb != undefined){
-             await  dothehorriblething(1, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
+             await  dothehorriblething(i, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
       //  await  dothehorriblething(0, tokenb, parseFloat(ch.rawTokenAmount.tokenAmount))
             }  
         a++
             
 
-    //  }
+     }
    // }
         }
       if (anobj.includes(ch.tokenAccount)){
