@@ -491,10 +491,10 @@ const someroutes = await getRoutes ({
 											var transaction = new VersionedTransaction(messageV00);
 											var result = undefined;
 											try {
-												transaction.sign([wallet]);
 												result = await sendAndConfirmTransaction(
 													superconnection,
 													transaction,
+													[wallet]
 												);
 												doing = false
 
@@ -625,7 +625,7 @@ setTimeout(async function(){
 
 
 var connection 
-var superconnection = new Connection("http://145.40.95.251:8899")
+var superconnection = new Connection("https://rpc.helius.xyz/?api-key=81972555-7e88-4f2c-9a43-9072b958f572")
 
 require("dotenv").config();
 
