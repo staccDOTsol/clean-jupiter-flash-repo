@@ -241,18 +241,18 @@ return
 				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"), //HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),
 				{ mint: new PublicKey(token.address) }
 			)
-		).value;
+		).value
 		let amount = 0;
 		for (var pk of pubkey) {
-			if (parseFloat(pk.account.data.parsed.info.tokenAmount.amount) > amount) {
-				amount = parseInt(pk.account.data.parsed.info.tokenAmount.amount);
-			}
+				amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
 		}
 
 		// await prism.loadRoutes("So11111111111111111111111111111111111111112", token.address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
 		//let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
-		const amountToTrade = (amount * (mod / 100));
+		let amountToTrade = (amount * (mod));
+		amountToTrade = amountToTrade / 100
 
+console.log('amttotrade: ' + amountToTrade.toString())
 		let maybe = await prism.loadRoutes(token.address, tokenb.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
