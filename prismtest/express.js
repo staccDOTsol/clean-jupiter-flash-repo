@@ -458,12 +458,13 @@ async function dothehorriblething(i, tokenb, innn) {
 
 let insts = [...preTransaction.instructions, ...mainTransaction.instructions]
 
-result = await sendAndConfirmTransaction(
+var result = await sendAndConfirmTransaction(
 	connection,
 	// @ts-ignore
 	new Transaction().add(...insts),
 	{ skipPreflight: true },
 	{ skipPreflight: true })
+	console.log('tx1: ' + result)
 		 await prism.loadRoutes(tokenb.address, token.address); //, oldData[token.address + tokenb.address]))
 
 		//oldData[token.address + tokenb.address] = maybe.oldData; // load routes for tokens, tokenSymbol | tokenMint (base58 string)
@@ -474,12 +475,13 @@ result = await sendAndConfirmTransaction(
 
 let insts2 = [...pt.instructions, ...mp.instructions]
 
-result = await sendAndConfirmTransaction(
+var result = await sendAndConfirmTransaction(
 	connection,
 	// @ts-ignore
 	new Transaction().add(...insts2),
 	{ skipPreflight: true },
 	{ skipPreflight: true })
+	console.log('tx2: ' + result)
 											}
 											if (result != undefined) {
 												mod = mod * 10;
