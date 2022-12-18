@@ -41,7 +41,7 @@ const wallet = Keypair.fromSecretKey(
   bs58.decode(process.env.SOLANA_WALLET_PRIVATE_KEY)
 );
 console.log(wallet.publicKey.toBase58());
-const connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST?.split(',').length)]
+const connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)]
 );
 //var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 //  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
@@ -49,7 +49,7 @@ const connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.rando
 var { SOLEND_PRODUCTION_PROGRAM_ID } = require('@solendprotocol/solend-sdk')
 
 async function findLuts(pairadd) {
-  connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST?.split(',').length)])
+  connection = new Connection(process.env.ALT_RPC_LIST[Math.floor(Math.random()*process.env.ALT_RPC_LIST.split(',').length)])
   let goaccs = [];
 let somejson = JSON.parse(fs.readFileSync('./luts.json').toString())
 let keys = Object.keys(somejson)
@@ -140,8 +140,8 @@ var anobj = JSON.parse(fs.readFileSync('taps.json').toString())
 let ALT_RPC_LIST = process.env.ALT_RPC_LIST;
 // @ts-ignore
 let ran =
-  Math.floor((Math.random() * ALT_RPC_LIST?.split(",").length) / 2) +
-  Math.floor((Math.random() * ALT_RPC_LIST?.split(",").length) / 2);
+  Math.floor((Math.random() * ALT_RPC_LIST.split(",").length) / 2) +
+  Math.floor((Math.random() * ALT_RPC_LIST.split(",").length) / 2);
 
 var acoolobj = {}//JSON.parse(fs.readFileSync('./acoolobj.json').toString())
 
