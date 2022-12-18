@@ -264,6 +264,7 @@ console.log(wallet.publicKey.toBase58())
                   }
                   c++
               }
+              thepaydirt.push(pt.instructions[1])
               c = 0
               for (var ix of [...mp.instructions]){
                 if (!thepaydirt.includes(ix)&& c > 0){
@@ -304,6 +305,7 @@ let insts1 = [
     }
   }
             let instructions = [
+              ...preTransaction,
               flashBorrowReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25* 10 ** token.decimals),
                 new PublicKey(reserve.config.liquidityAddress),
@@ -316,7 +318,7 @@ let insts1 = [
               ...thepaydirt,
               flashRepayReserveLiquidityInstruction(
                 Math.ceil(routes[abc].amountIn * 1.25 * 10 ** token.decimals),
-               0,// preTransaction.instructions.length,//+pt.instructions.length,
+               preTransaction.instructions.length,//+pt.instructions.length,
                 tokenAccount,
                 new PublicKey(reserve.config.liquidityAddress),
                 new PublicKey(reserve.config.liquidityFeeReceiverAddress),
@@ -358,7 +360,7 @@ let insts1 = [
               (// @ts-ignore
                 await connection.getLatestBlockhash()
               ).blockhash,
-              instructions: [...insts1, ...instructions],
+              instructions: [...preTransaction, ...instructions],
             }).compileToV0Message([...goaccs, ...tgoaccs[token.symbol]]);
             var transaction = new VersionedTransaction(messageV00);
             var result = undefined;
