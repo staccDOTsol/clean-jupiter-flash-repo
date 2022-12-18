@@ -6,6 +6,8 @@ const {
 	Keypair,
 	PublicKey,
 	sendAndConfirmTransaction,
+	VersionedMessage,
+	Transaction,
 
   } = require( "@solana/web3.js" );
 const {
@@ -323,8 +325,16 @@ const someroutes = await getRoutes ({
 											let thepaydirt = [];
 											let c = 0;
 											console.log(execute)
-											let mainTransaction = execute.swapTransaction 
-											let mp = execute2.swapTransaction
+											let DecompileArgs1 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
+											let decompiled1 = VersionedMessage.decompile(
+											execute.swapTransaction.message,
+											DecompileArgs1)
+											let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
+											let decompiled2 = VersionedMessage.decompile(
+											execute2.swapTransaction.message,
+											DecompileArgs2)
+											let mainTransaction = new Transaction().add(...decompiled1.instructions)
+											let mp = new Transaction().add(...decompiled2.instructions)
 											let pt = []
 											let preTransaction = []
 											if (execute.setupTransaction){
