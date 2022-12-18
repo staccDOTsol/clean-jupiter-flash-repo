@@ -101,7 +101,7 @@ async function findLuts(ixs, pairadd) {
 							//	if (goaccs.length > 9) {
 							//		lastcompare = acompare;
 							////	} else {
-									lastcompare = acompare - 2;
+									//lastcompare = acompare - 2;
 							//	}
 								// @ts-ignore
 								goaccs.push(test);
