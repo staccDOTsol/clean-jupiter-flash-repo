@@ -219,7 +219,7 @@ let tokenAccount = (
     console.log(routes.length)
     if (true){
 
-      var abc = Math.floor(Math.random()*4)
+      var abc = Math.floor(Math.random()*3)
       if (routes[abc]) {
 
 
