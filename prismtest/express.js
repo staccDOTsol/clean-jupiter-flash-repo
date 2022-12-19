@@ -317,6 +317,8 @@ let a = 0
 let ran = Math.random() * 100 // 55
 let tokenb;
 for (var _ of Object.keys(btokens)){
+  console.log(list[a])
+  console.log(ran)
 	if (list[a] > ran && list[a] < ran){
 		for (bbb of Object.values(btokens)){
 			if (bbb.relative == list[a]){
