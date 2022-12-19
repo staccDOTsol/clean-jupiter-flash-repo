@@ -642,7 +642,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		mod = mod * 10;
 	}
 	doing = false;
-  mod = mod / 1.1
+  mod = mod / 2
 }
 } catch (err){
 	console.log(err)
@@ -661,7 +661,7 @@ app.post("/", async function (req, res) {
 				if (
 					true
 				) {
-					if (mod < 0.01) {
+					if (mod < 0.0001) {
 						mod = 100;
 					}
 					var a = 2;
