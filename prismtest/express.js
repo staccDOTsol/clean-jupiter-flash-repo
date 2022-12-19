@@ -306,6 +306,12 @@ totrades['cum'] = tcum
 setInterval(async function(){
 	try {
 		let list = []
+    let tcum = 0
+totrades['cum'] = 0
+for (var val of Object.values(totrades)){
+		tcum=val
+}
+totrades['cum'] = tcum
 for (var totrade of Object.keys(totrades)){
 	if (totrade != 'cum'){
 	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
