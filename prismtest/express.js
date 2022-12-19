@@ -292,7 +292,7 @@ let hm = await jupiter.computeRoutes({
 
 let tcum = 0
 totrades['cum'] = 0
-for (var val of Object.val(totrades)){
+for (var val of Object.values(totrades)){
 		tcum=val
 }
 totrades['cum'] = tcum
