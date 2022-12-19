@@ -634,6 +634,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		mod = mod * 10;
 	}
 	doing = false;
+  mod = mod / 1.1
 }
 } catch (err){
 	console.log(err)
