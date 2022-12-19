@@ -35,10 +35,13 @@
 		"bs58": "^5.0.0",
 		"buffer-layout": "^1.2.2",
 		"cors": "^2.8.5",
+		"ethers": "^5.7.2",
 		"express": "^4.18.2",
 		"import-jsx": "^4.0.1",
 		"jsbi": "^4.3.0",
 		"moment": "^2.29.3",
+		"moralis": "^2.10.0",
+		"moralis-v1": "^1.12.0",
 		"open": "^8.4.0",
 		"promise-retry": "^2.0.1",
 		"request": "^2.88.2"
