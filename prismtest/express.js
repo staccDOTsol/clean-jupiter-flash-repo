@@ -288,7 +288,7 @@ let hm = await jupiter.computeRoutes({
 	slippageBps: 3,
 	forceFetch: true,
   })
-  totrades[tokenb.address] = hm.routesInfos[0].outAmount
+  totrades[tokenb.address] = JSBI.toNumber(hm.routesInfos[0].outAmount)
 
 let tcum = 0
 totrades['cum'] = 0
