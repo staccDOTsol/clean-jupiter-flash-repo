@@ -341,7 +341,7 @@ if (tokenb){
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
 
-	console.log('trading ', btoken.symbol)
+	console.log('trading ', tokenb.symbol)
 	const someroutes = await getRoutes ({
 		jupiter,
 		inputToken: atokens[i],
