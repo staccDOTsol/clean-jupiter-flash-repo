@@ -642,7 +642,14 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		mod = mod * 10;
 	}
 	doing = false;
+  if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
+  .div(10 ** tokenb.decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+  .div(10 ** atokens[i].decimals) ) {
+    mod = mod / 1.05
+  }
+  else {
   mod = mod / 2
+  }
 }
 } catch (err){
 	console.log(err)
