@@ -49,6 +49,7 @@ async function getRoutes  ({
             slippageBps,
             forceFetch: true,
           })
+          
 		  if (JSBI.toNumber(routes.routesInfos[0].outAmount) > 5 * Math.abs (innn) ){
 //			return null
 		  }
@@ -62,6 +63,7 @@ async function getRoutes  ({
 			})
 		  ;	  
     if (routes && routes.routesInfos && routes2 && routes2.routesInfos) {
+      console.log(innn.toString() + ' toks in event')
       console.log("Possible number of routes:", routes.routesInfos.length, " ", routes2.routesInfos.length);
       console.log(
         "Best quotes: ",
