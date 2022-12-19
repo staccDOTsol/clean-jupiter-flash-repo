@@ -1,4 +1,4 @@
-const { SolendMarket } = require("@solendprotocol/solend-sdk")//./solend-sdk/save/classes");
+const { SolendMarket } = require("@solendprotocol/solend-sdk")// FOR RISKLOL ./solend-sdk/save/classes"); 
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
@@ -12,7 +12,7 @@ const {
   } = require( "@solana/web3.js" );
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("@solendprotocol/solend-sdk")//"./solend-sdk/save/instructions/flashRepayReserveLiquidity"); //./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("@solendprotocol/solend-sdk")//// FOR RISKLOL  "./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
@@ -26,7 +26,7 @@ const {
   Jupiter, getPlatformFeeAccounts,
 } = require( "@jup-ag/core" ) ;
 const Decimal = require( "decimal.js");
-
+let totrades = {'cum': 0}
 async function getRoutes  ({
   jupiter,
   inputToken,
@@ -63,7 +63,6 @@ async function getRoutes  ({
 			})
 		  ;	  
     if (routes && routes.routesInfos && routes2 && routes2.routesInfos) {
-      console.log(innn.toString() + ' toks in event')
       console.log("Possible number of routes:", routes.routesInfos.length, " ", routes2.routesInfos.length);
       console.log(
         "Best quotes: ",
@@ -126,6 +125,8 @@ console.log(wallet.publicKey.toBase58());
 var connection = new Connection(
 	ALT_RPC_LIST[Math.floor(Math.random() * ALT_RPC_LIST.length)]
 );
+
+// FOR RISKLOL 
 //var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
 //  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
 //);
@@ -192,6 +193,7 @@ let tokens = JSON.parse(fs.readFileSync("./solana.tokenlist.json").toString());
 let tokens2 = JSON.parse(fs.readFileSync("./tokens.json").toString());
 let mod = 6.66;
 let tokenbs = [];
+let btokens = {}
 var anobj = JSON.parse(fs.readFileSync("taps.json").toString());
 
 var acoolobj = {}; //JSON.parse(fs.readFileSync('./acoolobj.json').toString())
@@ -248,9 +250,8 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		else  if (market.reserves[i]){
 		
 		// @ts-ignore
-		let symbol = market.reserves[i].config.liquidityToken.symbol;
 		//mod = Math.random() * 0.05 + 0.001; 	
-		 atokens[i] = {
+		 atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
 			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
 			decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
 			symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
@@ -260,7 +261,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 return
 		}
 		const pubkey = (
-			await connection.getParsedTokenAccountsByOwner(
+			await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
 				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
 				{ mint: new PublicKey(atokens[i].address) }
 			)
@@ -276,269 +277,23 @@ return
 		amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
-const someroutes = await getRoutes ({
-	jupiter,
-	inputToken: atokens[i],
-	outputToken: tokenb,
-	inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
-	slippageBps: 2, innn})
-	const routes = someroutes[0]
-	const routes2 = someroutes[1]
-
-	let tokenAccount = (
-			await getOrCreateAssociatedTokenAccount(
-				connection, // connection
-				wallet, // fee payer
-				new PublicKey(market.reserves[i].config.liquidityToken.mint),
-				wallet.publicKey
-			)
-		).address;
-		console.log(routes.routesInfos.length);
-		console.log(routes2.routesInfos.length);
-		if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
-			for (var abc of [0]){
-				try {
-					 
-							if (true) {
-								var bca = 0//Math.floor(Math.random() * 2);
-								try {
-									for (var bca of [0]) {
-										
-										if (
-											new Decimal 	(routes.routesInfos[0].inAmount.toString())
-          .div(10 ** tokenb.decimals) * 1.0072 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-          .div(10 ** atokens[i].decimals) &&
-											!doing
-										) {
-											//doing = true
-											console.log(
-												mod.toString() +
-												atokens[i].symbol +
-												" " +
-												atokens[i].address + " mod " +
-													
-													tokenb.symbol +
-													" " +
-													tokenb.address
-											);
-											const execute = await jupiter.exchange({
-												routeInfo:routes.routesInfos[0],
-											  });
-											  const execute2 = await jupiter.exchange({
-												routeInfo:routes2.routesInfos[0],
-												});
-										  
-											let thepaydirt = [];
-											let c = 0;
-											let DecompileArgs1 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
-											let decompiled1 = TransactionMessage.decompile(
-											execute.swapTransaction.message,
-											DecompileArgs1)
-											let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
-											let decompiled2 = TransactionMessage.decompile(
-											execute2.swapTransaction.message,
-											DecompileArgs2)
-											var cc3 = 0 
-											let newix = []
-											for (var ix of decompiled2.instructions){
-												if (cc3 > 0){
-													newix.push(ix)
-												}
-												cc3++
-											}
-											let mainTransaction = new Transaction().add(...decompiled1.instructions)
-											let mp = new Transaction().add(...newix)
-											let pt =  new Transaction()
-											let preTransaction =  new Transaction()
-											if (execute.setupTransaction){
-												let DecompileArgs2 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
-											let decompiled2 = TransactionMessage.decompile(
-											execute.setupTransaction.message,
-											DecompileArgs2)
-											 preTransaction.add(...decompiled2.instructions)
-											
-											}
-											if (execute2.setupTransaction){
-												let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
-											let decompiled2 = TransactionMessage.decompile(
-											execute2.setupTransaction.message,
-											DecompileArgs2)
-											 pt.add(...decompiled2.instructions)
-											}
-											for (var ix of [...mainTransaction.instructions]) {
-												if (!thepaydirt.includes(ix)) {
-													thepaydirt.push(ix);
-												}
-												c++;
-											}
-											let ccc = 0 
-											for (var pi of pt.instructions){
-												if (ccc > 0){
-													thepaydirt.push(pi)
-												}
-												ccc++
-											}
-											c = 0;
-											for (var ix of [...mp.instructions]) {
-												if (!thepaydirt.includes(ix)) {
-													thepaydirt.push(ix);
-												}
-												c++;
-											}
-
-											const associatedDestinationTokenAddr =
-												await Token.getAssociatedTokenAddress(
-													ASSOCIATED_TOKEN_PROGRAM_ID,
-													TOKEN_PROGRAM_ID,
-													new PublicKey(tokenb.address),
-													wallet.publicKey
-												);
-											let instructions2 = [];
-											const receiverAccount = await connection.getAccountInfo(
-												associatedDestinationTokenAddr
-											);
-
-											if (
-												receiverAccount !== null &&
-												receiverAccount.owner.toBase58() !==
-													wallet.publicKey.toBase58()
-											) {
-												// derived account of original owner was at one point transferred, so we transfer our account (only works with NFTs, not fungibles). I opened https://github.com/solana-labs/solana-program-library/issues/2514 to figure out fungibles
-											} else {
-												if (receiverAccount === null) {
-													instructions2.push(
-														Token.createAssociatedTokenAccountInstruction(
-															ASSOCIATED_TOKEN_PROGRAM_ID,
-															TOKEN_PROGRAM_ID,
-															new PublicKey(tokenb.address),
-															associatedDestinationTokenAddr,
-															wallet.publicKey,
-															wallet.publicKey
-														)
-													);
-												}
-											}
-
-											const params = {
-												microLamports: 0//1.38*10**5,
-											  };
-											//  const ix138 =
-											//  ComputeBudgetProgram.setComputeUnitPrice (params);
-										  
-											let instructions = []//ix138];
-											let ccc2 = 0 
-											
-											instructions.push(
-												flashBorrowReserveLiquidityInstruction(
-													Math.ceil(amountToTrade),
-													new PublicKey(market.reserves[i].config.liquidityAddress),
-													tokenAccount,
-													new PublicKey(market.reserves[i].config.address),
-													new PublicKey(market.config.address),
-													SOLEND_PRODUCTION_PROGRAM_ID
-												)
-											);
-											for (var ptix of preTransaction.instructions){
-												if (ccc2 > 0){
-													instructions.push(ptix)
-												}
-												ccc2++
-											}
-											if (instructions2.length > 0) {
-												instructions.push(...instructions2);
-											}
-
-											instructions.push(...thepaydirt);
-											instructions.push(
-												flashRepayReserveLiquidityInstruction(
-													Math.ceil(amountToTrade),
-													0, //+pt.instructions.length,
-													tokenAccount,
-													new PublicKey(market.reserves[i].config.liquidityAddress),
-													new PublicKey(
-														market.reserves[i].config.liquidityFeeReceiverAddress//liquidityFeeReceiverAddress
-													),
-													tokenAccount,
-													new PublicKey(market.reserves[i].config.address),
-													new PublicKey(market.config.address),
-													wallet.publicKey,
-													SOLEND_PRODUCTION_PROGRAM_ID/*,
-                new PublicKey(jaregms[atokens[i].symbol]),
-                new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
-												)
-											);
-											instructions.push(
-												createTransferInstruction(
-													tokenAccount, // from (should be a token account)
-													tokenAccount,
-													wallet.publicKey, // from's owner
-													(
-														await connection.getParsedTokenAccountsByOwner(
-															wallet.publicKey,
-															{
-																mint: new PublicKey(
-																	market.reserves[i].config.liquidityToken.mint
-																),
-															}
-														)
-													).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountMid * 0.8 * 10 ** atokens[i].address)
-												)
-											);
-											console.log(instructions.length);
-											if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
-												tgoaccs[atokens[i].symbol] = [];
-											}
-											//  if (tgoaccs[atokens[i].symbol].length == 0){
-											tgoaccs[atokens[i].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
-											//  }
-											var messageV00 = new TransactionMessage({
-												payerKey: wallet.publicKey,
-												recentBlockhash: await // @ts-ignore
-												(
-													await connection.getLatestBlockhash()
-												).blockhash,
-												instructions,
-											}).compileToV0Message([
-												...goaccs,
-												...tgoaccs[atokens[i].symbol],
-											]);
-											var transaction = new VersionedTransaction(messageV00);
-											var result = undefined;
-											try {
-												transaction.sign([wallet]);
-												result = await sendAndConfirmTransaction(
-													superconnection,
-													transaction,
-													{}
-												);
-												doing = false
-
-												for (var i = 0; i<=100; i++){
-												console.log("tx: https://solscan.io/tx/" + result);
-												}
-												var txs = fs.readFileSync("./txs.txt").toString();
-												txs += "\nhttps://solscan.io/tx/" + result;
-												fs.writeFileSync("txs.txt", txs);
-											} catch (err) {
-												console.log(err);
-
-											}
-											if (result != undefined) {
-												mod = mod * 10;
-											}
-											doing = false;
-										}
-									}
-								} catch (err) {
-									doing = false;
-									console.log(err);
-								}
-							}
-						}
-                        catch (err){
-                            console.log(err)
-                        }
-					}
+if (!Object.keys(totrades).includes(tokenb.address)){
+	totrades[tokenb.address] = 0
+}
+totrades[tokenb.address] = hm.routesInfos[0].outAmount
+let hm = await jupiter.computeRoutes({
+	inputMint: new PublicKey(outputToken.address),
+	outputMint: new PublicKey(inputToken.address),
+	amount: JSBI.BigInt(innn), // raw input amount of tokens
+	slippageBps,
+	forceFetch: true,
+  })
+let tcum = 0
+totrades['cum'] = 0
+for (var val of Object.val(totrades)){
+		tcum=val
+}
+totrades['cum'] = tcum
 				}
 			}
 	
@@ -546,6 +301,307 @@ const someroutes = await getRoutes ({
 		console.log(err);
 	}
 }
+setInterval(async function(){
+	try {
+		let list = []
+for (var totrade of Object.keys(totrades)){
+	if (totrade != 'cum'){
+	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
+	list.push( (totrades[totrade] / totrades.cum) * 100)
+}
+}
+list = list.sort().reverse()
+let a = 0
+let ran = Math.random() * 100 // 55
+let tokenb;
+for (var _ of Object.keys(btokens)){
+	if (list[a] > ran && list[a] < ran){
+		for (bbb of Object.values(btokens)){
+			if (bbb.relative == list[a]){
+				tokenb = bbb
+				console.log('winner winner chikcum dinner')
+				console.log(tokenb)
+			}
+		}
+		continue
+	}
+	else {
+
+		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
+		console.log('ran: ', ran)
+		ran = ran - tokenb.relative
+		a++
+	}
+	console.log('trading ', btoken.symbol)
+	const someroutes = await getRoutes ({
+		jupiter,
+		inputToken: atokens[i],
+		outputToken: tokenb,
+		inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
+		slippageBps: 2, innn})
+		const routes = someroutes[0]
+		const routes2 = someroutes[1]
+	
+		let tokenAccount = (
+				await getOrCreateAssociatedTokenAccount(
+					connection, // connection
+					wallet, // fee payer
+					new PublicKey(market.reserves[i].config.liquidityToken.mint),
+					wallet.publicKey
+				)
+			).address;
+			console.log(routes.routesInfos.length);
+			console.log(routes2.routesInfos.length);
+			if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
+				for (var abc of [0]){
+					try {
+						 
+								if (true) {
+									var bca = 0//Math.floor(Math.random() * 2);
+									try {
+										for (var bca of [0]) {
+											
+											if (
+												new Decimal 	(routes.routesInfos[0].inAmount.toString())
+			  .div(10 ** tokenb.decimals) * 1.0072 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+			  .div(10 ** atokens[i].decimals) &&
+												!doing
+											) {
+												//doing = true
+												console.log(
+													mod.toString() +
+													atokens[i].symbol +
+													" " +
+													atokens[i].address + " mod " +
+														
+														tokenb.symbol +
+														" " +
+														tokenb.address
+												);
+												
+											}
+										}
+									} catch (err) {
+										doing = false;
+										console.log(err);
+									}
+								}
+							}
+							catch (err){
+								console.log(err)
+							}
+						}
+	const execute = await jupiter.exchange({
+		routeInfo:routes.routesInfos[0],
+	  });
+	  const execute2 = await jupiter.exchange({
+		routeInfo:routes2.routesInfos[0],
+		});
+  
+	let thepaydirt = [];
+	let c = 0;
+	let DecompileArgs1 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
+	let decompiled1 = TransactionMessage.decompile(
+	execute.swapTransaction.message,
+	DecompileArgs1)
+	let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
+	let decompiled2 = TransactionMessage.decompile(
+	execute2.swapTransaction.message,
+	DecompileArgs2)
+	var cc3 = 0 
+	let newix = []
+	for (var ix of decompiled2.instructions){
+		if (cc3 > 0){
+			newix.push(ix)
+		}
+		cc3++
+	}
+	let mainTransaction = new Transaction().add(...decompiled1.instructions)
+	let mp = new Transaction().add(...newix)
+	let pt =  new Transaction()
+	let preTransaction =  new Transaction()
+	if (execute.setupTransaction){
+		let DecompileArgs2 = {addressLookupTableAccounts: execute.addressLookupTableAccounts}
+	let decompiled2 = TransactionMessage.decompile(
+	execute.setupTransaction.message,
+	DecompileArgs2)
+	 preTransaction.add(...decompiled2.instructions)
+	
+	}
+	if (execute2.setupTransaction){
+		let DecompileArgs2 = {addressLookupTableAccounts: execute2.addressLookupTableAccounts}
+	let decompiled2 = TransactionMessage.decompile(
+	execute2.setupTransaction.message,
+	DecompileArgs2)
+	 pt.add(...decompiled2.instructions)
+	}
+	for (var ix of [...mainTransaction.instructions]) {
+		if (!thepaydirt.includes(ix)) {
+			thepaydirt.push(ix);
+		}
+		c++;
+	}
+	let ccc = 0 
+	for (var pi of pt.instructions){
+		if (ccc > 0){
+			thepaydirt.push(pi)
+		}
+		ccc++
+	}
+	c = 0;
+	for (var ix of [...mp.instructions]) {
+		if (!thepaydirt.includes(ix)) {
+			thepaydirt.push(ix);
+		}
+		c++;
+	}
+
+	const associatedDestinationTokenAddr =
+		await Token.getAssociatedTokenAddress(
+			ASSOCIATED_TOKEN_PROGRAM_ID,
+			TOKEN_PROGRAM_ID,
+			new PublicKey(tokenb.address),
+			wallet.publicKey
+		);
+	let instructions2 = [];
+	const receiverAccount = await connection.getAccountInfo(
+		associatedDestinationTokenAddr
+	);
+
+	if (
+		receiverAccount !== null &&
+		receiverAccount.owner.toBase58() !==
+			wallet.publicKey.toBase58()
+	) {
+		// derived account of original owner was at one point transferred, so we transfer our account (only works with NFTs, not fungibles). I opened https://github.com/solana-labs/solana-program-library/issues/2514 to figure out fungibles
+	} else {
+		if (receiverAccount === null) {
+			instructions2.push(
+				Token.createAssociatedTokenAccountInstruction(
+					ASSOCIATED_TOKEN_PROGRAM_ID,
+					TOKEN_PROGRAM_ID,
+					new PublicKey(tokenb.address),
+					associatedDestinationTokenAddr,
+					wallet.publicKey,
+					wallet.publicKey
+				)
+			);
+		}
+	}
+
+	const params = {
+		microLamports: 0//1.38*10**5,
+	  };
+	//  const ix138 =
+	//  ComputeBudgetProgram.setComputeUnitPrice (params);
+  
+	let instructions = []//ix138];
+	let ccc2 = 0 
+	
+	instructions.push(
+		flashBorrowReserveLiquidityInstruction(
+			Math.ceil(amountToTrade),
+			new PublicKey(market.reserves[i].config.liquidityAddress),
+			tokenAccount,
+			new PublicKey(market.reserves[i].config.address),
+			new PublicKey(market.config.address),
+			SOLEND_PRODUCTION_PROGRAM_ID
+		)
+	);
+	for (var ptix of preTransaction.instructions){
+		if (ccc2 > 0){
+			instructions.push(ptix)
+		}
+		ccc2++
+	}
+	if (instructions2.length > 0) {
+		instructions.push(...instructions2);
+	}
+
+	instructions.push(...thepaydirt);
+	instructions.push(
+		flashRepayReserveLiquidityInstruction(
+			Math.ceil(amountToTrade),
+			0, //+pt.instructions.length,
+			tokenAccount,
+			new PublicKey(market.reserves[i].config.liquidityAddress),
+			new PublicKey(
+				market.reserves[i].config.liquidityFeeReceiverAddress//// FOR RISK.lol switch these two values liquidityAddress
+			),
+			tokenAccount,
+			new PublicKey(market.reserves[i].config.address),
+			new PublicKey(market.config.address),
+			wallet.publicKey,
+			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
+new PublicKey(jaregms[atokens[i].symbol]),
+new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
+		)
+	);
+	instructions.push(
+		createTransferInstruction(
+			tokenAccount, // from (should be a token account)
+			tokenAccount,
+			wallet.publicKey, // from's owner
+			(
+				await connection.getParsedTokenAccountsByOwner(
+					wallet.publicKey,
+					{
+						mint: new PublicKey(
+							market.reserves[i].config.liquidityToken.mint
+						),
+					}
+				)
+			).value[0].account.data.parsed.info.tokenAmount.amount //+ Math.ceil(solamis[0].amountMid * 0.8 * 10 ** atokens[i].address)
+		)
+	);
+	console.log(instructions.length);
+	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
+		tgoaccs[atokens[i].symbol] = [];
+	}
+	//  if (tgoaccs[atokens[i].symbol].length == 0){
+	tgoaccs[atokens[i].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
+	//  }
+	var messageV00 = new TransactionMessage({
+		payerKey: wallet.publicKey,
+		recentBlockhash: await // @ts-ignore
+		(
+			await connection.getLatestBlockhash()
+		).blockhash,
+		instructions,
+	}).compileToV0Message([
+		...goaccs,
+		...tgoaccs[atokens[i].symbol],
+	]);
+	var transaction = new VersionedTransaction(messageV00);
+	var result = undefined;
+	try {
+		transaction.sign([wallet]);
+		result = await sendAndConfirmTransaction(
+			superconnection,
+			transaction,
+			{}
+		);
+		doing = false
+
+		for (var i = 0; i<=100; i++){
+		console.log("tx: https://solscan.io/tx/" + result);
+		}
+		var txs = fs.readFileSync("./txs.txt").toString();
+		txs += "\nhttps://solscan.io/tx/" + result;
+		fs.writeFileSync("txs.txt", txs);
+	} catch (err) {
+		console.log(err);
+
+	}
+	if (result != undefined) {
+		mod = mod * 10;
+	}
+	doing = false;
+}
+} catch (err){
+	console.log(err)
+}
+})
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
@@ -568,10 +624,14 @@ app.post("/", async function (req, res) {
 					if (tokenbt == undefined) {
 						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
+					if (!Object.keys(btokens).includes(tokenbt.address)){
+						btokens[tokenbt.address] = tokenbt
+					}
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
 					if (tokenbt != undefined) {
-						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){
+						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){// FOR RISK.lol you can supply 10, to dothehorriblething for msol, 
+							//or the order in which reserves appear on claymore.codes. This may be buggy unless u do 1 tokena per run of this thing tho
 						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 setTimeout(async function(){
 /*don't dot his it fucks up token
