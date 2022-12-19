@@ -280,7 +280,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 if (!Object.keys(totrades).includes(tokenb.address)){
 	totrades[tokenb.address] = 0
 }
-totrades[tokenb.address] = hm.routesInfos[0].outAmount
+
 let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(outputToken.address),
 	outputMint: new PublicKey(inputToken.address),
@@ -288,6 +288,8 @@ let hm = await jupiter.computeRoutes({
 	slippageBps,
 	forceFetch: true,
   })
+  totrades[tokenb.address] = hm.routesInfos[0].outAmount
+
 let tcum = 0
 totrades['cum'] = 0
 for (var val of Object.val(totrades)){
