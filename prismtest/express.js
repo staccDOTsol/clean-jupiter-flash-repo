@@ -304,6 +304,7 @@ for (var totrade of Object.keys(totrades)){
 }
 }
 list = list.sort().reverse()
+list.push(100)
 console.log(list)
 let a = 0
 let ran = Math.random() * 100 // 55
@@ -314,8 +315,8 @@ for (var _ of Object.keys(btokens)){
 
   console.log(list[a])
   console.log(ran)
-  
-	if (list[a] < ran && ran < list[a-1]){
+  /// 6 24 70
+	if ( list[a] > ran  && ran < list[a+1]){
 		for (bbb of Object.values(btokens)){
 			if (bbb.relative == list[a]){
 				tokenb = bbb
