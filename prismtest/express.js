@@ -331,7 +331,7 @@ for (var _ of Object.keys(btokens)){
     a++
   }
 }
-
+if (tokenb){
 		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
@@ -601,6 +601,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		mod = mod * 10;
 	}
 	doing = false;
+}
 } catch (err){
 	console.log(err)
 }
