@@ -260,23 +260,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		if (tokenb.address == atokens[i].address){
 return
 		}
-		const pubkey = (
-			await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
-				new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
-				{ mint: new PublicKey(atokens[i].address) }
-			)
-		).value
-		let amount = 0;
-		for (var pk of pubkey) {
-				amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
-		}
-
-		// await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[i].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
-		//let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
-		let amountToTrade = (amount * (mod));
-		amountToTrade = parseInt(amountToTrade / 100)
-
-console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
+		
 if (!Object.keys(totrades).includes(tokenb.address)){
 	totrades[tokenb.address] = 0
 }
@@ -348,6 +332,23 @@ if (tokenb){
 		ran = ran - tokenb.relative
 
 	console.log('trading ', tokenb.symbol)
+  const pubkey = (
+    await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
+      new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
+      { mint: new PublicKey(atokens[i].address) }
+    )
+  ).value
+  let amount = 0;
+  for (var pk of pubkey) {
+      amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
+  }
+
+  // await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[i].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+  //let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
+  let amountToTrade = (amount * (mod));
+  amountToTrade = parseInt(amountToTrade / 100)
+
+console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
 	const someroutes = await getRoutes ({
 		jupiter,
 		inputToken: atokens[i],
