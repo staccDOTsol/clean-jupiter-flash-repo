@@ -296,6 +296,7 @@ for (var val of Object.values(totrades)){
 		tcum=val
 }
 totrades['cum'] = tcum
+console.log(totrades)
 for (var totrade of Object.keys(totrades)){
 	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
 if ( (totrades[totrade] / totrades.cum) * 100 != 100){
