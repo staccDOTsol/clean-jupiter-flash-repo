@@ -613,8 +613,8 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
             wallet.publicKey,
             {
               mint: new PublicKey(
-                token.address
-              ),
+                atokens[i].address
+                              ),
             }
           )
         ).value[0].account.data.parsed.info.tokenAmount.amount - 1// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
