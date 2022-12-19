@@ -298,10 +298,13 @@ for (var val of Object.values(totrades)){
 totrades['cum'] = tcum
 console.log(totrades)
 for (var totrade of Object.keys(totrades)){
+  if (totrade != 'cum'){
 	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
+
 if ( (totrades[totrade] / totrades.cum) * 100 != 100){
   list.push((totrades[totrade] / totrades.cum) * 100)
 
+}
 }
 }
 list = list.sort().reverse()
