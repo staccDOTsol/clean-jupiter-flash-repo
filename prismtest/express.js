@@ -327,13 +327,15 @@ for (var _ of Object.keys(btokens)){
 		}
 		continue
 	}
-	else {
+  else {
+    a++
+  }
+}
 
 		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
-		a++
-	}
+
 	console.log('trading ', btoken.symbol)
 	const someroutes = await getRoutes ({
 		jupiter,
