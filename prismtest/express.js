@@ -315,7 +315,7 @@ for (var _ of Object.keys(btokens)){
   console.log(list[a])
   console.log(ran)
   
-	if (list[a] > ran && ran > list[a+1]){
+	if (list[a] < ran && ran < list[a-1]){
 		for (bbb of Object.values(btokens)){
 			if (bbb.relative == list[a]){
 				tokenb = bbb
