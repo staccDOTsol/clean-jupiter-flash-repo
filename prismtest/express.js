@@ -277,7 +277,7 @@ let hm = await jupiter.computeRoutes({
 let tcum = 0
 totrades['cum'] = 0
 for (var val of Object.values(totrades)){
-		tcum=val
+		tcum+=val
 }
 totrades['cum'] = tcum
 				}
@@ -293,7 +293,7 @@ setInterval(async function(){
     let tcum = 0
 totrades['cum'] = 0
 for (var val of Object.values(totrades)){
-		tcum=val
+		tcum+=val
 }
 totrades['cum'] = tcum
 console.log(totrades)
