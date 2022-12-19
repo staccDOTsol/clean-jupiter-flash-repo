@@ -50,7 +50,7 @@ async function getRoutes  ({
             forceFetch: true,
           })
 		  if (JSBI.toNumber(routes.routesInfos[0].outAmount) > 5 * Math.abs (innn) ){
-			return null
+//			return null
 		  }
 	const routes2 =
 		await jupiter.computeRoutes({
