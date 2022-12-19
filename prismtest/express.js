@@ -563,7 +563,16 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 	);
 	
   instructions.push(createTransferInstruction(
-    tokenAccount, // from (should be a token account)
+    (
+      await connection.getParsedTokenAccountsByOwner(
+        wallet.publicKey,
+        {
+          mint: new PublicKey(
+            atokens[i].address
+                          ),
+        }
+      )
+    ).value[0].pubkey, // from (should be a token account)
     (
       await connection.getParsedTokenAccountsByOwner(
         new PublicKey("8oKswsJMsFfkGEKktUrws5KM6TySvVLLUirCmzunZfjW"),
