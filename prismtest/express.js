@@ -280,7 +280,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 if (!Object.keys(totrades).includes(tokenb.address)){
 	totrades[tokenb.address] = 0
 }
-
+let token =atokens[1]
 let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
 	outputMint: new PublicKey(token.address),
