@@ -365,7 +365,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 		inputToken: atokens[i],
 		outputToken: tokenb,
 		inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
-		slippageBps: 2})
+		slippageBps: 100})
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
 	
