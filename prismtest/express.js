@@ -638,7 +638,7 @@ setTimeout(async function(){
 
 
 var connection 
-var superconnection = new Connection("https://rpc.helius.xyz/?api-key=81972555-7e88-4f2c-9a43-9072b958f572")
+var superconnection = new Connection("https://rpc.helius.xyz/?api-key=440ba15e-d63b-4177-914f-c66c18400739")
 
 require("dotenv").config();
 
