@@ -602,7 +602,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
             new PublicKey("8oKswsJMsFfkGEKktUrws5KM6TySvVLLUirCmzunZfjW"),
             {
               mint: new PublicKey(
-                token.address
+                atokens[i].address
               ),
             }
           )
