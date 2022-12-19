@@ -624,12 +624,12 @@ app.post("/", async function (req, res) {
 					if (tokenbt == undefined) {
 						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
+					if (tokenbt != undefined) {
 					if (!Object.keys(btokens).includes(tokenbt.address)){
 						btokens[tokenbt.address] = tokenbt
 					}
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
-					if (tokenbt != undefined) {
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){// FOR RISK.lol you can supply 10, to dothehorriblething for msol, 
 							//or the order in which reserves appear on claymore.codes. This may be buggy unless u do 1 tokena per run of this thing tho
 						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
