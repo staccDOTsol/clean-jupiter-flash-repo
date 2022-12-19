@@ -601,7 +601,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 } catch (err){
 	console.log(err)
 }
-})
+}, 10000)
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
@@ -627,6 +627,7 @@ app.post("/", async function (req, res) {
 					if (tokenbt != undefined) {
 					if (!Object.keys(btokens).includes(tokenbt.address)){
 						btokens[tokenbt.address] = tokenbt
+            console.log(Object.keys(btokens).length)
 					}
 					//for (var i = 2; i<= 13; i++){
 					//   if (i != 1){
