@@ -514,12 +514,12 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 	}
 
 	const params = {
-		microLamports: 0//1.38*10**5,
+		microLamports: 5.38*10**5,
 	  };
-	//  const ix138 =
-	//  ComputeBudgetProgram.setComputeUnitPrice (params);
+	  const ix138 =
+	  ComputeBudgetProgram.setComputeUnitPrice (params);
   
-	let instructions = []//ix138];
+	let instructions = [ix138]//ix138];
 	let ccc2 = 0 
 	
 	instructions.push(
@@ -546,7 +546,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 	instructions.push(
 		flashRepayReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
-			0, //+pt.instructions.length,
+			1, //+pt.instructions.length,
 			tokenAccount,
 			new PublicKey(market.reserves[i].config.liquidityAddress),
 			new PublicKey(
