@@ -284,7 +284,7 @@ if (!Object.keys(totrades).includes(tokenb.address)){
 let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
 	outputMint: new PublicKey(token.address),
-	amount: JSBI.BigInt(innn), // raw input amount of tokens
+	amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
 	slippageBps,
 	forceFetch: true,
   })
