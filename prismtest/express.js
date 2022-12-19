@@ -335,7 +335,7 @@ if (tokenb){
 		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
-
+let i = 1
 	console.log('trading ', tokenb.symbol)
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
