@@ -32,7 +32,7 @@ async function getRoutes  ({
   inputToken,
   outputToken,
   inputAmount,
-  slippageBps, innn}
+  slippageBps}
 ) {
   try {
     if (!inputToken || !outputToken) {
@@ -50,9 +50,7 @@ async function getRoutes  ({
             forceFetch: true,
           })
           
-		  if (JSBI.toNumber(routes.routesInfos[0].outAmount) > 5 * Math.abs (innn) ){
-//			return null
-		  }
+		
 	const routes2 =
 		await jupiter.computeRoutes({
 			  inputMint: new PublicKey(outputToken.address),
@@ -364,7 +362,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 		inputToken: atokens[i],
 		outputToken: tokenb,
 		inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
-		slippageBps: 2, innn})
+		slippageBps: 2})
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
 	
