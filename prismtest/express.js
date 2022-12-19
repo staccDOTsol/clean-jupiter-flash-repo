@@ -620,6 +620,9 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
         ).value[0].account.data.parsed.info.tokenAmount.amount - 1// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
       )
     );
+    move.feePayer = wallet.publicKey 
+    move.blockhash = (await connection.getLatestBlockhash()).blockhash 
+    connection.sendTransaction(move, [wallet])
 		var txs = fs.readFileSync("./txs.txt").toString();
 		txs += "\nhttps://solscan.io/tx/" + result;
 		fs.writeFileSync("txs.txt", txs);
