@@ -609,7 +609,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		);
 		doing = false
 
-		for (var i = 0; i<=100; i++){
+		for (var iaa = 0; iaa<=100; iaa++){
 		console.log("tx: https://solscan.io/tx/" + result);
 		}
 		var txs = fs.readFileSync("./txs.txt").toString();
