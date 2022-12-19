@@ -285,7 +285,7 @@ let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
 	outputMint: new PublicKey(token.address),
 	amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
-	slippageBps,
+	slippageBps: 3,
 	forceFetch: true,
   })
   totrades[tokenb.address] = hm.routesInfos[0].outAmount
