@@ -336,6 +336,11 @@ if (tokenb){
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
 let i = 1
+atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+  address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
+  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+}
 	console.log('trading ', tokenb.symbol)
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
