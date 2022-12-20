@@ -276,7 +276,7 @@ if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0){
 if (!Object.keys(totrades).includes(tokenb.address)){
 	totrades[tokenb.address] = 0
 }
-  totrades[tokenb.address] += JSBI.toNumber(hm.routesInfos[0].outAmount)
+  totrades[tokenb.address] += innn < 0 ? -1 * JSBI.toNumber(hm.routesInfos[0].outAmount) : JSBI.toNumber(hm.routesInfos[0].outAmount) 
 }
 let tcum = 0
 totrades['cum'] = 0
@@ -382,7 +382,7 @@ atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
      wallet.publicKey,//new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
-      { mint: new PublicKey(atokens[i].address) }
+      { mint: new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v") }
     )
   ).value
   
@@ -651,7 +651,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint)
 	}
 	doing = false;
   if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
-  .div(10 ** atokens[i].decimals) * 1.005 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+  .div(10 ** atokens[i].decimals) / 1.015 < new Decimal(routes2.routesInfos[0].outAmount.toString())
   .div(10 ** atokens[i].decimals) ) {
     mod = mod / 1.05
   }

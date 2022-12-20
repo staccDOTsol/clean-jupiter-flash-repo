@@ -653,11 +653,9 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		mod = mod * 10;
 	}
 	doing = false;
-  if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
-  .div(10 ** atokens[1].decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-  .div(10 ** atokens[1].decimals) ) {
-    mod = mod / 1.05
-  }
+	if (amountToTrade / 1.0006  < JSBI.toNumber(routes2.routesInfos[0].outAmount)) {
+		mod = mod / 1.05
+	  }
   else {
   mod = mod / 2
   }
