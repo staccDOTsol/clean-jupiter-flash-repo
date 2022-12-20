@@ -293,7 +293,7 @@ for (var val of Object.values(totrades)){
 totrades['cum'] = tcum
 console.log(totrades)
 
-var l  = 1
+var l  = 0
 var s = 99999999999999999999999999
 if (Object.keys(totrades).length > 5 ){
 for (var totrade of Object.keys(totrades)){
@@ -409,13 +409,13 @@ try {
 			console.log(routes.routesInfos.length);
 			console.log(routes2.routesInfos.length);
 			if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
-				for (var abc of [0,1,2]){
+				for (var abc of [0]){
 					try {
 						 
 								if (true) {
 									var bca = 0//Math.floor(Math.random() * 2);
 									try {
-										for (var bca of [0,1,2]) {
+										for (var bca of [0]) {
 											
 											if (
 												(amountToTrade * 1.00 ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
