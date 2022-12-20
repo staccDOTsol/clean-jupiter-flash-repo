@@ -740,7 +740,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*/ //)
 		}
 		thedoing = false;
 	}
-}, Math.random() * 14000 + 1500);
+}, Math.random() * 14000 /  12 + 1500 /  12);
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
