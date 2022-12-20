@@ -246,7 +246,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			market = await SolendMarket.initialize(
 				connection,
 				"production"
-				//,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		else  if (market.reserves[1]){
