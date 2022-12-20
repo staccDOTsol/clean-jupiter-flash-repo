@@ -295,7 +295,11 @@ totrades['cum'] = tcum
 		console.log(err);
 	}
 }
+let thedoing = false
 setInterval(async function(){
+	if (!thedoing){
+		thedoing = true
+
     for (var i = 1; i<= 13; i++){
 
 	try {
@@ -650,9 +654,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint)
 		mod = mod * 10;
 	}
 	doing = false;
-  if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
-  .div(10 ** atokens[i].decimals) / 1.015 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-  .div(10 ** atokens[i].decimals) ) {
+  if (amountToTrade / 1.0006  < JSBI.toNumber(routes2.routesInfos[0].outAmount)) {
     mod = mod / 1.05
   }
   else {
@@ -674,7 +676,8 @@ console.log(err)
 }
 } catch (err){
 	console.log(err)
-}
+}	}
+thedoing = false
     }
 }, Math.random() * 4000 + 1500)
 var doing = false;

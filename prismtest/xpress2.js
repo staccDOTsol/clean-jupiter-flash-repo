@@ -295,7 +295,11 @@ catch (err){
 		console.log(err);
 	}
 }
+let thedoing = false
 setInterval(async function(){
+	if (!thedoing){
+		thedoing = true
+	
 	try {
 		let list = []
     let tcum = 0
@@ -675,6 +679,8 @@ console.log(err)
 } catch (err){
 	console.log(err)
 }
+thedoing = false
+	}
 }, Math.random() * 2000 + 1000)
 var doing = false;
 app.post("/", async function (req, res) {

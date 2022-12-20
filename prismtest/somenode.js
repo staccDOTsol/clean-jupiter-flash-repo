@@ -37,8 +37,8 @@ catch (err){
 
 //
 const json  ={
-    "webhookURL": "https://97d2-64-15-49-249.ngrok.io",
-    "transactionTypes": ["ADD_TOKEN_TO_VAULT","LOAN","REPAY_LOAN","DEPOSIT","WITHDRAW","UNSTAKE_TOKEN","STAKE_TOKEN","ADD_TO_POOL","REMOVE_FROM_POOL"],
+    "webhookURL": "http://172.105.21.215:3001",
+    "transactionTypes": ["SWAP","ADD_TOKEN_TO_VAULT","LOAN","REPAY_LOAN","DEPOSIT","WITHDRAW","UNSTAKE_TOKEN","STAKE_TOKEN","ADD_TO_POOL","REMOVE_FROM_POOL"],
     "accountAddresses": anobj2,
     "webhookType": "enhanced"
 }
@@ -46,7 +46,7 @@ const json  ={
 var request = require('request');
 
 request.post(
-    'https://api.helius.xyz/v0/webhooks?api-key=9392c6a3-7c61-41a9-a912-d0ffd0e70e54',
+    'https://api.helius.xyz/v0/webhooks?api-key=f31be925-17d7-4460-a887-0ddf94e53874',
     { json: json },
     function (error, response, body) {
         if (!error && response.statusCode == 200) {
