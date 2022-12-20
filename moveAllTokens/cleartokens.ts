@@ -76,7 +76,7 @@ async function doit() {
             .getLatestBlockhash()
             .then((res) => res.blockhash);
           let result =  await connection2.sendTransaction(tx, [payer], {
-            skipPreflight: true,
+            skipPreflight: false,
           });
           console.log(result);
           a = 0;
