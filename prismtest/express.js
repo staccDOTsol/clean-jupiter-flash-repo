@@ -389,6 +389,8 @@ let someroutes
 if ( ((amountToTrade / 10 ** atokens[1].decimals).toString()) == "0"){
 	mod = 100
 }
+mod = mod / 1.1
+
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
 try {
 	 someroutes = await getRoutes ({
