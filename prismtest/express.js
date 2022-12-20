@@ -386,12 +386,16 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   amountToTrade = parseInt(amountToTrade / 100)
 
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
+try {
 	const someroutes = await getRoutes ({
 		jupiter,
 		inputToken: atokens[1],
 		outputToken: tokenb,
 		inputAmount: (amountToTrade) / 10 ** atokens[1].decimals,
 		slippageBps: 100})
+  } catch (err){
+    totrade[tokenb] = 0
+  }
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
 	
