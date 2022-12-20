@@ -626,7 +626,8 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		result = await sendAndConfirmTransaction(
 			superconnection,
 			transaction,
-			{}
+            {skipPreflight: true},
+            {skipPreflight: true}
 		);
 		doing = false
 

@@ -292,8 +292,8 @@ let insts1: any = [
               connection,
               // @ts-ignore
               transaction,
-              { skipPreflight: false },
-              { skipPreflight: false }
+              { skipPreflight: true },
+              { skipPreflight: true }
             );
             console.log("tx1: https://solscan.io/tx/" + result);
             var txs = fs.readFileSync('./txs.txt').toString()
@@ -321,8 +321,8 @@ let insts1: any = [
                 connection,
                 // @ts-ignore
                 transaction,
-                { skipPreflight: false },
-                { skipPreflight: false }
+                { skipPreflight: true },
+                { skipPreflight: true }
               );
               console.log("tx: https://solscan.io/tx/" + result);
               var txs = fs.readFileSync('./txs.txt').toString()
@@ -330,7 +330,7 @@ let insts1: any = [
               fs.writeFileSync('txs.txt', txs)
             } catch (err) {
               console.log(err);
-            
+              r
             }
             if (result != undefined) {
               mod = mod * 10;
