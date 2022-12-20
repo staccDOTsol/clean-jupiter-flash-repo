@@ -263,19 +263,20 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 return
 		}
 		
-if (!Object.keys(totrades).includes(tokenb.address)){
-	totrades[tokenb.address] = 0
-}
 let token =atokens[1]
 let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
 	outputMint: new PublicKey(token.address),
 	amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
-	slippageBps: 3,
+	slippageBps: 13,
 	forceFetch: true,
   })
+if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0){
+if (!Object.keys(totrades).includes(tokenb.address)){
+	totrades[tokenb.address] = 0
+}
   totrades[tokenb.address] += JSBI.toNumber(hm.routesInfos[0].outAmount)
-
+}
 let tcum = 0
 totrades['cum'] = 0
 for (var val of Object.values(totrades)){
