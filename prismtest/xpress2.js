@@ -420,7 +420,7 @@ try {
 											
 											if (
 												new Decimal 	(routes.routesInfos[0].inAmount.toString())
-			  .div(10 ** tokenb.decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+			  .div(10 ** atokens[1].decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
 			  .div(10 ** atokens[1].decimals) &&
 												!doing
 											) {
@@ -648,7 +648,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 	}
 	doing = false;
   if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
-  .div(10 ** tokenb.decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+  .div(10 ** atokens[1].decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
   .div(10 ** atokens[1].decimals) ) {
     mod = mod / 1.05
   }
@@ -762,7 +762,7 @@ setTimeout(async function(){
 
 
 var connection 
-var superconnection = new Connection("https://rpc.helius.xyz/?api-key=440ba15e-d63b-4177-914f-c66c18400739")
+var superconnection = new Connection("https://rpc.helius.xyz/?api-key=6a839ee9-3c7f-47f1-b40a-ade585ba25ff")
 
 require("dotenv").config();
 
