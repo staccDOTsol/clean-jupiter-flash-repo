@@ -214,6 +214,10 @@ var reservePairs = {};
 let atokens = {}
 async function dothehorriblething(i, tokenbc, innn, dec) {
 	mod = mod / 1.5
+
+  if (mod < 1) {
+    mod = 100;
+  }
 	const tokenb = tokenbc
 	//i = 10
 	try {
@@ -581,39 +585,12 @@ new PublicKey(jaregms[atokens[i].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		//) 
 	//);
-	
+	console.log('we wanna c > ' + (pubkey.account.data.parsed.info.tokenAmount.amount + 20 / 10) ** 6)
   instructions.push(createTransferInstruction(
-    (
-      await connection.getParsedTokenAccountsByOwner(
-        wallet.publicKey,
-        {
-          mint: new PublicKey(
-            atokens[i].address
-                          ),
-        }
-      )
-    ).value[0].pubkey, // from (should be a token account)
-    (
-      await connection.getParsedTokenAccountsByOwner(
-        wallet.publicKey,
-        {
-          mint: new PublicKey(
-            atokens[i].address
-          ),
-        }
-      )
-    ).value[0].pubkey,
+    pubkey.pubkey, // from (should be a token account)
+    pubkey.pubkey,
     wallet.publicKey, // from's owner
-    (
-      await connection.getParsedTokenAccountsByOwner(
-        wallet.publicKey,
-        {
-          mint: new PublicKey(
-            atokens[i].address
-                          ),
-        }
-      )
-    ).value[0].account.data.parsed.info.tokenAmount.amount + 20// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
+    pubkey.account.data.parsed.info.tokenAmount.amount + 20// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
   ))
 	console.log(instructions.length);
 	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
