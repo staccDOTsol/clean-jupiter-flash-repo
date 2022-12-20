@@ -421,9 +421,12 @@ try {
 									var bca = 0//Math.floor(Math.random() * 2);
 									try {
 										for (var bca of [0]) {
-											
+											console.log('aaaaa')
+											console.log(amountToTrade)
+											console.log(JSBI.toNumber((routes2.routesInfos[0].outAmount)))
+
 											if (
-												JSBI.toNumber(routes.routesInfos[0].inAmount ) * 1.015 < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
+												(amountToTrade ) * 1.015 < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
 											) {
 												//doing = true
