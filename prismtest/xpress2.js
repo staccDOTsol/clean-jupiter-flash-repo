@@ -246,19 +246,29 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			market = await SolendMarket.initialize(
 				connection,
 				"production"
-				,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				//,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
-		else  if (market.reserves[i]){
+		else  if (market.reserves[1]){
 		
 		// @ts-ignore
 		//mod = Math.random() * 0.05 + 0.001; 	
 		 atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
 			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-			decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-			symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+			decimals: 6,//,market.reserves[1].config.liquidityToken.decimals,
+			symbol: "USDC"//market.reserves[1].config.liquidityToken.symbol,
 		};
-
+        try {
+            someroutes = await getRoutes ({
+               jupiter,
+               inputToken: tokenb[1],
+               outputToken: atokens[1],
+               inputAmount: innn,
+               slippageBps: 100})
+               totrades[tokenb.address] = JSBI.toNumber((routes2.routesInfos[0].outAmount))
+         } catch (err){
+           totrades[tokenb.address] = 1
+         }
 		if (tokenb.address == atokens[1].address){
 return
 		}
@@ -341,13 +351,13 @@ if (tokenb){
 let i = 1
 atokens[0] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
   address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+  decimals: 6,//,market.reserves[1].config.liquidityToken.decimals,
+  symbol: "USDC"//market.reserves[1].config.liquidityToken.symbol,
 }
 atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
   address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+  decimals: 6,//,market.reserves[1].config.liquidityToken.decimals,
+  symbol: "USDC"//market.reserves[1].config.liquidityToken.symbol,
 }
 	console.log('trading ', tokenb.symbol)
   const pubkey2 = (
@@ -397,7 +407,7 @@ try {
 				await getOrCreateAssociatedTokenAccount(
 					connection, // connection
 					wallet, // fee payerJSBI.toNumber(hm.routesInfos[0].outAmount)
-					new PublicKey(market.reserves[i].config.liquidityToken.mint),
+					new PublicKey(market.reserves[1].config.liquidityToken.mint),
 					wallet.publicKey
 				)
 			).address;
@@ -540,9 +550,9 @@ try {
 	instructions.push(
 		flashBorrowReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
-			new PublicKey(market.reserves[i].config.liquidityAddress),
+			new PublicKey(market.reserves[1].config.liquidityAddress),
 			tokenAccount,
-			new PublicKey(market.reserves[i].config.address),
+			new PublicKey(market.reserves[1].config.address),
 			new PublicKey(market.config.address),
 			SOLEND_PRODUCTION_PROGRAM_ID
 		)
@@ -564,17 +574,17 @@ try {
 			Math.ceil(amountToTrade),
 			1, //+pt.instructions.length,
 			tokenAccount,
-			new PublicKey(market.reserves[i].config.liquidityAddress),
+			new PublicKey(market.reserves[1].config.liquidityAddress),
 			new PublicKey(
-				market.reserves[i].config.liquidityFeeReceiverAddress//// FOR RISK.lol switch these two values liquidityAddress
+				market.reserves[1].config.liquidityFeeReceiverAddress//// FOR RISK.lol switch these two values liquidityAddress
 			),
 			tokenAccount,
-			new PublicKey(market.reserves[i].config.address),
+			new PublicKey(market.reserves[1].config.address),
 			new PublicKey(market.config.address),
 			wallet.publicKey,
 			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
 new PublicKey(jaregms[atokens[1].symbol]),
-new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
+new PublicKey(market.reserves[1].config.liquidityToken.mint*///)
 	) 
 	); 
   console.log(pubkey.length)
