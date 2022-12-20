@@ -685,7 +685,7 @@ app.post("/", async function (req, res) {
 				if (
 					true
 				) {
-					if (mod < 0.001) {
+					if (mod < 1) {
 						mod = 100;
 					}
 					var a = 2;
