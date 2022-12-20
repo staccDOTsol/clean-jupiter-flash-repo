@@ -253,13 +253,13 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 		
 		// @ts-ignore
 		//mod = Math.random() * 0.05 + 0.001; 	
-		 atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+		 atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
 			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
 			decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
 			symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
 		};
 
-		if (tokenb.address == atokens[i].address){
+		if (tokenb.address == atokens[1].address){
 return
 		}
 		
@@ -357,7 +357,12 @@ if (tokenb){
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
 let i = 1
-atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+atokens[0] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+  address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
+  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+}
+atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
   address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
   decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
   symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
@@ -366,7 +371,7 @@ atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
       wallet.publicKey,///new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
-      { mint: new PublicKey(atokens[i].address) }
+      { mint: new PublicKey(atokens[1].address) }
     )
   ).value
   let amount = 0;
@@ -374,17 +379,17 @@ atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
       amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
   }
 
-  // await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[i].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+  // await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[1].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
   //let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
   let amountToTrade = (amount * (mod));
   amountToTrade = parseInt(amountToTrade / 100)
 
-console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
+console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
 	const someroutes = await getRoutes ({
 		jupiter,
-		inputToken: atokens[i],
+		inputToken: atokens[1],
 		outputToken: tokenb,
-		inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
+		inputAmount: (amountToTrade) / 10 ** atokens[1].decimals,
 		slippageBps: 100})
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
@@ -411,15 +416,15 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 											if (
 												new Decimal 	(routes.routesInfos[0].inAmount.toString())
 			  .div(10 ** tokenb.decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-			  .div(10 ** atokens[i].decimals) &&
+			  .div(10 ** atokens[1].decimals) &&
 												!doing
 											) {
 												//doing = true
 												console.log(
 													mod.toString() +
-													atokens[i].symbol +
+													atokens[1].symbol +
 													" " +
-													atokens[i].address + " mod " +
+													atokens[1].address + " mod " +
 														
 														tokenb.symbol +
 														" " +
@@ -581,7 +586,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 			new PublicKey(market.config.address),
 			wallet.publicKey,
 			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
-new PublicKey(jaregms[atokens[i].symbol]),
+new PublicKey(jaregms[atokens[1].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		) 
 	);
@@ -591,14 +596,14 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
     pubkey[0].pubkey, // from (should be a token account)
     pubkey[0].pubkey,
     wallet.publicKey, // from's owner
-    pubkey[0].account.data.parsed.info.tokenAmount.amount// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
+    pubkey[0].account.data.parsed.info.tokenAmount.amount// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[1].address)
   ))
 	console.log(instructions.length);
-	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
-		tgoaccs[atokens[i].symbol] = [];
+	if (!Object.keys(tgoaccs).includes(atokens[1].symbol)) {
+		tgoaccs[atokens[1].symbol] = [];
 	}
-	//  if (tgoaccs[atokens[i].symbol].length == 0){
-	tgoaccs[atokens[i].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
+	//  if (tgoaccs[atokens[1].symbol].length == 0){
+	tgoaccs[atokens[1].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
 	//  }
 	var messageV00 = new TransactionMessage({
 		payerKey: wallet.publicKey,
@@ -609,7 +614,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		instructions,
 	}).compileToV0Message([
 		...goaccs,
-		...tgoaccs[atokens[i].symbol],
+		...tgoaccs[atokens[1].symbol],
 	]);
 	var transaction = new VersionedTransaction(messageV00);
 	var result = undefined;
@@ -639,7 +644,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 	doing = false;
   if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
   .div(10 ** tokenb.decimals) * 1.0172 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-  .div(10 ** atokens[i].decimals) ) {
+  .div(10 ** atokens[1].decimals) ) {
     mod = mod / 1.05
   }
   else {
