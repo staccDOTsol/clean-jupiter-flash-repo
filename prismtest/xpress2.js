@@ -286,7 +286,7 @@ for (var val of Object.values(totrades)){
 totrades['cum'] = tcum
 }
 catch (err){
-   totrades[tokenb.address] = Math.random() * 10 ** tokenb.decimals
+   totrades[tokenb.address] = Math.random() * 10 ** atokens[1].decimals
 }
 				}
 			}
@@ -413,7 +413,7 @@ try {
 		inputAmount: (amountToTrade) / 10 ** atokens[1].decimals,
 		slippageBps: 100})
   } catch (err){
-    totrades[tokenb.address] = 1
+//    totrades[tokenb.address] = 1
   }
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
