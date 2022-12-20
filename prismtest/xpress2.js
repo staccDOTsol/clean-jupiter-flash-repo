@@ -429,7 +429,7 @@ try {
 			console.log(routes.routesInfos.length);
 			console.log(routes2.routesInfos.length);
 			if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
-				for (var abc of [0,1,2]){
+				for (var abc of [0]){
 					try {
 						 
 								if (true) {

@@ -198,7 +198,7 @@ try {
    oldData[tokenb.address + token.address] =    maybe2.oldData
    let routes2 = prism.getRoutes(routes[abc].amountOut / 1.001); // get routes based on from Token amount 10 USDC -> ? PRISM
 console.log(routes2.length)
-    for (var bca of [0,1,2]) {
+    for (var bca of [0]) {
       try {
         
         

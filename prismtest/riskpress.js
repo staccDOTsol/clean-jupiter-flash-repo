@@ -1,4 +1,4 @@
-const { SolendMarket } = require("@solendprotocol/solend-sdk")// FOR RISKLOL ./solend-sdk/save/classes"); 
+const { SolendMarket } = require("./solend-sdk/save/classes");// FOR RISKLOL ./solend-sdk/save/classes"); 
 const { getOrCreateAssociatedTokenAccount } = require("./spl-token/");
 const { createTransferInstruction } = require("./spl-token/");
 const {
@@ -12,7 +12,7 @@ const {
   } = require( "@solana/web3.js" );
 const {
 	flashRepayReserveLiquidityInstruction,
-} = require("@solendprotocol/solend-sdk")//// FOR RISKLOL  "./solend-sdk/save/instructions/flashRepayReserveLiquidity");
+} = require("./solend-sdk/save/instructions/flashRepayReserveLiquidity");//// FOR RISKLOL  "./solend-sdk/save/instructions/flashRepayReserveLiquidity");
 const {
 	flashBorrowReserveLiquidityInstruction,
 } = require("@solendprotocol/solend-sdk");
@@ -125,10 +125,10 @@ var connection = new Connection(
 );
 
 // FOR RISKLOL 
-//var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
-//  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
-//);
-var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
+var SOLEND_PRODUCTION_PROGRAM_ID = new PublicKey(
+  "E4AifNCQZzPjE1pTjAWS8ii4ovLNruSGsdWRMBSq2wBa"
+);
+//var { SOLEND_PRODUCTION_PROGRAM_ID } = require("@solendprotocol/solend-sdk");
 
 let tgoaccs = {};
 let jupiter, market, goluts;
@@ -153,13 +153,13 @@ setTimeout(async function () {
 	market = await SolendMarket.initialize(
 		connection,
 		"production"
-		,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		//,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 	);
 	for (var res of market.reserves) {
 		tokenbs.push({
 			address: res.config.liquidityToken.mint,
 			decimals: res.config.liquidityToken.decimals,
-			symbol: res.config.liquidityToken.symbol,
+			symbol: res.config.asset,
 		});
 		console.log(res.config.liquidityFeeReceiverAddress);
 	}
@@ -246,24 +246,24 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			market = await SolendMarket.initialize(
 				connection,
 				"production"
-				,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+		//		,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		else  if (market.reserves[i]){
 		
 		// @ts-ignore
 		//mod = Math.random() * 0.05 + 0.001; 	
-		 atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
-			address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-			decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-			symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
+		 atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+			address: market.reserves[i].config.liquidityToken.mint,//"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+			decimals: market.reserves[i].config.liquidityToken.decimals,
+			symbol: market.reserves[i].config.asset,
 		};
 
-		if (tokenb.address == atokens[1].address){
+		if (tokenb.address == atokens[i].address){
 return
 		}
 		
-let token =atokens[1]
+let token =atokens[i]
 try {
 let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
@@ -286,7 +286,7 @@ for (var val of Object.values(totrades)){
 totrades['cum'] = tcum
 				}
 				 catch (err){
-				//	totrades[tokenb.address] = Math.random() * 10 ** atokens[1].decimals
+				//	totrades[tokenb.address] = Math.random() * 10 ** atokens[i].decimals
 				}
 				}
 			}
@@ -296,6 +296,8 @@ totrades['cum'] = tcum
 	}
 }
 setInterval(async function(){
+    for (var i = 1; i<= 13; i++){
+
 	try {
 		let list = []
     let tcum = 0
@@ -359,51 +361,52 @@ for (var _ of Object.keys(btokens)){
 } else if (list.length == 1){
   tokenb = Object.values(btokens)[0]
 }
-if (tokenb){
+if (tokenb && market){
 		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
 		console.log('ran: ', ran)
 		ran = ran - tokenb.relative
-let i = 1
-atokens[0] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
-  address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
-}
-atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
-  address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  decimals: 6,//,market.reserves[i].config.liquidityToken.decimals,
-  symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
-}
+atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
+    address: market.reserves[i].config.liquidityToken.mint,//"EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    decimals: market.reserves[i].config.liquidityToken.decimals,
+    symbol: market.reserves[i].config.asset,
+};
+
 	console.log('trading ', tokenb.symbol)
+  const pubkey2 = (
+    await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
+     new PublicKey("HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"),//new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
+      { mint: new PublicKey(atokens[i].address) }
+    )
+  ).value
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
      wallet.publicKey,//new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
-      { mint: new PublicKey(atokens[1].address) }
+      { mint: new PublicKey(atokens[i].address) }
     )
   ).value
   
   let amount = 0;
-  for (var pk of pubkey) {
+  for (var pk of pubkey2) {
       amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
   }
 
-  // await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[1].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
+  // await prism.loadRoutes("So11111111111111111111111111111111111111112", atokens[i].address, undefined); // load routes for tokens, tokenSymbol | tokenMint (base58 string)
   //let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
   let amountToTrade = (amount * (mod));
   amountToTrade = parseInt(amountToTrade / 100)
 let someroutes
-if ( ((amountToTrade / 10 ** atokens[1].decimals).toString()) == "0"){
+if ( ((amountToTrade / 10 ** atokens[i].decimals).toString()) == "0"){
 	mod = 100
 }
 mod = mod / 1.1
 
-console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
+console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toString())
 try {
 	 someroutes = await getRoutes ({
 		jupiter,
-		inputToken: atokens[1],
+		inputToken: atokens[i],
 		outputToken: tokenb,
-		inputAmount: (amountToTrade) / 10 ** atokens[1].decimals,
+		inputAmount: (amountToTrade) / 10 ** atokens[i].decimals,
 		slippageBps: 100})
   } catch (err){
   //  totrades[tokenb.address] = 1
@@ -437,9 +440,9 @@ try {
 												//doing = true
 												console.log(
 													mod.toString() +
-													atokens[1].symbol +
+													atokens[i].symbol +
 													" " +
-													atokens[1].address + " mod " +
+													atokens[i].address + " mod " +
 														
 														tokenb.symbol +
 														" " +
@@ -552,7 +555,7 @@ try {
   
 	let instructions = [ix138]//ix138];
 	let ccc2 = 0 
-	/*
+	
 	instructions.push(
 		flashBorrowReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -562,7 +565,7 @@ try {
 			new PublicKey(market.config.address),
 			SOLEND_PRODUCTION_PROGRAM_ID
 		)
-	); */
+	); 
 	for (var ptix of preTransaction.instructions){
 		if (ccc2 > 0){
 			instructions.push(ptix)
@@ -574,7 +577,7 @@ try {
 	}
 
 	instructions.push(...thepaydirt);
-  /*
+  
 	instructions.push(
 		flashRepayReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -582,31 +585,31 @@ try {
 			tokenAccount,
 			new PublicKey(market.reserves[i].config.liquidityAddress),
 			new PublicKey(
-				market.reserves[i].config.liquidityFeeReceiverAddress//// FOR RISK.lol switch these two values liquidityAddress
+				market.reserves[i].config.liquidityAddress//// FOR RISK.lol switch these two values liquidityAddress
 			),
 			tokenAccount,
 			new PublicKey(market.reserves[i].config.address),
 			new PublicKey(market.config.address),
 			wallet.publicKey,
-			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
-new PublicKey(jaregms[atokens[1].symbol]),
-new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
-	//	) 
-	//); 
+			SOLEND_PRODUCTION_PROGRAM_ID,// FOR RISK.lol uncomment this
+new PublicKey(jaregms[atokens[i].symbol]),
+new PublicKey(market.reserves[i].config.liquidityToken.mint)
+		) 
+	); 
   console.log(pubkey.length)
 	console.log('we wanna c > ' + ((parseInt(pubkey[0].account.data.parsed.info.tokenAmount.amount) + 14 ))  /10 ** 6)
   instructions.push(createTransferInstruction(
     pubkey[0].pubkey, // from (should be a token account)
     pubkey[0].pubkey,
     wallet.publicKey, // from's owner
-    ((parseInt(pubkey[0].account.data.parsed.info.tokenAmount.amount) + 14 ))// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[1].address)
+    ((parseInt(pubkey[0].account.data.parsed.info.tokenAmount.amount) + 14 ))// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
   ))
 	console.log(instructions.length);
-	if (!Object.keys(tgoaccs).includes(atokens[1].symbol)) {
-		tgoaccs[atokens[1].symbol] = [];
+	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
+		tgoaccs[atokens[i].symbol] = [];
 	}
-	//  if (tgoaccs[atokens[1].symbol].length == 0){
-	tgoaccs[atokens[1].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
+	//  if (tgoaccs[atokens[i].symbol].length == 0){
+	tgoaccs[atokens[i].symbol] = [...execute.addressLookupTableAccounts, ...execute2.addressLookupTableAccounts]
 	//  }
 	var messageV00 = new TransactionMessage({
 		payerKey: wallet.publicKey,
@@ -617,7 +620,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		instructions,
 	}).compileToV0Message([
 		...goaccs,
-		...tgoaccs[atokens[1].symbol],
+		...tgoaccs[atokens[i].symbol],
 	]);
 	var transaction = new VersionedTransaction(messageV00);
 	var result = undefined;
@@ -647,8 +650,8 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 	}
 	doing = false;
   if (new Decimal 	(routes.routesInfos[0].inAmount.toString())
-  .div(10 ** atokens[1].decimals) * 1.005 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-  .div(10 ** atokens[1].decimals) ) {
+  .div(10 ** atokens[i].decimals) * 1.005 < new Decimal(routes2.routesInfos[0].outAmount.toString())
+  .div(10 ** atokens[i].decimals) ) {
     mod = mod / 1.05
   }
   else {
@@ -671,6 +674,7 @@ console.log(err)
 } catch (err){
 	console.log(err)
 }
+    }
 }, Math.random() * 2000 + 1000)
 var doing = false;
 app.post("/", async function (req, res) {
@@ -702,11 +706,11 @@ app.post("/", async function (req, res) {
 						btokens[tokenbt.address] = tokenbt
             console.log(Object.keys(btokens).length)
 					}
-					//for (var i = 2; i<= 13; i++){
-					//   if (i != 1){
+					for (var i = 1; i<= 13; i++){
+					//   if (i != 0){
 						if (tokenbt.symbol != "SOL" && tokenbt.symbol != "USDC"){// FOR RISK.lol you can supply 10, to dothehorriblething for msol, 
 							//or the order in which reserves appear on claymore.codes. This may be buggy unless u do 1 tokena per run of this thing tho
-						  dothehorriblething(1, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
+						  dothehorriblething(i, tokenbt, parseFloat(ch.rawTokenAmount.tokenAmount),ch.rawTokenAmount.decimals)
 setTimeout(async function(){
 /*don't dot his it fucks up token
 						 dothehorriblething(
@@ -721,7 +725,7 @@ setTimeout(async function(){
 					a++;
 
 					 }
-					// }
+					 }
 				}
 				if (anobj.includes(ch.tokenAccount)) {
 					if (!Object.keys(acoolobj).includes(ch.tokenAccount)) {
