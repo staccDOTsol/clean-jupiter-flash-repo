@@ -246,7 +246,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 			market = await SolendMarket.initialize(
 				connection,
 				"production"
-			//	,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
+				,"7RCz8wb6WXxUhAigok9ttgrVgDFFFbibcirECzWSBauM"
 			);
 		}
 		else  if (market.reserves[1]){
@@ -416,10 +416,7 @@ try {
 									var bca = 0//Math.floor(Math.random() * 2);
 									try {
 										for (var bca of [0,1,2]) {
-											console.log('aaaaa')
-											console.log(amountToTrade)
-											console.log(JSBI.toNumber((routes2.routesInfos[0].outAmount)))
-
+											
 											if (
 												(amountToTrade * 1.00 ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
