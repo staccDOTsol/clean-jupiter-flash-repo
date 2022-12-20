@@ -295,8 +295,23 @@ for (var val of Object.values(totrades)){
 }
 totrades['cum'] = tcum
 console.log(totrades)
+
+var l  = 1
+var s = 99999999999999999999999999
+if (Object.keys(totrades).length > 2 ){
 for (var totrade of Object.keys(totrades)){
   if (totrade != 'cum'){
+    if (totrades[totrade] > l){
+      l = (totrades[totrade])
+    }
+    if ((totrades[totrade] < s )){
+      s = (totrades[totrade])
+    }
+  }
+}
+}
+for (var totrade of Object.keys(totrades)){
+  if (totrade != 'cum' && (totrades[totrade]) != s && (totrades[totrade]) != l){
 	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
 
   list.push((totrades[totrade] / totrades.cum) * 100)
@@ -518,14 +533,14 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 	}
 
 	const params = {
-		microLamports: 5.38*10**5,
+		microLamports: 2.38*10**5,
 	  };
 	  const ix138 =
 	  ComputeBudgetProgram.setComputeUnitPrice (params);
   
 	let instructions = [ix138]//ix138];
 	let ccc2 = 0 
-	
+	/*
 	instructions.push(
 		flashBorrowReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -535,7 +550,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 			new PublicKey(market.config.address),
 			SOLEND_PRODUCTION_PROGRAM_ID
 		)
-	);
+	); */
 	for (var ptix of preTransaction.instructions){
 		if (ccc2 > 0){
 			instructions.push(ptix)
@@ -547,6 +562,7 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 	}
 
 	instructions.push(...thepaydirt);
+  /*
 	instructions.push(
 		flashRepayReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -563,8 +579,8 @@ console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[i].decimals).toStrin
 			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
 new PublicKey(jaregms[atokens[i].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
-		)
-	);
+		//) 
+	//);
 	
   instructions.push(createTransferInstruction(
     (
@@ -579,7 +595,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
     ).value[0].pubkey, // from (should be a token account)
     (
       await connection.getParsedTokenAccountsByOwner(
-        new PublicKey("8oKswsJMsFfkGEKktUrws5KM6TySvVLLUirCmzunZfjW"),
+        wallet.publicKey,
         {
           mint: new PublicKey(
             atokens[i].address
@@ -597,7 +613,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
                           ),
         }
       )
-    ).value[0].account.data.parsed.info.tokenAmount.amount - 1// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
+    ).value[0].account.data.parsed.info.tokenAmount.amount + 20// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
   ))
 	console.log(instructions.length);
 	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
