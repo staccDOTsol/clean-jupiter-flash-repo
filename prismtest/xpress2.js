@@ -46,7 +46,7 @@ async function getRoutes  ({
             inputMint: new PublicKey(inputToken.address),
             outputMint: new PublicKey(outputToken.address),
             amount: JSBI.BigInt(inputAmountInSmallestUnits), // raw input amount of tokens
-            slippageBps,
+            slippageBps: 100,
             forceFetch: true,
           })
           
@@ -56,7 +56,7 @@ async function getRoutes  ({
 			  inputMint: new PublicKey(outputToken.address),
 			  outputMint: new PublicKey(inputToken.address),
 			  amount: routes.routesInfos[0].outAmount, // raw input amount of tokens
-			  slippageBps,
+			  slippageBps: 100,
 			  forceFetch: true,
 			})
 		  ;	  
@@ -269,7 +269,7 @@ let hm = await jupiter.computeRoutes({
 	inputMint: new PublicKey(tokenb.address),
 	outputMint: new PublicKey(token.address),
 	amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
-	slippageBps: 13,
+	slippageBps: 100,
 	forceFetch: true,
   })
 if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0){
