@@ -307,8 +307,9 @@ totrades['cum'] = tcum
 console.log(totrades)
 
 var l  = 1
-var s = 99999999999999999999999999
+var s = 1
 if (Object.keys(totrades).length > 3 ){
+	s = 99999999999999999999999999
 for (var totrade of Object.keys(totrades)){
   if (totrade != 'cum'){
     if (totrades[totrade] > l){
@@ -322,9 +323,9 @@ for (var totrade of Object.keys(totrades)){
 }
 for (var totrade of Object.keys(totrades)){
   if (totrade != 'cum'  && (totrades[totrade]) != s && (totrades[totrade]) != l){
-	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
+	btokens[totrade].relative = (totrades[totrade] / (totrades.cum - l - s)) * 100
 
-  list.push((totrades[totrade] / totrades.cum) * 100)
+  list.push((totrades[totrade] / (totrades.cum - l - s)) * 100)
 
 }
 }
