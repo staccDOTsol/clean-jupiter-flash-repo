@@ -391,6 +391,10 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   let amountToTrade = (amount * (mod));
   amountToTrade = parseInt(amountToTrade / 100)
 let someroutes
+
+if ( ((amountToTrade / 10 ** atokens[1].decimals).toString()) == "0"){
+	mod = 100
+}
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
 try {
 	 someroutes = await getRoutes ({
