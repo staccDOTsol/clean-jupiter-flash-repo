@@ -361,7 +361,7 @@ atokens[i] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
 	console.log('trading ', tokenb.symbol)
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
-      new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
+      wallet.publicKey,///new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
       { mint: new PublicKey(atokens[i].address) }
     )
   ).value
