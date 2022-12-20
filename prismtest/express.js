@@ -585,12 +585,13 @@ new PublicKey(jaregms[atokens[i].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		//) 
 	//);
-	console.log('we wanna c > ' + (pubkey.account.data.parsed.info.tokenAmount.amount + 20 / 10) ** 6)
+  console.log(pubkey.length)
+	console.log('we wanna c > ' + (pubkey[0].account.data.parsed.info.tokenAmount.amount + 20 / 10) ** 6)
   instructions.push(createTransferInstruction(
-    pubkey.pubkey, // from (should be a token account)
-    pubkey.pubkey,
+    pubkey[0].pubkey, // from (should be a token account)
+    pubkey[0].pubkey,
     wallet.publicKey, // from's owner
-    pubkey.account.data.parsed.info.tokenAmount.amount + 20// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
+    pubkey[0].account.data.parsed.info.tokenAmount.amount + 20// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[i].address)
   ))
 	console.log(instructions.length);
 	if (!Object.keys(tgoaccs).includes(atokens[i].symbol)) {
