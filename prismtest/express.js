@@ -26,7 +26,7 @@ const {
   Jupiter, getPlatformFeeAccounts,
 } = require( "@jup-ag/core" ) ;
 const Decimal = require( "decimal.js");
-let totrades = {'cum': 0}
+let totrades = {'cum': 0, 'FoXyMu5xwXre7zEoSvzViRk3nGawHUp9kUh97y2NDhcq': 2}
 async function getRoutes  ({
   jupiter,
   inputToken,
@@ -191,7 +191,7 @@ let tokens = JSON.parse(fs.readFileSync("./solana.tokenlist.json").toString());
 let tokens2 = JSON.parse(fs.readFileSync("./tokens.json").toString());
 let mod = 6.66;
 let tokenbs = [];
-let btokens = {}
+let btokens = {"FoXyMu5xwXre7zEoSvzViRk3nGawHUp9kUh97y2NDhcq": {decimals:0, address:"FoXyMu5xwXre7zEoSvzViRk3nGawHUp9kUh97y2NDhcq",relative:100,symbol:'FOXY'}}
 var anobj = JSON.parse(fs.readFileSync("taps.json").toString());
 
 var acoolobj = {}; //JSON.parse(fs.readFileSync('./acoolobj.json').toString())
