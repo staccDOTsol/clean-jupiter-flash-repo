@@ -420,9 +420,7 @@ try {
 										for (var bca of [0]) {
 											
 											if (
-												new Decimal 	(routes.routesInfos[0].inAmount.toString())
-			  .div(10 ** atokens[1].decimals) * 1.005 < new Decimal(routes2.routesInfos[0].outAmount.toString())
-			  .div(10 ** atokens[1].decimals) &&
+												JSBI.toNumber(routes.routesInfos[0].inAmount ) * 1.005 < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
 											) {
 												//doing = true
