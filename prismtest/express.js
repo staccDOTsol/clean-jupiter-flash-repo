@@ -426,7 +426,7 @@ try {
 											console.log(JSBI.toNumber((routes2.routesInfos[0].outAmount)))
 
 											if (
-												(amountToTrade ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
+												(amountToTrade * 1.005 ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
 											) {
 												//doing = true
@@ -440,19 +440,7 @@ try {
 														" " +
 														tokenb.address
 												);
-												
-											}
-										}
-									} catch (err) {
-										doing = false;
-										console.log(err);
-									}
-								}
-							}
-							catch (err){
-								console.log(err)
-							}
-						}
+											
 	const execute = await jupiter.exchange({
 		routeInfo:routes.routesInfos[0],
 	  });
@@ -660,6 +648,19 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
   else {
   mod = mod / 2
   }
+  	
+}
+}
+} catch (err) {
+doing = false;
+console.log(err);
+}
+}
+}
+catch (err){
+console.log(err)
+}
+}
 }
 } catch (err){
 	console.log(err)
