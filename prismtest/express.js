@@ -286,7 +286,7 @@ for (var val of Object.values(totrades)){
 totrades['cum'] = tcum
 				}
 				 catch (err){
-					totrades[tokenb.address] = Math.random() * 10 ** tokenb.decimals
+					totrades[tokenb.address] = Math.random() * 10 ** tokena.decimals
 				 }
 				}
 			}
