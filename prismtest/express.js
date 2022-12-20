@@ -554,7 +554,7 @@ try {
   
 	let instructions = [ix138]//ix138];
 	let ccc2 = 0 
-	
+	/*
 	instructions.push(
 		flashBorrowReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -564,7 +564,7 @@ try {
 			new PublicKey(market.config.address),
 			SOLEND_PRODUCTION_PROGRAM_ID
 		)
-	); 
+	); */
 	for (var ptix of preTransaction.instructions){
 		if (ccc2 > 0){
 			instructions.push(ptix)
@@ -576,7 +576,7 @@ try {
 	}
 
 	instructions.push(...thepaydirt);
-  
+  /*
 	instructions.push(
 		flashRepayReserveLiquidityInstruction(
 			Math.ceil(amountToTrade),
@@ -593,15 +593,15 @@ try {
 			SOLEND_PRODUCTION_PROGRAM_ID/*,// FOR RISK.lol uncomment this
 new PublicKey(jaregms[atokens[1].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
-		) 
-	);
+	//	) 
+	//); 
   console.log(pubkey.length)
-	console.log('we wanna c > ' + (pubkey[0].account.data.parsed.info.tokenAmount.amount )  /10 ** 6)
+	console.log('we wanna c > ' + (BigInt(parseFloat(pubkey[0].account.data.parsed.info.tokenAmount.amount) + 14 ))  /10 ** 6)
   instructions.push(createTransferInstruction(
     pubkey[0].pubkey, // from (should be a token account)
     pubkey[0].pubkey,
     wallet.publicKey, // from's owner
-    pubkey[0].account.data.parsed.info.tokenAmount.amount// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[1].address)
+    (BigInt(parseFloat(pubkey[0].account.data.parsed.info.tokenAmount.amount) + 14 ))// + Math.ceil(JSBI.toNumber(solamis.routesInfos[0].outAmount)* 10 ** atokens[1].address)
   ))
 	console.log(instructions.length);
 	if (!Object.keys(tgoaccs).includes(atokens[1].symbol)) {
