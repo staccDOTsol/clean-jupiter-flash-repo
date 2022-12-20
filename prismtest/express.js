@@ -316,7 +316,7 @@ for (var totrade of Object.keys(totrades)){
 }
 }
 for (var totrade of Object.keys(totrades)){
-  if (totrade != 'cum' && (totrades[totrade]) != s && (totrades[totrade]) != l){
+  if (totrade != 'cum'){// && (totrades[totrade]) != s && (totrades[totrade]) != l){
 	btokens[totrade].relative = (totrades[totrade] / totrades.cum) * 100
 
   list.push((totrades[totrade] / totrades.cum) * 100)
