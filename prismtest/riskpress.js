@@ -298,7 +298,7 @@ totrades['cum'] = tcum
 let thedoing = false
 setInterval(async function(){
 	if (!thedoing){
-		thedoing = true
+		//thedoing = true
 
     for (var i = 1; i<= 13; i++){
 
@@ -679,7 +679,7 @@ console.log(err)
 }	}
 thedoing = false
     }
-}, Math.random() * 4000 + 1500)
+}, Math.random() * 14000 + 1500)
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
