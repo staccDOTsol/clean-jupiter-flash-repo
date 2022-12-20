@@ -267,7 +267,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
                slippageBps: 100})
                totrades[tokenb.address] = JSBI.toNumber((routes2.routesInfos[0].outAmount))
          } catch (err){
-           totrades[tokenb.address] =  Math.floor(Math.random * 10 ** atokens[1].decimals)
+           totrades[tokenb.address] =  Math.floor(Math.random()* 10 ** atokens[1].decimals)
          }
 		if (tokenb.address == atokens[1].address){
 return
@@ -393,7 +393,7 @@ try {
 		slippageBps: 100})
 		totrades[tokenb.address] = JSBI.toNumber((routes2.routesInfos[0].outAmount))
 	} catch (err){
-	  totrades[tokenb.address] =  Math.floor(Math.random * 10 ** atokens[1].decimals)
+	  totrades[tokenb.address] =  Math.floor(Math.random()* 10 ** atokens[1].decimals)
 	}
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
