@@ -672,6 +672,9 @@ app.post("/", async function (req, res) {
 					if (tokenbt == undefined) {
 						tokenbt = tokens2.find((t) => t.address === ch.mint);
 					}
+          if (tokenbt == undefined){
+            tokenbt = {address: ch.mint, symbol: 'undefined', decimals: 9}
+          }
 					if (tokenbt != undefined) {
 					if (!Object.keys(btokens).includes(tokenbt.address)){
 						btokens[tokenbt.address] = tokenbt
