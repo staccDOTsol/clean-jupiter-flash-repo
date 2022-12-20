@@ -298,6 +298,7 @@ totrades['cum'] = tcum
 let thedoing = false
 setInterval(async function(){
 	if (!thedoing){
+		thedoing = true
 	try {
 		let list = []
     let tcum = 0
