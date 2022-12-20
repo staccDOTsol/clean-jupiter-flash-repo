@@ -205,7 +205,7 @@ function sendAndConfirmTransaction(connection, serialized) {
         let signature = null;
         let signatureResponse = null;
         while (true) {
-            connection.sendRawTransaction(serialized, { skipPreflight: true }).catch((e) => {
+            connection.sendRawTransaction(serialized, { skipPreflight: false }).catch((e) => {
                 return null;
             }).then(result => { if (!signature)
                 signature = result; });

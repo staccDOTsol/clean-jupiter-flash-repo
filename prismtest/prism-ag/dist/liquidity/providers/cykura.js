@@ -52,7 +52,7 @@ function getCykuraPools(connection) {
         let programAccounts = yield (0, common_1.getFilteredProgramAccounts)(connection, new web3_js_1.PublicKey(types_1.CYKURA_PROGRAM_ID), [{ dataSize: 138 }]);
         let decodedAccounts = [];
         let provider = new anchor.AnchorProvider(connection, new nodewallet_1.default(web3_js_1.Keypair.generate()), {
-            skipPreflight: true,
+            skipPreflight: false,
             preflightCommitment: "recent",
             commitment: "recent",
         });

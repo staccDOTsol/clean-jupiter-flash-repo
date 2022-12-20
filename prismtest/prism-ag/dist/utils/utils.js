@@ -73,7 +73,7 @@ function sendCustomTransaction(connection, wallet, allInstructions) {
         allTransactions = yield wallet.signAllTransactions(allTransactions);
         let promises = [];
         for (let i = 0; i < allTransactions.length; i++)
-            promises.push(connection.sendRawTransaction(allTransactions[i].serialize(), { skipPreflight: true }));
+            promises.push(connection.sendRawTransaction(allTransactions[i].serialize(), { skipPreflight: false }));
         return yield Promise.all(promises);
     });
 }

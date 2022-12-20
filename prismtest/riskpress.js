@@ -434,7 +434,7 @@ try {
 										for (var bca of [0]) {
 										
 											if (
-												(amountToTrade * 1.00 ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
+												(amountToTrade * 1.0006 ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
 											) {
 												//doing = true
@@ -675,7 +675,7 @@ console.log(err)
 	console.log(err)
 }
     }
-}, Math.random() * 2000 + 1000)
+}, Math.random() * 4000 + 1500)
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
@@ -782,4 +782,4 @@ var superconnection = new Connection("https://rpc.helius.xyz/?api-key=440ba15e-d
 
 require("dotenv").config();
 
-app.listen("3000");
+app.listen("3002");

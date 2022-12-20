@@ -216,7 +216,7 @@ exports.IDL = {
     errors: [],
 };
 function getBalansolProgram(connection) {
-    const PROVIDER = new anchor_1.AnchorProvider(connection, new nodewallet_1.default(anchor_1.web3.Keypair.generate()), { skipPreflight: true });
+    const PROVIDER = new anchor_1.AnchorProvider(connection, new nodewallet_1.default(anchor_1.web3.Keypair.generate()), { skipPreflight: false });
     return new anchor_1.Program(exports.IDL, exports.BALANSOL_PROGRAM_ID, PROVIDER);
 }
 exports.getBalansolProgram = getBalansolProgram;
