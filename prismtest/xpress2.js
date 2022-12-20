@@ -264,25 +264,6 @@ return
 		}
 		
 let token =atokens[1]
-let hm = await jupiter.computeRoutes({
-	inputMint: new PublicKey(tokenb.address),
-	outputMint: new PublicKey(token.address),
-	amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
-	slippageBps: 13,
-	forceFetch: true,
-  })
-if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0){
-if (!Object.keys(totrades).includes(tokenb.address)){
-	totrades[tokenb.address] = 0
-}
-  totrades[tokenb.address] += JSBI.toNumber(hm.routesInfos[0].outAmount)
-}
-let tcum = 0
-totrades['cum'] = 0
-for (var val of Object.values(totrades)){
-		tcum+=val
-}
-totrades['cum'] = tcum
 				}
 			}
 	
@@ -405,8 +386,9 @@ try {
 		outputToken: tokenb,
 		inputAmount: (amountToTrade) / 10 ** atokens[1].decimals,
 		slippageBps: 100})
+        totrades[tokenb.address] = JSBI.toNumber((routes2.routesInfos[0].outAmount))
   } catch (err){
-    //totrades[tokenb.address] = 1
+    totrades[tokenb.address] = 1
   }
 		const routes = someroutes[0]
 		const routes2 = someroutes[1]
