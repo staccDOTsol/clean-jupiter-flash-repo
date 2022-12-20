@@ -369,14 +369,20 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   symbol: "USDC"//market.reserves[i].config.liquidityToken.symbol,
 }
 	console.log('trading ', tokenb.symbol)
-  const pubkey = (
+  const pubkey2 = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
      new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
       { mint: new PublicKey(atokens[1].address) }
     )
   ).value
+  const pubkey = (
+    await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
+     wallet.publicKey, //new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
+      { mint: new PublicKey(atokens[1].address) }
+    )
+  ).value
   let amount = 0;
-  for (var pk of pubkey) {
+  for (var pk of pubkey2) {
       amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
   }
 

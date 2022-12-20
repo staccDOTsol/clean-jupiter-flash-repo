@@ -375,6 +375,7 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
       { mint: new PublicKey(atokens[1].address) }
     )
   ).value
+  
   let amount = 0;
   for (var pk of pubkey) {
       amount += parseInt(pk.account.data.parsed.info.tokenAmount.amount);
