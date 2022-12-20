@@ -331,7 +331,7 @@ for (var totrade of Object.keys(totrades)){
 
 }
 }
-list = list.sort().reverse()
+list = list.sort()
 list.push(100)
 console.log(list)
 let a = 0
