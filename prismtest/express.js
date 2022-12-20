@@ -414,13 +414,13 @@ try {
 			console.log(routes.routesInfos.length);
 			console.log(routes2.routesInfos.length);
 			if (!routes.routesInfos[0] || !routes2.routesInfos[0]) return
-				for (var abc of [0]){
+				for (var abc of [0,1,2]){
 					try {
 						 
 								if (true) {
 									var bca = 0//Math.floor(Math.random() * 2);
 									try {
-										for (var bca of [0]) {
+										for (var bca of [0,1,2]) {
 											console.log('aaaaa')
 											console.log(amountToTrade)
 											console.log(JSBI.toNumber((routes2.routesInfos[0].outAmount)))
