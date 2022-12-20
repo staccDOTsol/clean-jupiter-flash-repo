@@ -371,7 +371,7 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
 	console.log('trading ', tokenb.symbol)
   const pubkey = (
     await connection.getParsedTokenAccountsByOwner(// FOR RISK.lol switch these two values
-      wallet.publicKey,///new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
+     new PublicKey("55YceCDfyvdcPPozDiMeNp9TpwmL1hdoTEFw5BMNWbpf"),//,HECVhRpddhzhkn6n1vdiqhQe1Y65yjXuwb45jKspD1VV"), //"),
       { mint: new PublicKey(atokens[1].address) }
     )
   ).value
@@ -402,7 +402,7 @@ try {
 		let tokenAccount = (
 				await getOrCreateAssociatedTokenAccount(
 					connection, // connection
-					wallet, // fee payer
+					wallet, // fee payerJSBI.toNumber(hm.routesInfos[0].outAmount)
 					new PublicKey(market.reserves[i].config.liquidityToken.mint),
 					wallet.publicKey
 				)
