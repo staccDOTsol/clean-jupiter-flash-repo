@@ -426,7 +426,7 @@ try {
 											console.log(JSBI.toNumber((routes2.routesInfos[0].outAmount)))
 
 											if (
-												(amountToTrade ) * 1.015 < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
+												(amountToTrade ) < JSBI.toNumber((routes2.routesInfos[0].outAmount)) &&
 												!doing
 											) {
 												//doing = true
