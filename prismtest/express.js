@@ -660,7 +660,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 } catch (err){
 	console.log(err)
 }
-}, 1000)
+}, Math.random() * 2000 + 1000)
 var doing = false;
 app.post("/", async function (req, res) {
 	if (req.body.fee > 5000) {
