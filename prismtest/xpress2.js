@@ -336,32 +336,33 @@ if ((totrades[totrade] / (totrades.cum - l - s)) * 100 > 0.01){
 }
 list = list.sort()
 list.push(105)
-let tlist = list
 console.log(list)
 let a = 0
 let ran = Math.random() * 100 // 55
 let tokenb;
-if (tlist.length > 1){
-for (var _ of tlist){
-  /// 6 24 70
-	if ( tlist[a] > ran  && ran <= tlist[a-1]){
-		for (bbb of Object.values(btokens)){
-			if (bbb.relative == tlist[a]){
-				tokenb = bbb
-				console.log('winner winner chikcum dinner')
-				console.log(tokenb)
-				continue
-			}
-		}
-	}
-    a++
-}
+if (list.length > 1){
+	for (var _ of Object.keys(list)){
+		/// 6 24 70
+		  if ( list[a] > ran  && ran <= list[a+1]){
+			  for (bbb of Object.values(btokens)){
+				  if (bbb.relative == list[a]){
+					  tokenb = bbb
+					  console.log('winner winner chikcum dinner')
+					  console.log(tokenb)
+					  break
+				  }
+			  }
+			  
+		  }
+		  a++
+	  }
 } else if (list.length == 1){
   tokenb = Object.values(btokens)[0]
 }
 if (tokenb){
 		console.log(tokenb.symbol + ' relative chance ' + tokenb.relative)
 		console.log('ran: ', ran)
+		ran = ran - tokenb.relative
 let i = 1
 atokens[0] = { // for risk.lol this is all fucky and hardcoded to turbosol .issue is that i indexed these differently in our obj vs solend api
   address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",

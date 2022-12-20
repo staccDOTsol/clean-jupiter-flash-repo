@@ -340,11 +340,7 @@ let a = 0
 let ran = Math.random() * 100 // 55
 let tokenb;
 if (list.length > 1){
-for (var _ of Object.keys(btokens)){
-  console.log()
-
-  console.log(list[a])
-  console.log(ran)
+for (var _ of Object.keys(list)){
   /// 6 24 70
 	if ( list[a] > ran  && ran <= list[a+1]){
 		for (bbb of Object.values(btokens)){
@@ -352,13 +348,12 @@ for (var _ of Object.keys(btokens)){
 				tokenb = bbb
 				console.log('winner winner chikcum dinner')
 				console.log(tokenb)
+				break
 			}
 		}
-		continue
+		
 	}
-  else {
     a++
-  }
 }
 } else if (list.length == 1){
   tokenb = Object.values(btokens)[0]
