@@ -586,7 +586,7 @@ new PublicKey(market.reserves[i].config.liquidityToken.mint*///)
 		//) 
 	//);
   console.log(pubkey.length)
-	console.log('we wanna c > ' + (pubkey[0].account.data.parsed.info.tokenAmount.amount + 20 / 10) ** 6)
+	console.log('we wanna c > ' + (pubkey[0].account.data.parsed.info.tokenAmount.amount + 20)  /10 ** 6)
   instructions.push(createTransferInstruction(
     pubkey[0].pubkey, // from (should be a token account)
     pubkey[0].pubkey,
