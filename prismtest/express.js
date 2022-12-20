@@ -303,7 +303,7 @@ console.log(totrades)
 
 var l  = 1
 var s = 99999999999999999999999999
-if (Object.keys(totrades).length > 2 ){
+if (Object.keys(totrades).length > 3 ){
 for (var totrade of Object.keys(totrades)){
   if (totrade != 'cum'){
     if (totrades[totrade] > l){
