@@ -332,7 +332,7 @@ for (var totrade of Object.keys(totrades)){
 }
 }
 list = list.sort()
-list.push(100)
+list.push(105)
 console.log(list)
 let a = 0
 let ran = Math.random() * 100 // 55
