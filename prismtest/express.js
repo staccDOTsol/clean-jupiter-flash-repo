@@ -384,10 +384,10 @@ atokens[1] = { // for risk.lol this is all fucky and hardcoded to turbosol .issu
   //let solamis = prism.getRoutes(0.000005); // get routes based on from Token amount 10 USDC -> ? PRISM
   let amountToTrade = (amount * (mod));
   amountToTrade = parseInt(amountToTrade / 100)
-
+let someroutes
 console.log('amttotrade: ' + (amountToTrade / 10 ** atokens[1].decimals).toString())
 try {
-	const someroutes = await getRoutes ({
+	 someroutes = await getRoutes ({
 		jupiter,
 		inputToken: atokens[1],
 		outputToken: tokenb,
