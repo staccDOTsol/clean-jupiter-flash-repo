@@ -276,7 +276,7 @@ if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0){
 if (!Object.keys(totrades).includes(tokenb.address)){
 	totrades[tokenb.address] = 0
 }
-  totrades[tokenb.address] += innn < 0 ? -1 * JSBI.toNumber(hm.routesInfos[0].outAmount) : JSBI.toNumber(hm.routesInfos[0].outAmount) 
+  totrades[tokenb.address] += innn < 0 ?  JSBI.toNumber(hm.routesInfos[0].outAmount) : JSBI.toNumber(hm.routesInfos[0].outAmount) 
 }
 let tcum = 0
 totrades['cum'] = 0
