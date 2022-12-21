@@ -360,7 +360,7 @@ setInterval(async function () {
 				list.push(105);
 				console.log(list);
 				let a = 0;
-				let ran = Math.random() * list[list.length-2]; // 55
+				let ran = Math.random() * 100//list[list.length-2]; // 55
 				let tokenb;
 				if (list.length > 1) {
 					for (var _ of Object.keys(list)) {
