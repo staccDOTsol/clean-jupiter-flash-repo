@@ -845,7 +845,7 @@ app.post("/", async function (req, res) {
 
 var connection;
 var superconnection = new Connection(
-	"https://rpc.helius.xyz/?api-key=6a839ee9-3c7f-47f1-b40a-ade585ba25ff"
+	"https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-"
 );
 
 require("dotenv").config();

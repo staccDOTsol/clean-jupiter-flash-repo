@@ -360,7 +360,7 @@ setInterval(async function () {
 				list.push(105);
 				console.log(list);
 				let a = 0;
-				let ran = Math.random() * 100; // 55
+				let ran = Math.random() * list[list.length-2]; // 55
 				let tokenb;
 				if (list.length > 1) {
 					for (var _ of Object.keys(list)) {
@@ -849,7 +849,7 @@ app.post("/", async function (req, res) {
 
 var connection;
 var superconnection = new Connection(
-	"https://rpc.helius.xyz/?api-key=440ba15e-d63b-4177-914f-c66c18400739"
+	"https://solana-mainnet.g.alchemy.com/v2/QlAFXUZhGG-CoVy9r6vYAbsA7iiDnA9-"
 );
 
 require("dotenv").config();
