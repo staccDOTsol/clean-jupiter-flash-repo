@@ -356,7 +356,7 @@ setInterval(async function () {
 						}
 					}
 				}
-				list = list.sort();
+				list = list
 				list.push(105);
 				console.log(list);
 				let a = 0;
@@ -375,7 +375,7 @@ setInterval(async function () {
 							}
 						}
 						else {
-							ran = ran - list[a]
+							//ran = ran - list[a]
 						}
 						a++;
 					}
@@ -464,7 +464,7 @@ setInterval(async function () {
 								try {
 									for (var bca of [0]) {
 										if (
-											amountToTrade * 1.0006 <
+											amountToTrade * 1.002 <
 												JSBI.toNumber(routes2.routesInfos[0].outAmount) &&
 											!doing
 										) {

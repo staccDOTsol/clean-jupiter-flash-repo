@@ -354,7 +354,7 @@ setInterval(async function () {
 					}
 				}
 			}
-			list = list.sort();
+			list = list
 			console.log(list);
 			list.push(105);
 			let a = 0;
@@ -374,7 +374,7 @@ setInterval(async function () {
 						}
 					}
 					else {
-						ran = ran - list[a]
+						//ran = ran - list[a]
 					}
 					a++;
 				}
@@ -637,7 +637,7 @@ setInterval(async function () {
 new PublicKey(jaregms[atokens[1].symbol]),
 new PublicKey(market.reserves[i].config.liquidityToken.mint*/ //)
 										//	)
-										//);
+										//);	
 										console.log(pubkey.length);
 										console.log(
 											"we wanna c > " +

@@ -355,7 +355,7 @@ setInterval(async function () {
 					}
 				}
 			}
-			list = list.sort();
+			list = list
 			list.push(105);
 			console.log(list);
 			let a = 0;
@@ -374,7 +374,7 @@ setInterval(async function () {
 						}
 					}
 					else {
-						ran = ran - list[a]
+						//ran = ran - list[a]
 					}
 					a++;
 				}
