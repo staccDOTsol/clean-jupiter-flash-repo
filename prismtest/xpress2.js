@@ -355,7 +355,7 @@ setInterval(async function () {
 					}
 				}
 			}
-			list = list.sort().reverse()
+			list = list.sort()
 			list.push(105);
 			console.log(list);
 			let a = 0;
