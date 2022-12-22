@@ -228,7 +228,7 @@ let atokens = {};
 async function dothehorriblething(i, tokenbc, innn, dec) {
 	mod = mod / 1.5;
 
-	if (mod < 1) {
+	if (mod < 0.0001) {
 		mod = 100;
 	}
 	const tokenb = tokenbc;
@@ -752,7 +752,7 @@ app.post("/", async function (req, res) {
 		if (abc.tokenBalanceChanges.length > 0) {
 			for (var ch of abc.tokenBalanceChanges) {
 				if (true) {
-					if (mod < 1) {
+					if (mod < 0.0001) {
 						mod = 100;
 					}
 					var a = 2;
