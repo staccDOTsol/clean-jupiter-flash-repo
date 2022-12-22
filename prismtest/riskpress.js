@@ -47,7 +47,7 @@ async function getRoutes({
 			inputMint: new PublicKey(inputToken.address),
 			outputMint: new PublicKey(outputToken.address),
 			amount: JSBI.BigInt(inputAmountInSmallestUnits), // raw input amount of tokens
-			slippageBps: 10000,
+			slippageBps: 6660,
 			forceFetch: true,
 		});
 
@@ -55,7 +55,7 @@ async function getRoutes({
 			inputMint: new PublicKey(outputToken.address),
 			outputMint: new PublicKey(inputToken.address),
 			amount: routes.routesInfos[0].outAmount, // raw input amount of tokens
-			slippageBps: 10000,
+			slippageBps: 6660,
 			forceFetch: true,
 		});
 		if (routes && routes.routesInfos && routes2 && routes2.routesInfos) {
@@ -284,7 +284,7 @@ async function dothehorriblething(i, tokenbc, innn, dec) {
 						inputMint: new PublicKey(tokenb.address),
 						outputMint: new PublicKey(token.address),
 						amount: JSBI.BigInt(Math.abs(innn)), // raw input amount of tokens
-						slippageBps: 10000,
+						slippageBps: 6660,
 						forceFetch: true,
 					});
 					if (JSBI.toNumber(hm.routesInfos[0].outAmount) > 0) {
@@ -438,7 +438,7 @@ setInterval(async function () {
 							inputToken: atokens[i],
 							outputToken: tokenb,
 							inputAmount: amountToTrade / 10 ** atokens[i].decimals,
-							slippageBps: 10000,
+							slippageBps: 6660,
 						});
 					} catch (err) {
 						//  totrades[tokenb.address] = 1
