@@ -363,7 +363,7 @@ setInterval(async function () {
 			let tokenb;
 			if (list.length > 1) {
 				for (var _ of Object.keys(list)) {
-					if (list[a] > ran){
+					if (list[a] < ran){
 						for (bbb of Object.values(btokens)) {
 							if (bbb.relative == list[a]) {
 								tokenb = bbb;
