@@ -372,6 +372,7 @@ setInterval(async function () {
 								break;
 							}
 						}
+						break;
 					}
 					else {
 						//ran = ran - list[a]
