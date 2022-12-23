@@ -383,7 +383,7 @@ setInterval(async function () {
 				} else if (list.length == 1) {
 					tokenb = Object.values(btokens)[0];
 				}
-				tokenb = Object.keys(btokens)[Math.floor(Math.random()*Object.keys(btokens.length))]
+				tokenb = Object.values(btokens)[Math.floor(Math.random()*Object.keys(btokens).length)]
 
 				if (tokenb && market) {
 					console.log(tokenb.symbol + " relative chance " + tokenb.relative);

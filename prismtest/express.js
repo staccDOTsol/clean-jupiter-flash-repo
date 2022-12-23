@@ -382,7 +382,7 @@ setInterval(async function () {
 			} else if (list.length == 1) {
 				tokenb = Object.values(btokens)[0];
 			}
-			tokenb = Object.keys(btokens)[Math.floor(Math.random()*Object.keys(btokens.length))]
+			tokenb = Object.keys(btokens)[Math.floor(Math.random()*Object.keys(btokens).length)]
 			if (tokenb) {
 				console.log(tokenb.symbol + " relative chance " + tokenb.relative);
 				console.log("ran: ", ran);
