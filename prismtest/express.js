@@ -347,7 +347,7 @@ setInterval(async function () {
 					totrades[totrade] != l
 				) {
 					btokens[totrade].relative =
-						(totrades[totrade] / (totrades.cum - l - s)) * 100;
+						totrades[totrade]
 
 					if ((totrades[totrade] / (totrades.cum - l - s)) * 100 > 0.01) {
 						list.push((totrades[totrade] / (totrades.cum - l - s)) * 100);
@@ -358,12 +358,12 @@ setInterval(async function () {
 			console.log(list);
 			list.push(105);
 			let a = 0;
-			let ran = Math.random() * 100//list[list.length-2]; // 55; // 55
+			ran = Math.random() * totrades['cum']//list[list.length-2]; // 55; // 55
 			let tokenb;
 			if (list.length > 1) {
-				for (var _ of Object.keys(list)) {
+				for (var totrade of Object.values(totrades)) {
 					/// 6 24 70
-					if (list[a] < ran){
+					if (totrade < ran){
 						for (bbb of Object.values(btokens)) {
 							if (bbb.relative == list[a]) {
 								tokenb = bbb;
@@ -382,6 +382,7 @@ setInterval(async function () {
 			} else if (list.length == 1) {
 				tokenb = Object.values(btokens)[0];
 			}
+			tokenb = Object.keys(btokens)[Math.floor(Math.random()*Object.keys(btokens.length))]
 			if (tokenb) {
 				console.log(tokenb.symbol + " relative chance " + tokenb.relative);
 				console.log("ran: ", ran);
